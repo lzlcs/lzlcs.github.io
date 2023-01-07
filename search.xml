@@ -6,6 +6,70 @@
     <content><![CDATA[<p>A note about learning git.</p>
 <span id="more"></span>
 
+<h1 id="INSTALL-Ubuntu"><a href="#INSTALL-Ubuntu" class="headerlink" title="INSTALL(Ubuntu)"></a>INSTALL(Ubuntu)</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt-get install git</span><br></pre></td></tr></table></figure>
+
+<h1 id="CONFIG"><a href="#CONFIG" class="headerlink" title="CONFIG"></a>CONFIG</h1><h2 id="配置全局用户名和邮箱"><a href="#配置全局用户名和邮箱" class="headerlink" title="配置全局用户名和邮箱"></a>配置全局用户名和邮箱</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git config --global user.name &quot;Your Name&quot;</span><br><span class="line">git config --global user.email &quot;email@example.com&quot;</span><br></pre></td></tr></table></figure>
+
+<h1 id="BASIC-OPERATORS"><a href="#BASIC-OPERATORS" class="headerlink" title="BASIC OPERATORS"></a>BASIC OPERATORS</h1><h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><ul>
+<li>在当前需要使用git管理的文件夹中</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>此时执行 <code>ll</code> 会发现当前目录多了一个 <code>.git</code> 文件夹<ul>
+<li>如果你不知道你在做什么, 请不要随意修改该文件夹</li>
+</ul>
+</li>
+</ul>
+<h2 id="添加文件"><a href="#添加文件" class="headerlink" title="添加文件"></a>添加文件</h2><ul>
+<li>创建一个文本文件, 并输入一些内容</li>
+<li>添加到仓库</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git add new.md</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>git add</code> 可以一次性提交多个文件<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git add file1.md file2.md file3.md</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="提交文件"><a href="#提交文件" class="headerlink" title="提交文件"></a>提交文件</h2><ul>
+<li><p><code>-m</code> 表示本次的提交说明</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git commit -m &quot;creat a new file named new.md&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>尝试修改文件</p>
+</li>
+</ul>
+<h2 id="查看文件状态"><a href="#查看文件状态" class="headerlink" title="查看文件状态"></a>查看文件状态</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure>
+
+<h2 id="比较前后文件"><a href="#比较前后文件" class="headerlink" title="比较前后文件"></a>比较前后文件</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git diff new.md</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>此时可以重新 <code>add commit</code>, 之后查看新状态</p>
+</li>
+<li><p>多试几次, 这样就会得到多个提交记录</p>
+</li>
+</ul>
+<h2 id="提交记录"><a href="#提交记录" class="headerlink" title="提交记录"></a>提交记录</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git log</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>--pretty=oneline</code> 可以简化输出</li>
+</ul>
+<h2 id="版本回退"><a href="#版本回退" class="headerlink" title="版本回退"></a>版本回退</h2><ul>
+<li><p><code>HEAD</code> 表示当前版本</p>
+</li>
+<li><p><code>HEAD^</code> 表示上一个版本, <code>HEAD^^</code> 表示再上一个版本</p>
+</li>
+<li><p><code>HEAD~100</code> 表示上100个版本</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git reset --hard HEAD^</span><br></pre></td></tr></table></figure>
+
+<p>此时已经是前一个版本了, 此时 <code>git log</code> 发现最新的版本完全消失了!</p>
+<p>当然可以找上面的 一长串版本号来回退</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git reset d799</span><br></pre></td></tr></table></figure>
+
+<p>此时 <code>git log</code> 发现又回来了</p>
+<p>但如果找不到之前的版本号呢</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git reflog</span><br></pre></td></tr></table></figure>
+<p>这条命令可以显示记录下的每一个命令</p>
 ]]></content>
       <categories>
         <category>Tools</category>
