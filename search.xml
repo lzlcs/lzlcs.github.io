@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>GitCommands</title>
+    <url>/2023/01/07/GitCommands/</url>
+    <content><![CDATA[<p>安装</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt-get install git</span><br></pre></td></tr></table></figure>
+
+<p>git init<br>git add file1.cpp file2.cpp file3.cpp<br>git commit -m “commit log”<br>git status<br>git diff<br>git reset –hard HEAD^<br>git reset (版本号)<br>git reflog</p>
+]]></content>
+      <categories>
+        <category>Reference Tables</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+        <tag>Tables</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>LearnGit</title>
     <url>/2023/01/07/LearnGit/</url>
     <content><![CDATA[<p>A note about learning git.</p>
