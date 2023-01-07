@@ -3,10 +3,12 @@
   <entry>
     <title>GitCommands</title>
     <url>/2023/01/07/GitCommands/</url>
-    <content><![CDATA[<p>安装</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt-get install git</span><br></pre></td></tr></table></figure>
+    <content><![CDATA[<p>Quick Reference Table</p>
+<span id="more"></span>
 
-<p>git init<br>git add file1.cpp file2.cpp file3.cpp<br>git commit -m “commit log”<br>git status<br>git diff<br>git reset –hard HEAD^<br>git reset (版本号)<br>git reflog</p>
+<p>安装</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt-get install git</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git init</span><br><span class="line">git add file1.cpp file2.cpp file3.cpp</span><br><span class="line">git commit -m &quot;commit log&quot;</span><br><span class="line">git status</span><br><span class="line">git diff</span><br><span class="line">git reset --hard HEAD^</span><br><span class="line">git reset (版本号)</span><br><span class="line">git reflog</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>Reference Tables</category>
