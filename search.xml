@@ -1,24 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>GitCommands</title>
-    <url>/2023/01/07/GitCommands/</url>
-    <content><![CDATA[<p>Quick Reference Table</p>
-<span id="more"></span>
-
-<p>安装</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt-get install git</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git init</span><br><span class="line">git add file1.cpp file2.cpp file3.cpp</span><br><span class="line">git commit -m &quot;commit log&quot;</span><br><span class="line">git status</span><br><span class="line">git diff</span><br><span class="line">git reset --hard HEAD^</span><br><span class="line">git reset (版本号)</span><br><span class="line">git reflog</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Reference Tables</category>
-      </categories>
-      <tags>
-        <tag>Git</tag>
-        <tag>Tables</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>LearnGit</title>
     <url>/2023/01/07/LearnGit/</url>
     <content><![CDATA[<p>A note about learning git.</p>
@@ -41,7 +23,7 @@
 </ul>
 <h2 id="添加文件"><a href="#添加文件" class="headerlink" title="添加文件"></a>添加文件</h2><ul>
 <li>创建一个文本文件, 并输入一些内容</li>
-<li>添加到仓库</li>
+<li>添加到暂存区</li>
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git add new.md</span><br></pre></td></tr></table></figure>
 
@@ -49,6 +31,8 @@
 <li><code>git add</code> 可以一次性提交多个文件<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git add file1.md file2.md file3.md</span><br></pre></td></tr></table></figure></li>
 </ul>
 <h2 id="提交文件"><a href="#提交文件" class="headerlink" title="提交文件"></a>提交文件</h2><ul>
+<li><p>提交到仓库</p>
+</li>
 <li><p><code>-m</code> 表示本次的提交说明</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git commit -m &quot;creat a new file named new.md&quot;</span><br></pre></td></tr></table></figure>
 </li>
@@ -88,6 +72,17 @@
 <p>但如果找不到之前的版本号呢</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git reflog</span><br></pre></td></tr></table></figure>
 <p>这条命令可以显示记录下的每一个命令</p>
+<h2 id="撤销修改"><a href="#撤销修改" class="headerlink" title="撤销修改"></a>撤销修改</h2><ul>
+<li>回退到上次commit</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git checkout -- file</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>撤销暂存区文件</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git reset HEAD &lt;file&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="删除文件"><a href="#删除文件" class="headerlink" title="删除文件"></a>删除文件</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git rm file</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>Tools</category>
@@ -119,6 +114,24 @@
       </categories>
       <tags>
         <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>GitCommands</title>
+    <url>/2023/01/07/GitCommands/</url>
+    <content><![CDATA[<p>Quick Reference Table</p>
+<span id="more"></span>
+
+<p>安装</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt-get install git</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git init</span><br><span class="line">git add file1.cpp file2.cpp file3.cpp</span><br><span class="line">git commit -m &quot;commit log&quot;</span><br><span class="line">git status</span><br><span class="line">git diff</span><br><span class="line">git reset --hard HEAD^</span><br><span class="line">git reset (版本号)</span><br><span class="line">git reflog</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Reference Tables</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+        <tag>Tables</tag>
       </tags>
   </entry>
 </search>

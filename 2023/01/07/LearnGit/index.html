@@ -204,7 +204,7 @@
     
         <span class="article-update-date article-meta-item">
         <i class="fas fa-file-pen"></i>&nbsp;
-        <span class="pc">2023-01-07 11:21:52</span>
+        <span class="pc">2023-01-07 14:27:41</span>
     </span>
     
     
@@ -239,7 +239,7 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fas fa-file-word"></i>&nbsp;<span>379 字</span>
+            <i class="fas fa-file-word"></i>&nbsp;<span>418 字</span>
         </span>
     
     
@@ -280,7 +280,7 @@
 </ul>
 <h2 id="添加文件"><a href="#添加文件" class="headerlink" title="添加文件"></a>添加文件</h2><ul>
 <li>创建一个文本文件, 并输入一些内容</li>
-<li>添加到仓库</li>
+<li>添加到暂存区</li>
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add new.md</span><br></pre></td></tr></table></figure>
 
@@ -288,6 +288,8 @@
 <li><code>git add</code> 可以一次性提交多个文件<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add file1.md file2.md file3.md</span><br></pre></td></tr></table></figure></li>
 </ul>
 <h2 id="提交文件"><a href="#提交文件" class="headerlink" title="提交文件"></a>提交文件</h2><ul>
+<li><p>提交到仓库</p>
+</li>
 <li><p><code>-m</code> 表示本次的提交说明</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m &quot;creat a new file named new.md&quot;</span><br></pre></td></tr></table></figure>
 </li>
@@ -327,6 +329,17 @@
 <p>但如果找不到之前的版本号呢</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reflog</span><br></pre></td></tr></table></figure>
 <p>这条命令可以显示记录下的每一个命令</p>
+<h2 id="撤销修改"><a href="#撤销修改" class="headerlink" title="撤销修改"></a>撤销修改</h2><ul>
+<li>回退到上次commit</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -- file</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>撤销暂存区文件</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset HEAD &lt;file&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="删除文件"><a href="#删除文件" class="headerlink" title="删除文件"></a>删除文件</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git rm file</span><br></pre></td></tr></table></figure>
 
             </div>
 
@@ -413,7 +426,7 @@
             <div class="toc-content-container">
                 <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#INSTALL-Ubuntu"><span class="nav-number">1.</span> <span class="nav-text">INSTALL(Ubuntu)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CONFIG"><span class="nav-number">2.</span> <span class="nav-text">CONFIG</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%85%A8%E5%B1%80%E7%94%A8%E6%88%B7%E5%90%8D%E5%92%8C%E9%82%AE%E7%AE%B1"><span class="nav-number">2.1.</span> <span class="nav-text">配置全局用户名和邮箱</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BASIC-OPERATORS"><span class="nav-number">3.</span> <span class="nav-text">BASIC OPERATORS</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.1.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">添加文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E6%96%87%E4%BB%B6"><span class="nav-number">3.3.</span> <span class="nav-text">提交文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E7%8A%B6%E6%80%81"><span class="nav-number">3.4.</span> <span class="nav-text">查看文件状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E5%89%8D%E5%90%8E%E6%96%87%E4%BB%B6"><span class="nav-number">3.5.</span> <span class="nav-text">比较前后文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E8%AE%B0%E5%BD%95"><span class="nav-number">3.6.</span> <span class="nav-text">提交记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E5%9B%9E%E9%80%80"><span class="nav-number">3.7.</span> <span class="nav-text">版本回退</span></a></li></ol></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#INSTALL-Ubuntu"><span class="nav-number">1.</span> <span class="nav-text">INSTALL(Ubuntu)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CONFIG"><span class="nav-number">2.</span> <span class="nav-text">CONFIG</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%85%A8%E5%B1%80%E7%94%A8%E6%88%B7%E5%90%8D%E5%92%8C%E9%82%AE%E7%AE%B1"><span class="nav-number">2.1.</span> <span class="nav-text">配置全局用户名和邮箱</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BASIC-OPERATORS"><span class="nav-number">3.</span> <span class="nav-text">BASIC OPERATORS</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.1.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">添加文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E6%96%87%E4%BB%B6"><span class="nav-number">3.3.</span> <span class="nav-text">提交文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E7%8A%B6%E6%80%81"><span class="nav-number">3.4.</span> <span class="nav-text">查看文件状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E5%89%8D%E5%90%8E%E6%96%87%E4%BB%B6"><span class="nav-number">3.5.</span> <span class="nav-text">比较前后文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E8%AE%B0%E5%BD%95"><span class="nav-number">3.6.</span> <span class="nav-text">提交记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E5%9B%9E%E9%80%80"><span class="nav-number">3.7.</span> <span class="nav-text">版本回退</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%92%A4%E9%94%80%E4%BF%AE%E6%94%B9"><span class="nav-number">3.8.</span> <span class="nav-text">撤销修改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6"><span class="nav-number">3.9.</span> <span class="nav-text">删除文件</span></a></li></ol></li></ol>
     </div>
 </div>
 
