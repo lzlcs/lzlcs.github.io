@@ -9,7 +9,7 @@
     
     <title>
         
-            LearnGit |
+            Learnvim |
         
         Blog
     </title>
@@ -176,7 +176,7 @@
         <div class="article-content-container">
 
             <div class="article-title">
-                <span class="title-hover-animation">LearnGit</span>
+                <span class="title-hover-animation">Learnvim</span>
             </div>
 
             
@@ -198,53 +198,27 @@
         
             <i class="fa-regular fa-calendar-plus"></i>&nbsp;
         
-        <span class="pc">2023-01-07 10:39:49</span>
-        <span class="mobile">2023-01-07 10:39</span>
+        <span class="pc">2023-01-11 19:19:48</span>
+        <span class="mobile">2023-01-11 19:19</span>
     </span>
     
         <span class="article-update-date article-meta-item">
         <i class="fas fa-file-pen"></i>&nbsp;
-        <span class="pc">2023-01-11 19:48:33</span>
+        <span class="pc">2023-01-11 20:02:41</span>
     </span>
     
     
-        <span class="article-categories article-meta-item">
-            <i class="fas fa-folder"></i>&nbsp;
-            <ul>
-                
-                    <li>
-                        <a href="/categories/Tools/">Tools</a>&nbsp;
-                    </li>
-                
-            </ul>
-        </span>
-    
-    
-        <span class="article-tags article-meta-item">
-            <i class="fas fa-tags"></i>&nbsp;
-            <ul>
-                
-                    <li>
-                        <a href="/tags/Git/">Git</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/Tools/">Tools</a>&nbsp;
-                    </li>
-                
-            </ul>
-        </span>
     
 
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fas fa-file-word"></i>&nbsp;<span>418 字</span>
+            <i class="fas fa-file-word"></i>&nbsp;<span>648 字</span>
         </span>
     
     
         <span class="article-min2read article-meta-item">
-            <i class="fas fa-clock"></i>&nbsp;<span>1 分钟</span>
+            <i class="fas fa-clock"></i>&nbsp;<span>4 分钟</span>
         </span>
     
     
@@ -260,89 +234,116 @@
             
 
             <div class="article-content keep-markdown-body">
-                <p>A note about learning git.</p>
+                <p>A note about learning vim.</p>
 <span id="more"></span>
 
-<h1 id="INSTALL-Ubuntu"><a href="#INSTALL-Ubuntu" class="headerlink" title="INSTALL(Ubuntu)"></a>INSTALL(Ubuntu)</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install git</span><br></pre></td></tr></table></figure>
-
-<h1 id="CONFIG"><a href="#CONFIG" class="headerlink" title="CONFIG"></a>CONFIG</h1><h2 id="配置全局用户名和邮箱"><a href="#配置全局用户名和邮箱" class="headerlink" title="配置全局用户名和邮箱"></a>配置全局用户名和邮箱</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name &quot;Your Name&quot;</span><br><span class="line">git config --global user.email &quot;email@example.com&quot;</span><br></pre></td></tr></table></figure>
-
-<h1 id="BASIC-OPERATORS"><a href="#BASIC-OPERATORS" class="headerlink" title="BASIC OPERATORS"></a>BASIC OPERATORS</h1><h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><ul>
-<li>在当前需要使用git管理的文件夹中</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure>
-
+<h2 id="Chapter-1-The-Vim-Way"><a href="#Chapter-1-The-Vim-Way" class="headerlink" title="Chapter 1: The Vim Way"></a>Chapter 1: The Vim Way</h2><h3 id="Tip-1-Meet-the-Dot-Command"><a href="#Tip-1-Meet-the-Dot-Command" class="headerlink" title="Tip 1: Meet the Dot Command"></a>Tip 1: Meet the Dot Command</h3><blockquote>
+<p><code>.</code> is to repeat the last change</p>
+</blockquote>
 <ul>
-<li>此时执行 <code>ll</code> 会发现当前目录多了一个 <code>.git</code> 文件夹<ul>
-<li>如果你不知道你在做什么, 请不要随意修改该文件夹</li>
+<li>The Dot Command is a Micro Macro.</li>
+</ul>
+<h3 id="Tip-2-Don’t-Repeat-Yourself"><a href="#Tip-2-Don’t-Repeat-Yourself" class="headerlink" title="Tip 2: Don’t Repeat Yourself"></a>Tip 2: Don’t Repeat Yourself</h3><blockquote>
+<p>Move and use the dot command</p>
+</blockquote>
+<ul>
+<li>Reduce Extraneous Movement</li>
+</ul>
+<h3 id="Tip-3-Take-One-Step-Back-Then-Three-Forward"><a href="#Tip-3-Take-One-Step-Back-Then-Three-Forward" class="headerlink" title="Tip 3: Take One Step Back, Then Three Forward"></a>Tip 3: Take One Step Back, Then Three Forward</h3><ul>
+<li>Make the change repeatable</li>
+<li>Make the motion repeatable</li>
+<li>All together</li>
+</ul>
+<h3 id="Tip-4-Act-Repeat-Reverse"><a href="#Tip-4-Act-Repeat-Reverse" class="headerlink" title="Tip 4: Act, Repeat, Reverse"></a>Tip 4: Act, Repeat, Reverse</h3><blockquote>
+<p>Notice that many commands have its reversed form to themselves.<br>So you can undo almost everything.</p>
+</blockquote>
+<h3 id="Tip-5-Find-and-Replace-by-Hand"><a href="#Tip-5-Find-and-Replace-by-Hand" class="headerlink" title="Tip 5: Find and Replace by Hand"></a>Tip 5: Find and Replace by Hand</h3><ul>
+<li>Use <code>:%s/content/copy/g</code> to replace all in this file<ul>
+<li>Or use <code>/content</code> and <code>.</code> to replace one by one with your judgement.</li>
 </ul>
 </li>
 </ul>
-<h2 id="添加文件"><a href="#添加文件" class="headerlink" title="添加文件"></a>添加文件</h2><ul>
-<li>创建一个文本文件, 并输入一些内容</li>
-<li>添加到暂存区</li>
+<h3 id="Tip-6-Meet-the-Dot-Formula"><a href="#Tip-6-Meet-the-Dot-Formula" class="headerlink" title="Tip 6: Meet the Dot Formula"></a>Tip 6: Meet the Dot Formula</h3><ul>
+<li>One Keystroke to Move, One Keystroke to Execute.</li>
 </ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add new.md</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>git add</code> 可以一次性提交多个文件</li>
+<h2 id="Chapter-2-Normal-Mode"><a href="#Chapter-2-Normal-Mode" class="headerlink" title="Chapter 2: Normal Mode"></a>Chapter 2: Normal Mode</h2><h3 id="Tip-7-Pause-with-Your-Brush-Off-the-Page"><a href="#Tip-7-Pause-with-Your-Brush-Off-the-Page" class="headerlink" title="Tip 7: Pause with Your Brush Off the Page"></a>Tip 7: Pause with Your Brush Off the Page</h3><blockquote>
+<p>When you ask yourself whether you should enter the normal mode, then do it.</p>
+</blockquote>
+<h3 id="Tip-8-Chunk-Your-Undos"><a href="#Tip-8-Chunk-Your-Undos" class="headerlink" title="Tip 8: Chunk Your Undos"></a>Tip 8: Chunk Your Undos</h3><ul>
+<li><code>u</code> is the undo command.<ul>
+<li><code>u</code> and <code>&lt;C-r&gt;</code> are relative commands.</li>
 </ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git add file1.md file2.md file3.md</span><br></pre></td></tr></table></figure>
-
-<h2 id="提交文件"><a href="#提交文件" class="headerlink" title="提交文件"></a>提交文件</h2><ul>
-<li>提交到仓库</li>
-<li><code>-m</code> 表示本次的提交说明</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit -m &quot;creat a new file named new.md&quot;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>尝试修改文件</li>
-</ul>
-<h2 id="查看文件状态"><a href="#查看文件状态" class="headerlink" title="查看文件状态"></a>查看文件状态</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure>
-
-<h2 id="比较前后文件"><a href="#比较前后文件" class="headerlink" title="比较前后文件"></a>比较前后文件</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git diff new.md</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><p>此时可以重新 <code>add commit</code>, 之后查看新状态</p>
-</li>
-<li><p>多试几次, 这样就会得到多个提交记录</p>
 </li>
 </ul>
-<h2 id="提交记录"><a href="#提交记录" class="headerlink" title="提交记录"></a>提交记录</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git log</span><br></pre></td></tr></table></figure>
-
+<h3 id="Tip-9-Compose-Repeatable-Changes"><a href="#Tip-9-Compose-Repeatable-Changes" class="headerlink" title="Tip 9: Compose Repeatable Changes"></a>Tip 9: Compose Repeatable Changes</h3><ul>
+<li>In a word, make your command repeatable as possible as you can,<br>so when you find the next operator can be done by <code>.</code>, you’ll be happy.</li>
+</ul>
+<h3 id="Tip-10-Use-Counts-to-Do-Simple-Arithmetic"><a href="#Tip-10-Use-Counts-to-Do-Simple-Arithmetic" class="headerlink" title="Tip 10: Use Counts to Do Simple Arithmetic"></a>Tip 10: Use Counts to Do Simple Arithmetic</h3><ul>
+<li><code>&lt;C-a&gt;</code> and <code>&lt;C-x&gt;</code> perform addition and substraction on numbers.</li>
+</ul>
+<p>Line one<br>Line two<br>Line three<br>Line four</p>
+<p>var foo &#x3D; 1;<br>var bar &#x3D; ‘a’;<br>var foobar &#x3D; foo + bar;</p>
+<p>var foo &#x3D; “method(“ + argument1 + “,” + argument2 + “)”;</p>
+<p>…We’re waiting for copy before the site can go live…<br>…If you are content with this, let’s go ahead with it…<br>…We’ll launch as soon as we have the copy…</p>
+<p>The end is high</p>
+<h2 id="VimSheet"><a href="#VimSheet" class="headerlink" title="VimSheet"></a>VimSheet</h2><ul>
+<li><p>This sheet is associated by myself which I think it is easy to remember.</p>
+</li>
+<li><p><code>.</code> is to repeat the last change</p>
+</li>
+</ul>
+<h3 id="Basic-movement"><a href="#Basic-movement" class="headerlink" title="Basic movement"></a>Basic movement</h3><ul>
+<li>‘j’ is to move cursor down.</li>
+<li>‘k’ is to move cursor up.</li>
+<li>‘h’ is to move cursor left.</li>
+<li>‘l’ is to move cursor right.</li>
+<li>‘0’ is to move cursor to the beginning of the line.</li>
+<li>‘^’ is to move cursor to the first non-space character.</li>
+<li>‘$’ is to move cursor to the end of the line.</li>
+</ul>
+<h3 id="Enter-insert-mode"><a href="#Enter-insert-mode" class="headerlink" title="Enter insert mode"></a>Enter insert mode</h3><ul>
+<li><p><code>a</code> is to enter the insert mode after the cursor.</p>
+</li>
+<li><p><code>A</code> is to enter the insert mode at the end of the line.</p>
+</li>
+<li><p><code>i</code> is to enter the insert mode before the cursor.</p>
+</li>
+<li><p>‘I’ is to enter the insert mode at the beginning of the line.</p>
+</li>
+<li><p>‘o’ is to enter the insert mode on the next line.</p>
+</li>
+<li><p>‘O’ is to enter the insert mode on the previous line.</p>
+</li>
+<li><p>‘s’ is to delete the current letter and enter the insert mode.</p>
+</li>
+<li><p>‘S’ is to delete the entire line and enter the insert mode.</p>
+</li>
+<li><p>‘c [command]’ is to delete something and enter the insert mode.</p>
 <ul>
-<li><code>--pretty=oneline</code> 可以简化输出</li>
+<li>What to delete is defined by [command].</li>
 </ul>
-<h2 id="版本回退"><a href="#版本回退" class="headerlink" title="版本回退"></a>版本回退</h2><ul>
-<li><p><code>HEAD</code> 表示当前版本</p>
 </li>
-<li><p><code>HEAD^</code> 表示上一个版本, <code>HEAD^^</code> 表示再上一个版本</p>
+<li><p>‘C’ is to delete from the cursor to the end of line and enter the insert mode.</p>
 </li>
-<li><p><code>HEAD~100</code> 表示上100个版本</p>
+<li><p><code>d/D</code> is similar to ‘c&#x2F;C’ but they don’t enter the insert mode after deleting.</p>
 </li>
 </ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset --hard HEAD^</span><br></pre></td></tr></table></figure>
-
-<p>此时已经是前一个版本了, 此时 <code>git log</code> 发现最新的版本完全消失了!</p>
-<p>当然可以找上面的 一长串版本号来回退</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset d799</span><br></pre></td></tr></table></figure>
-
-<p>此时 <code>git log</code> 发现又回来了</p>
-<p>但如果找不到之前的版本号呢</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reflog</span><br></pre></td></tr></table></figure>
-
-<p>这条命令可以显示记录下的每一个命令</p>
-<h2 id="撤销修改"><a href="#撤销修改" class="headerlink" title="撤销修改"></a>撤销修改</h2><ul>
-<li>回退到上次commit</li>
+<h3 id="Find-something-to-move"><a href="#Find-something-to-move" class="headerlink" title="Find something to move"></a>Find something to move</h3><ul>
+<li><code>f [l]</code> is to find and move to the first matched letter afterward in this line.</li>
+<li><code>F [l]</code> is to find and move to the first matched letter forward in this line.</li>
+<li><code>t [l]</code> is to find and move before the first matched letter afterward in this line.</li>
+<li><code>T [l]</code> is to find and move before the first matched letter forward in this line.<ul>
+<li><code>;</code> can repeat the last <code>f/F/t/T</code> command in the same direction.</li>
+<li><code>,</code> can repeat the last <code>f/F/t/T</code> command in the opposite direction.</li>
 </ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -- file</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>撤销暂存区文件</li>
+</li>
+<li><code>/pattern</code> is to find “pattern” afterward in this file.</li>
+<li><code>?pattern</code> is to find “pattern” forward in this file.<ul>
+<li><code>n</code> can repeat the last <code>/</code> or <code>?</code> command in the same direction.</li>
+<li><code>N</code> can repeat the last <code>/</code> or <code>?</code> command in the same direction.</li>
 </ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reset HEAD &lt;file&gt;</span><br></pre></td></tr></table></figure>
-
-<h2 id="删除文件"><a href="#删除文件" class="headerlink" title="删除文件"></a>删除文件</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git rm file</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
 
             </div>
 
@@ -351,16 +352,16 @@
                     <div class="article-copyright-info-container">
     <ul class="copyright-info-content">
         <li>
-            <span class="type">本文标题</span>：<span class="content">LearnGit</span>
+            <span class="type">本文标题</span>：<span class="content">Learnvim</span>
         </li>
         <li>
             <span class="type">本文作者</span>：<span class="content">lzl</span>
         </li>
         <li>
-            <span class="type">创建时间</span>：<span class="content">2023-01-07 10:39:49</span>
+            <span class="type">创建时间</span>：<span class="content">2023-01-11 19:19:48</span>
         </li>
         <li class="post-link">
-            <span class="type">本文链接</span>：<span class="content">2023/01/07/LearnGit/</span>
+            <span class="type">本文链接</span>：<span class="content">2023/01/11/Learnvim/</span>
         </li>
         <li>
             <span class="type">版权声明</span>：<span class="content">本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！</span>
@@ -372,45 +373,18 @@
             
 
             
-                <ul class="post-tags-box">
-                    
-                        <li class="tag-item">
-                            <a href="/tags/Git/">#Git</a>&nbsp;
-                        </li>
-                    
-                        <li class="tag-item">
-                            <a href="/tags/Tools/">#Tools</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            
 
             
                 <div class="article-nav">
-                    
-                        <div class="article-prev">
-                            <a class="prev"
-                               rel="prev"
-                               href="/2023/01/07/GitCommands/"
-                            >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                                <span class="title flex-center">
-                                <span class="post-nav-title-item">GitCommands</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                            </a>
-                        </div>
                     
                     
                         <div class="article-next">
                             <a class="next"
                                rel="next"
-                               href="/2022/10/25/hello-world/"
+                               href="/2023/01/07/GitCommands/"
                             >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Hello World</span>
+                                <span class="post-nav-title-item">GitCommands</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                                 <span class="right arrow-icon flex-center">
@@ -429,7 +403,7 @@
             <div class="toc-content-container">
                 <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#INSTALL-Ubuntu"><span class="nav-number">1.</span> <span class="nav-text">INSTALL(Ubuntu)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CONFIG"><span class="nav-number">2.</span> <span class="nav-text">CONFIG</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%85%A8%E5%B1%80%E7%94%A8%E6%88%B7%E5%90%8D%E5%92%8C%E9%82%AE%E7%AE%B1"><span class="nav-number">2.1.</span> <span class="nav-text">配置全局用户名和邮箱</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BASIC-OPERATORS"><span class="nav-number">3.</span> <span class="nav-text">BASIC OPERATORS</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.1.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">添加文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E6%96%87%E4%BB%B6"><span class="nav-number">3.3.</span> <span class="nav-text">提交文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E7%8A%B6%E6%80%81"><span class="nav-number">3.4.</span> <span class="nav-text">查看文件状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E8%BE%83%E5%89%8D%E5%90%8E%E6%96%87%E4%BB%B6"><span class="nav-number">3.5.</span> <span class="nav-text">比较前后文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E8%AE%B0%E5%BD%95"><span class="nav-number">3.6.</span> <span class="nav-text">提交记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E5%9B%9E%E9%80%80"><span class="nav-number">3.7.</span> <span class="nav-text">版本回退</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%92%A4%E9%94%80%E4%BF%AE%E6%94%B9"><span class="nav-number">3.8.</span> <span class="nav-text">撤销修改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6"><span class="nav-number">3.9.</span> <span class="nav-text">删除文件</span></a></li></ol></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Chapter-1-The-Vim-Way"><span class="nav-number">1.</span> <span class="nav-text">Chapter 1: The Vim Way</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tip-1-Meet-the-Dot-Command"><span class="nav-number">1.1.</span> <span class="nav-text">Tip 1: Meet the Dot Command</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tip-2-Don%E2%80%99t-Repeat-Yourself"><span class="nav-number">1.2.</span> <span class="nav-text">Tip 2: Don’t Repeat Yourself</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tip-3-Take-One-Step-Back-Then-Three-Forward"><span class="nav-number">1.3.</span> <span class="nav-text">Tip 3: Take One Step Back, Then Three Forward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tip-4-Act-Repeat-Reverse"><span class="nav-number">1.4.</span> <span class="nav-text">Tip 4: Act, Repeat, Reverse</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tip-5-Find-and-Replace-by-Hand"><span class="nav-number">1.5.</span> <span class="nav-text">Tip 5: Find and Replace by Hand</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tip-6-Meet-the-Dot-Formula"><span class="nav-number">1.6.</span> <span class="nav-text">Tip 6: Meet the Dot Formula</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Chapter-2-Normal-Mode"><span class="nav-number">2.</span> <span class="nav-text">Chapter 2: Normal Mode</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tip-7-Pause-with-Your-Brush-Off-the-Page"><span class="nav-number">2.1.</span> <span class="nav-text">Tip 7: Pause with Your Brush Off the Page</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tip-8-Chunk-Your-Undos"><span class="nav-number">2.2.</span> <span class="nav-text">Tip 8: Chunk Your Undos</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tip-9-Compose-Repeatable-Changes"><span class="nav-number">2.3.</span> <span class="nav-text">Tip 9: Compose Repeatable Changes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tip-10-Use-Counts-to-Do-Simple-Arithmetic"><span class="nav-number">2.4.</span> <span class="nav-text">Tip 10: Use Counts to Do Simple Arithmetic</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VimSheet"><span class="nav-number">3.</span> <span class="nav-text">VimSheet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Basic-movement"><span class="nav-number">3.1.</span> <span class="nav-text">Basic movement</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Enter-insert-mode"><span class="nav-number">3.2.</span> <span class="nav-text">Enter insert mode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Find-something-to-move"><span class="nav-number">3.3.</span> <span class="nav-text">Find something to move</span></a></li></ol></li></ol>
     </div>
 </div>
 
