@@ -160,75 +160,176 @@
 </li>
 </ul>
 <h3 id="Tip-9-Compose-Repeatable-Changes"><a href="#Tip-9-Compose-Repeatable-Changes" class="headerlink" title="Tip 9: Compose Repeatable Changes"></a>Tip 9: Compose Repeatable Changes</h3><ul>
-<li>In a word, make your command repeatable as possible as you can,<br>so when you find the next operator can be done by <code>.</code>, you’ll be happy.</li>
+<li>In a word, make your command repeatable as possible as you can,<br>so when you find the next operator can be done by <code>.</code>, you&#96;ll be happy.</li>
 </ul>
 <h3 id="Tip-10-Use-Counts-to-Do-Simple-Arithmetic"><a href="#Tip-10-Use-Counts-to-Do-Simple-Arithmetic" class="headerlink" title="Tip 10: Use Counts to Do Simple Arithmetic"></a>Tip 10: Use Counts to Do Simple Arithmetic</h3><ul>
 <li><code>&lt;C-a&gt;</code> and <code>&lt;C-x&gt;</code> perform addition and substraction on numbers.</li>
 </ul>
-<p>Line one<br>Line two<br>Line three<br>Line four</p>
-<p>var foo &#x3D; 1;<br>var bar &#x3D; ‘a’;<br>var foobar &#x3D; foo + bar;</p>
-<p>var foo &#x3D; “method(“ + argument1 + “,” + argument2 + “)”;</p>
-<p>…We’re waiting for copy before the site can go live…<br>…If you are content with this, let’s go ahead with it…<br>…We’ll launch as soon as we have the copy…</p>
-<p>The end is high</p>
-<h2 id="VimSheet"><a href="#VimSheet" class="headerlink" title="VimSheet"></a>VimSheet</h2><ul>
-<li><p>This sheet is associated by myself which I think it is easy to remember.</p>
+<h3 id="Tip-11-Don’t-Count-If-You-Can-Repeat"><a href="#Tip-11-Don’t-Count-If-You-Can-Repeat" class="headerlink" title="Tip 11: Don’t Count If You Can Repeat"></a>Tip 11: Don’t Count If You Can Repeat</h3><ul>
+<li>You can use <code>dw.......</code> rather than <code>d7w</code> because you counting time are long.<ul>
+<li>Also, if you type dot one more time, you can type <code>u</code> to undo it easily.</li>
+</ul>
 </li>
-<li><p><code>.</code> is to repeat the last change</p>
+<li>But you can use <code>d7w</code> to have a cleaner undo tree if you like counting.</li>
+</ul>
+<p>Which to use is up to you.</p>
+<h3 id="Tip-12-Combine-and-Conquer"><a href="#Tip-12-Combine-and-Conquer" class="headerlink" title="Tip 12: Combine and Conquer"></a>Tip 12: Combine and Conquer</h3><ul>
+<li>Operator + Motion &#x3D; Action</li>
+<li>Try to map your own keys</li>
+</ul>
+<h2 id="Chapter-3-Insert-Mode"><a href="#Chapter-3-Insert-Mode" class="headerlink" title="Chapter 3 Insert Mode"></a>Chapter 3 Insert Mode</h2><h3 id="Tip-13-Make-Corrections-Instantly-from-Insert-Mode"><a href="#Tip-13-Make-Corrections-Instantly-from-Insert-Mode" class="headerlink" title="Tip 13: Make Corrections Instantly from Insert Mode"></a>Tip 13: Make Corrections Instantly from Insert Mode</h3><ul>
+<li><code>&lt;C-h&gt;</code> is the same as the <code>&lt;BS&gt;</code></li>
+<li><code>&lt;C-w&gt;</code> is the same as <code>db</code></li>
+<li><code>&lt;C-u&gt;</code> is the same as <code>d^</code></li>
+</ul>
+<h3 id="Tip-14-Get-Back-to-Normal-Mode"><a href="#Tip-14-Get-Back-to-Normal-Mode" class="headerlink" title="Tip 14: Get Back to Normal Mode"></a>Tip 14: Get Back to Normal Mode</h3><ul>
+<li><code>&lt;C-[&gt;</code> is the same as <code>&lt;esc&gt;</code></li>
+<li><code>&lt;C-o&gt;</code> is to enter the insert normal mode.</li>
+</ul>
+<h3 id="Tip-15-Paste-from-a-Register-Without-Leaving-Insert-Mode"><a href="#Tip-15-Paste-from-a-Register-Without-Leaving-Insert-Mode" class="headerlink" title="Tip 15: Paste from a Register Without Leaving Insert Mode"></a>Tip 15: Paste from a Register Without Leaving Insert Mode</h3><ul>
+<li><code>&lt;C-r&gt;&#123;register&#125;</code> is to paste text from the register.</li>
+<li>In my opinion, it’s not better than <code>&lt;C-o&gt;p</code></li>
+</ul>
+<h3 id="Tip-16-Do-Back-of-the-Envelope-Calculations-in-Place"><a href="#Tip-16-Do-Back-of-the-Envelope-Calculations-in-Place" class="headerlink" title="Tip 16: Do Back-of-the-Envelope Calculations in Place"></a>Tip 16: Do Back-of-the-Envelope Calculations in Place</h3><ul>
+<li><code>&lt;C-r&gt;=&#123;expression&#125;&lt;CR&gt;</code> can calculate the value of the expression.</li>
+</ul>
+<h3 id="Tip-17-Insert-Unusual-Characters-by-Character-Code"><a href="#Tip-17-Insert-Unusual-Characters-by-Character-Code" class="headerlink" title="Tip 17: Insert Unusual Characters by Character Code"></a>Tip 17: Insert Unusual Characters by Character Code</h3><ul>
+<li><code>&lt;C-v&gt;&#123;code&#125;</code> can insert some special characters.<ul>
+<li>To know more, see <code>:h i_CTRL_V_digit</code> for more details.</li>
+<li>Also, you can use <code>ga</code> to know the code of the letter under the cursor.</li>
+<li><code>&lt;C-v&gt;&lt;Tab&gt;</code> is to insert the tab rather than any spaces<br>whether you use the <code>expandtab</code> option.</li>
+</ul>
 </li>
 </ul>
-<h3 id="Basic-movement"><a href="#Basic-movement" class="headerlink" title="Basic movement"></a>Basic movement</h3><ul>
-<li>‘j’ is to move cursor down.</li>
-<li>‘k’ is to move cursor up.</li>
-<li>‘h’ is to move cursor left.</li>
-<li>‘l’ is to move cursor right.</li>
-<li>‘0’ is to move cursor to the beginning of the line.</li>
-<li>‘^’ is to move cursor to the first non-space character.</li>
-<li>‘$’ is to move cursor to the end of the line.</li>
+<h3 id="Tip-18-Insert-Unusual-Characters-by-Digraph"><a href="#Tip-18-Insert-Unusual-Characters-by-Digraph" class="headerlink" title="Tip 18: Insert Unusual Characters by Digraph"></a>Tip 18: Insert Unusual Characters by Digraph</h3><ul>
+<li><code>&lt;C_k&gt;&#123;char1&#125;&#123;char2&#125;</code> can type digraphs.<ul>
+<li>Use <code>:digraph</code> for more details.</li>
 </ul>
-<h3 id="Enter-insert-mode"><a href="#Enter-insert-mode" class="headerlink" title="Enter insert mode"></a>Enter insert mode</h3><ul>
-<li><p><code>a</code> is to enter the insert mode after the cursor.</p>
 </li>
-<li><p><code>A</code> is to enter the insert mode at the end of the line.</p>
+</ul>
+<h3 id="Tip-19-Overwrite-Existing-Text-with-Replace-Mode"><a href="#Tip-19-Overwrite-Existing-Text-with-Replace-Mode" class="headerlink" title="Tip 19: Overwrite Existing Text with Replace Mode"></a>Tip 19: Overwrite Existing Text with Replace Mode</h3><ul>
+<li><code>R</code> is to enter the replace mode under the normal mode</li>
+<li><code>r&#123;letter&#125;</code> is to replace the letter under the cursor with the {letter}.</li>
+<li>Overwrite Tab Characters with Virtual Replace Mode<ul>
+<li>If you didn’t set <code>expandtab</code>, replacing a tab means that<br>replace many characters with one. (Many is due to the option <code>tabstop</code>.</li>
+<li>Also you can use <code>gR</code> to avoid it, use <code>gr</code> similarly.</li>
+</ul>
 </li>
-<li><p><code>i</code> is to enter the insert mode before the cursor.</p>
+</ul>
+<h2 id="Chapter-4"><a href="#Chapter-4" class="headerlink" title="Chapter 4"></a>Chapter 4</h2><h3 id="Tip-20-Grok-Visual-Mode"><a href="#Tip-20-Grok-Visual-Mode" class="headerlink" title="Tip 20: Grok Visual Mode"></a>Tip 20: Grok Visual Mode</h3><ul>
+<li><p>Use <code>v</code> to enter the visual mode.</p>
 </li>
-<li><p>‘I’ is to enter the insert mode at the beginning of the line.</p>
-</li>
-<li><p>‘o’ is to enter the insert mode on the next line.</p>
-</li>
-<li><p>‘O’ is to enter the insert mode on the previous line.</p>
-</li>
-<li><p>‘s’ is to delete the current letter and enter the insert mode.</p>
-</li>
-<li><p>‘S’ is to delete the entire line and enter the insert mode.</p>
-</li>
-<li><p>‘c [command]’ is to delete something and enter the insert mode.</p>
+<li><p>Most commands are the same as themselves in the normal mode.</p>
 <ul>
-<li>What to delete is defined by [command].</li>
+<li>The operator commands such as <code>y</code>, it needs you to confirm operation<br>object such as <code>iw</code>, but in the visual mode, the operation object directly<br>becomes the areas you have selected.</li>
 </ul>
 </li>
-<li><p>‘C’ is to delete from the cursor to the end of line and enter the insert mode.</p>
-</li>
-<li><p><code>d/D</code> is similar to ‘c&#x2F;C’ but they don’t enter the insert mode after deleting.</p>
-</li>
-</ul>
-<h3 id="Find-something-to-move"><a href="#Find-something-to-move" class="headerlink" title="Find something to move"></a>Find something to move</h3><ul>
-<li><code>f [l]</code> is to find and move to the first matched letter afterward in this line.</li>
-<li><code>F [l]</code> is to find and move to the first matched letter forward in this line.</li>
-<li><code>t [l]</code> is to find and move before the first matched letter afterward in this line.</li>
-<li><code>T [l]</code> is to find and move before the first matched letter forward in this line.<ul>
-<li><code>;</code> can repeat the last <code>f/F/t/T</code> command in the same direction.</li>
-<li><code>,</code> can repeat the last <code>f/F/t/T</code> command in the opposite direction.</li>
-</ul>
-</li>
-<li><code>/pattern</code> is to find “pattern” afterward in this file.</li>
-<li><code>?pattern</code> is to find “pattern” forward in this file.<ul>
-<li><code>n</code> can repeat the last <code>/</code> or <code>?</code> command in the same direction.</li>
-<li><code>N</code> can repeat the last <code>/</code> or <code>?</code> command in the same direction.</li>
+<li><p>Use <code>&lt;C-g&gt;</code> to enter the select mode, it is similar to the other editor.</p>
+<ul>
+<li>When you type any printable letter, the area you have selected will be<br>deleted and you will enter the insert mode with the letter printed.</li>
 </ul>
 </li>
 </ul>
-]]></content>
+<h3 id="Tip-21-Define-a-Visual-Selection"><a href="#Tip-21-Define-a-Visual-Selection" class="headerlink" title="Tip 21: Define a Visual Selection"></a>Tip 21: Define a Visual Selection</h3><ul>
+<li>Use <code>v</code> to enter the character-wise visual mode.</li>
+<li>Use <code>V</code> to enter the line-wise visual mode.</li>
+<li>Use <code>&lt;C-v&gt;</code> to enter the block-wise visual mode.</li>
+<li>Use <code>gv</code> to reselect the last visual selection.</li>
+</ul>
+<p>Also they can be use to change visual mode from the other visual mode.</p>
+<ul>
+<li>Use <code>o</code> to move to the other end of the selection.</li>
+</ul>
+<h3 id="Tip-22-Repeat-Line-Wise-Visual-Commands"><a href="#Tip-22-Repeat-Line-Wise-Visual-Commands" class="headerlink" title="Tip 22: Repeat Line-Wise Visual Commands"></a>Tip 22: Repeat Line-Wise Visual Commands</h3><ul>
+<li><code>.</code> command in the visual mode is to reselect the last visual selection<br>  and do the same things such as indenting.</li>
+</ul>
+<h3 id="Tip-23-Prefer-Operators-to-Visual-Commands-Where-Possible"><a href="#Tip-23-Prefer-Operators-to-Visual-Commands-Where-Possible" class="headerlink" title="Tip 23: Prefer Operators to Visual Commands Where Possible"></a>Tip 23: Prefer Operators to Visual Commands Where Possible</h3><ul>
+<li>You’d better use dot command in the normal mode so that it can be repeatable.</li>
+</ul>
+<h3 id="Tip-24-Edit-Tabular-Data-with-Visual-Block-Mode"><a href="#Tip-24-Edit-Tabular-Data-with-Visual-Block-Mode" class="headerlink" title="Tip 24: Edit Tabular Data with Visual-Block Mode"></a>Tip 24: Edit Tabular Data with Visual-Block Mode</h3><ul>
+<li>Use <code>&lt;C-v&gt;</code> to add the <code>|</code> in the same column for many lines.</li>
+<li>Use <code>V</code> to change the whole line into <code>-</code> by <code>r-</code></li>
+</ul>
+<h3 id="Tip-25-Change-Columns-of-Text"><a href="#Tip-25-Change-Columns-of-Text" class="headerlink" title="Tip 25: Change Columns of Text"></a>Tip 25: Change Columns of Text</h3><ul>
+<li>Return to the normal mode so that the change can be loaded.</li>
+</ul>
+<h3 id="Tip-26-Append-After-a-Ragged-Visual-Block"><a href="#Tip-26-Append-After-a-Ragged-Visual-Block" class="headerlink" title="Tip 26: Append After a Ragged Visual Block"></a>Tip 26: Append After a Ragged Visual Block</h3><ul>
+<li><code>i</code> and <code>a</code> have another meanings under the visual mode.<br>We’ll expain it later.</li>
+</ul>
+<h2 id="Chapter-5-Command-Line-Mode"><a href="#Chapter-5-Command-Line-Mode" class="headerlink" title="Chapter 5: Command-Line Mode"></a>Chapter 5: Command-Line Mode</h2><h3 id="Tip-27-Meet-Vim’s-Command-Line"><a href="#Tip-27-Meet-Vim’s-Command-Line" class="headerlink" title="Tip 27: Meet Vim’s Command Line"></a>Tip 27: Meet Vim’s Command Line</h3><ul>
+<li>See <code>:h delete</code>, <code>:h yank</code>, <code>:h put</code>, <code>:h copy</code>, <code>:h move</code>,<br><code>:h join</code>, <code>:h normal</code>, <code>:h substitute</code>, <code>:h global</code> for help.</li>
+</ul>
+<h3 id="Tip-28-Execute-a-Command-on-One-or-More-Consecutive-Lines"><a href="#Tip-28-Execute-a-Command-on-One-or-More-Consecutive-Lines" class="headerlink" title="Tip 28: Execute a Command on One or More Consecutive Lines"></a>Tip 28: Execute a Command on One or More Consecutive Lines</h3><ul>
+<li>See <code>:h range</code>, <code>:h pattern</code>, <code>:h mark</code> for help.</li>
+</ul>
+<h3 id="Tip-29-Duplicate-or-Move-Lines-Using-‘-t’-and-‘-m’-Commands"><a href="#Tip-29-Duplicate-or-Move-Lines-Using-‘-t’-and-‘-m’-Commands" class="headerlink" title="Tip 29: Duplicate or Move Lines Using ‘:t’ and ‘:m’ Commands"></a>Tip 29: Duplicate or Move Lines Using ‘:t’ and ‘:m’ Commands</h3><ul>
+<li><code>:t</code> is the same as <code>:copy</code>.</li>
+</ul>
+<h3 id="Tip-30-Run-Normal-Mode-Commands-Across-a-Range"><a href="#Tip-30-Run-Normal-Mode-Commands-Across-a-Range" class="headerlink" title="Tip 30: Run Normal Mode Commands Across a Range"></a>Tip 30: Run Normal Mode Commands Across a Range</h3><ul>
+<li>Use <code>:normal</code> to execute normal commands on the [range].</li>
+</ul>
+<h3 id="Tip-31-Repeat-the-Last-Ex-Command"><a href="#Tip-31-Repeat-the-Last-Ex-Command" class="headerlink" title="Tip 31: Repeat the Last Ex Command"></a>Tip 31: Repeat the Last Ex Command</h3><ul>
+<li>Use <code>@:</code> to execute the last ex command.<ul>
+<li><code>:bnext</code> can jump to the next buffer, but <code>&lt;C-o&gt;</code> can jump to the last<br>position of the cursor so that after using <code>@:</code> you can use it to reverse.</li>
+<li>Also for <code>:bprev</code> and <code>&lt;C-i&gt;</code>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="Tip-32-Tab-Complete-Your-Ex-Commands"><a href="#Tip-32-Tab-Complete-Your-Ex-Commands" class="headerlink" title="Tip 32: Tab-Complete Your Ex Commands"></a>Tip 32: Tab-Complete Your Ex Commands</h3><ul>
+<li><code>&lt;C-d&gt;</code> can reveal the list of possible completions.</li>
+</ul>
+<h3 id="Tip-33-Insert-the-Current-Word-at-the-Command-Prompt"><a href="#Tip-33-Insert-the-Current-Word-at-the-Command-Prompt" class="headerlink" title="Tip 33: Insert the Current Word at the Command Prompt"></a>Tip 33: Insert the Current Word at the Command Prompt</h3><ul>
+<li><code>\*</code> can find the next match for the word under the cursor.</li>
+<li><code>&lt;C-r&gt;&lt;C-w&gt;</code> can enter the word under the cursor in the command mode.</li>
+</ul>
+<h3 id="Tip-34-Recall-Commands-from-History"><a href="#Tip-34-Recall-Commands-from-History" class="headerlink" title="Tip 34: Recall Commands from History"></a>Tip 34: Recall Commands from History</h3><ul>
+<li><p><code>&lt;Up&gt;</code> and <code>&lt;Down&gt;</code> can recall history commands.</p>
+</li>
+<li><p><code>&lt;C-p&gt;</code> and <code>&lt;C-n&gt;</code> can also do that.</p>
+<ul>
+<li>But they have a disadvantage.</li>
+<li>When you type <code>:h </code> and use the arrow keystroke, it will filter the commands<br>you can try out.</li>
+</ul>
+</li>
+<li><p>Use map to solve this problem.</p>
+</li>
+</ul>
+<figure class="highlight lua"><table><tr><td class="code"><pre><span class="line">map(<span class="string">&quot;c&quot;</span>, <span class="string">&quot;&lt;C-p&gt;&quot;</span>, <span class="string">&quot;&lt;Up&gt;&quot;</span>, &#123; noremap = <span class="literal">true</span> &#125;)</span><br><span class="line">map(<span class="string">&quot;c&quot;</span>, <span class="string">&quot;&lt;C-n&gt;&quot;</span>, <span class="string">&quot;&lt;Down&gt;&quot;</span>, &#123; noremap = <span class="literal">true</span> &#125;)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>p:</code> can call a window which can list the history of commands, you can use<br><code>&lt;CR&gt;</code> to execute the command under the cursor.</p>
+<ul>
+<li>You can use any command in every mode, such as gather two lines divided by<br><code>|</code> and <code>&lt;CR&gt;</code> to execute.</li>
+</ul>
+</li>
+<li><p><code>p/</code> call a window which list the search history.</p>
+</li>
+<li><p><code>&lt;C-f&gt;</code> in the command mode can do the same as <code>p:</code>.</p>
+</li>
+</ul>
+<h3 id="Tip-35-Run-Commands-in-the-Shell"><a href="#Tip-35-Run-Commands-in-the-Shell" class="headerlink" title="Tip 35: Run Commands in the Shell"></a>Tip 35: Run Commands in the Shell</h3><ul>
+<li><p><code>:!&#123;command&#125;</code> execute commands under the terminal</p>
+</li>
+<li><p><code>:read !&#123;command&#125;</code> paste the outputs of commands to this buffer.</p>
+</li>
+<li><p><code>:write !&#123;command&#125;</code> use the content of this buffer as the input of commands.</p>
+<ul>
+<li>Notice: <code>:write! &#123;command&#125;</code> is different from the previous command,<br>see <code>:h write!</code> for help.</li>
+</ul>
+</li>
+<li><p><code>:[range]!&#123;command&#125;</code> can execute commands specially for this [range].</p>
+</li>
+<li><p>See <code>:h !</code> for a convenient shortcut for setting the range.</p>
+</li>
+</ul>
+<h2 id="Chapter-6-Manage-Multiple-Files"><a href="#Chapter-6-Manage-Multiple-Files" class="headerlink" title="Chapter 6: Manage Multiple Files"></a>Chapter 6: Manage Multiple Files</h2>]]></content>
+      <categories>
+        <category>Tools</category>
+      </categories>
+      <tags>
+        <tag>Tools</tag>
+        <tag>Vim</tag>
+      </tags>
   </entry>
   <entry>
     <title>Hello World</title>
