@@ -1,26 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>GitCommands</title>
-    <url>/2023/01/07/GitCommands/</url>
-    <content><![CDATA[<p>Quick Reference Table</p>
-<span id="more"></span>
-
-<p> $\frac{ads}{adsf}$</p>
-<p>安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install git</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git init</span><br><span class="line">git add file1.cpp file2.cpp file3.cpp</span><br><span class="line">git commit -m <span class="string">&quot;commit log&quot;</span></span><br><span class="line">git status</span><br><span class="line">git diff</span><br><span class="line">git reset --hard HEAD^</span><br><span class="line">git reset (版本号)</span><br><span class="line">git reflog</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Reference Tables</category>
-      </categories>
-      <tags>
-        <tag>Git</tag>
-        <tag>Tables</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>LearnGit</title>
     <url>/2023/01/07/LearnGit/</url>
     <content><![CDATA[<p>A note about learning git.</p>
@@ -322,7 +302,21 @@
 <li><p>See <code>:h !</code> for a convenient shortcut for setting the range.</p>
 </li>
 </ul>
-<h2 id="Chapter-6-Manage-Multiple-Files"><a href="#Chapter-6-Manage-Multiple-Files" class="headerlink" title="Chapter 6: Manage Multiple Files"></a>Chapter 6: Manage Multiple Files</h2>]]></content>
+<h2 id="Chapter-6-Manage-Multiple-Files"><a href="#Chapter-6-Manage-Multiple-Files" class="headerlink" title="Chapter 6: Manage Multiple Files"></a>Chapter 6: Manage Multiple Files</h2><h3 id="Tip-36-Track-Open-Files-with-the-Buffer-List"><a href="#Tip-36-Track-Open-Files-with-the-Buffer-List" class="headerlink" title="Tip 36: Track Open Files with the Buffer List"></a>Tip 36: Track Open Files with the Buffer List</h3><ul>
+<li><p>When you execute <code>nvim [filename]</code>, the nvim will creat a copy of this file.<br>So what you do is on this copy, you can change the real file when you save it.</p>
+</li>
+<li><p>You can use wildcards to edit files, for instance, <code>nvim \*\.cpp</code> </p>
+</li>
+<li><p>Then use <code>:ls</code> to see all buffers,<br>you can see a <code>%a</code> in front of your current buffer’s name.</p>
+</li>
+<li><p><code>:bnext</code> and <code>:bprev</code> can change the current buffer.</p>
+</li>
+<li><p><code>:bfirst</code> and <code>:blast</code> are easy to comprehense.</p>
+</li>
+<li><p><code>&lt;C-6&gt;(&lt;C-^&gt;)</code> can change to the buffer whose name has a <code>#</code> in front of itself.</p>
+</li>
+</ul>
+]]></content>
       <categories>
         <category>Tools</category>
       </categories>
