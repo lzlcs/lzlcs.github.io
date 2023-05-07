@@ -301,4 +301,155 @@ git branch -a
 
 Now you can see the changes you made recently on branch `beta`.
 
+## Push a branch to Github
 
+```
+git checkout -b branch2
+```
+
+Make some changes.
+
+```
+git status
+git add 
+git commit -m "..."
+git push origin branch2
+```
+
+In Github, we can see the changes and merge them into the branch `master` if we approve it.
+
+## Github flow 
+
+1. Create a new branch
+2. Make changes and add commits
+3. Open a pull request
+4. Review
+5. Deploy
+6. Merge
+
+### Create a new branch
+
+If you want to try something new, you create a new branch.
+Branching gives you an environment where you can make changes without affecting the main branch.
+
+When you make a new branch, you will always want to make it from the main branch.
+
+> Using descriptive names for new branches, so everyone can understand what is happening.
+
+### Make changes and add commits
+
+When you reach a small milestone, add the changes into your branch by commit.
+
+> Commit message are very important.
+
+### Open a pull request
+
+A Pull Request notifies people you have changes ready for them to consider or review.
+
+### Review 
+
+When a Pull Request is made, it can be reviewed by whoever has the proper access to the branch.
+
+### Deploy 
+
+GitHub allows you to deploy from a branch for final testing in production before merging with the master branch.
+
+### Merge
+
+After exhaustive testing, you can merge the code into the master branch!
+
+# Git contribute
+
+## Github fork
+
+### Fork a repository
+
+Click the `fork`.
+
+## Git clone
+
+### Clone a fork from Github
+
+** Move back to the origin repository. **
+
+```
+git clone ....
+cd ....
+git status
+git log
+git remote -v 
+```
+Raname: `git remote rename origin upstream`.
+
+Then fetch the URL of our own fork: `git remote add origin ...`
+
+* origin: we can read and write.
+* upstream wo can read only.
+
+## Github send pull request
+
+Make some changes.
+
+```
+git add .
+git commit -m ""
+git push origin
+```
+
+Now go to Github and pull request.
+
+## Git ignore
+
+When sharing your code with others, there are often files or parts of your project, you do not want to share.
+
+### Create .gitignore
+
+`touch .gitignore`
+
+> It is also possible to have additional .gitignore files in subdirectories. 
+> These only apply to files or folders within that directory.
+
+## Git security
+
+```
+ssh-keygen -t rsa -b 4096 -C "...@...com"
+ssh-add ~/.ssh/id_rsa
+clip < ~/.ssh/id_rsa.pub
+```
+Add ssh to Github.
+```
+ssh -T git@github.com
+git remote set-url remote-name git@github.com:username/repository.git
+```
+
+# Git undo
+
+## Git revert
+
+When we want to take a previous commit and add it as a new commit, keeping the log intact.
+
+```
+git log --oneline
+git revert HEAD --no-edit
+```
+Use `--no-edit` to skip the commit message editor (getting the default revert message).
+
+## Git reset
+
+Move the repository back to a previous commit, discarding any changes made after that commit.
+
+```
+git reset ...
+```
+
+## Git amend
+
+commit --amend is used to modify the most recent commit.
+
+```
+git commit -m "Adding plines to reddme"
+git commit --amend -m "Added lines to README.md"
+```
+
+> You should avoid making changes that rewrite history to remote repositories,
+> especially if others are working with them.
