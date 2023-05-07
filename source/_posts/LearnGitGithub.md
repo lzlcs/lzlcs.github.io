@@ -370,7 +370,7 @@ Click the `fork`.
 
 ### Clone a fork from Github
 
-** Move back to the origin repository. **
+**Move back to the origin repository.**
 
 ```
 git clone ....
