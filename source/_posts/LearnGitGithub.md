@@ -50,8 +50,6 @@ cd myproject
 
 ### Initialize git
 
-You must navigate to the correct folder.
-
 ```
 git init
 ```
@@ -78,61 +76,29 @@ Now git is aware of the file, but has not added it to our repository.
 > `M` Modified files.
 > `D` Deleted files.
 
+Use `git diff <filename>` to show the differences.
+
 ## Git staging environment
 
-Staged files are ready to be commited to the repository you are working in.
-
-Now add the new file to the staging environment.
-
 ```
-git add newfile.cpp
+git add <filename>
+git status
 ```
 
-Now you can use `git status` to check the status.
-
-### Git add more than one file
-
-Please create some files and change the `newfile`.
-
-```
-git add --all
-```
-
-Using `--all` instead of individual filenames will stage all changes(new, modified, deleted).
-
-> The shorthand command for git add `--all` is git add `-a`.
+Use `git add -a` to add all files.
 
 ## Git commit
 
-When you finish your work, you are ready to move from `stage` to `commit` for your repository.
+`git commit -m "<message>"`
 
-Git considers each commit change point or "save point", which you can go back to make some changes.
-When we commit, you should always include a message to indicate what you changed.
+* Use `git commit -a -m "<message>"` to commit without stage(don't recommend).
+* Use `git log` to view the historu of commits.
 
-```
-git commit -m "First release"
-```
-
-### Git commit without stage
-
-```
-git commit -a -m "Second release"
-```
-
-We don't recommend this way, because it can sometimes cause you to include unwanted changes.
-And this command is not suitable for committing untracked files.
-
-### Git commit log
-
-To view the history of commits for a repository, use the `log` command.
-```
-git log
-```
 
 ## Git help
 
-* `git commit -help` -- See all the available options for the specific command.
-    > Use `--help` to open the relevant Git manual page.
+* `git commit --help` -- See all the available options for the specific command.
+    * Use `--help` to open the relevant Git manual page.
 * `git help --all` -- See all possible commands.
     * `SHIFT + g` to the end of the list, `q` to exit.
 
@@ -436,11 +402,11 @@ Use `--no-edit` to skip the commit message editor (getting the default revert me
 
 ## Git reset
 
-Move the repository back to a previous commit, discarding any changes made after that commit.
-
-```
-git reset ...
-```
+* Use `git log --pretty=oneline` to show the commit history.
+* Use `git reset --hard HEAD^` to be the last version.
+    * `HEAD` is the current version, `HEAD^` is the previous version.
+    * `HEAD~n` is the previous n version
+* Use `git reflog` to show your commands, you can find the version number to estoppel.
 
 ## Git amend
 
