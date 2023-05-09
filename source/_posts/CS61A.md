@@ -10,6 +10,17 @@ categories: Course
 
 A note about Berkeley.
 
+# Courses
+
+## Lecture01
+
+Nothing important.
+
+## Lecture02
+
+* All expressions can use funtion call notation
+* It use expression tree when it evaluates the nested call expression.
+
 # Labs
 
 ## Lab00
