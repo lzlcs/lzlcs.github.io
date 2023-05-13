@@ -514,3 +514,42 @@ It's funny, haha.
 
 ## Chapter 10: 宏
 
+
+
+# 起步
+
+* `:q` 退出, `:q!` 不保存强制退出
+* `:w` 保存, `:w file.txt` 保存新建的文件并命名
+* `:h` 帮助, `:h write-quit` 查看特定命令的帮助
+
+* `nvim file.txt` 打开文件, `nvim file1.txt file2.txt file3.txt`
+> nvim 在不同 `buffer` 中打开文件
+
+* `nvim --version` 查看版本, `:version` 在 `vim` 内查看版本
+* `nvim +{cmd} file.txt` 打开文件后立即执行 `{cmd}`
+> 可使用 `nvim +{cmd1} +{cmd2} file.txt` 执行多个命令
+> `nvim -c {cmd}` 也有相同效果
+
+* `nvim -o2` 打开两个水平分隔窗口 
+* `nvim -o5 file1.txt file2.txt` 五个水平分隔的窗口并在前两个显示 `file1.txt` 和 `file2.txt`
+* `nvim -O2` 打开两个垂直分隔窗口
+
+* `<C-z>` 用来挂起 `nvim`, 使用 `fg` 返回 `nvim`
+> `:suspend` 和 `:stop` 和 `<C-z>` 有相同效果
+
+
+# Buffers
+
+* `:buffers` 查看所有 `buffer` 
+> `:ls` 和 `:files` 有相同作用
+
+* `:bn` 跳转到下一个 `buffer`, `:bp` 跳转到上一个 `buffer`
+* `:b <filename>` 跳转到特定文件, `:b n` 跳转到第n个 `buffer`
+* `<C-o>` 跳转到跳转列表中旧位置, `<C-i>` 跳转到跳转列表新位置, `<C-^>` 跳转到先前编辑的 `buffer`
+* `:bd` 删除当前 `buffer`, `:bd n`, `:bd <filename>` 删除特定 `buffer`
+
+* `:qa` 退出全部 `buffer`, `:wa` 保存所有 `buffer`, `:qa!` 强制退出所有 `buffer`
+
+# Windows
+
+

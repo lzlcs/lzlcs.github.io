@@ -71,6 +71,8 @@ Nothing important.
 
 ## Chapter 1: Building Abstractions with Functions
 
+### 1.1 Getting Started
+
 * `<C-p>`, `<C-n>` to access the previous or next history.
 * `<C-d>` to end the interpreter.
 
@@ -83,3 +85,11 @@ words = set(shakespeare.read().decode().split())
 ```
 
 **Don't be afraid of errors.**
+
+### 1.2 Elements of Programming
+
+Every powerful language has three such mechanisms.
+
+* Primitive expressions and statements.
+* Means of combination.
+* Means of abstraction.
