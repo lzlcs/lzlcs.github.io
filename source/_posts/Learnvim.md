@@ -552,4 +552,20 @@ It's funny, haha.
 
 # Windows
 
+* `:sp <filename>` 水平分割窗口, 并在新窗口打开文件
+> `<C-w> s` 打开一个水平分割的窗口
+* `:vsp <filename>` 垂直分割窗口, 并在新窗口打开文件
+> `<C-w> v` 打开一个垂直分割的窗口
+* `:new <filename>` 创建新窗口并打开文件
 
+* `<C-w>j` 移动到下方窗口, `hkl` 同理
+* `:buffer <buffername>` 使当前窗口显示此 `buffer`
+
+* `:q` 关闭当前窗口, `<C-w> c` 关闭当前窗口, `<C-w> o` 关闭除当前窗口的其他窗口
+
+# Tabs
+
+* `:tabnew <filename>` 新 `tab`
+* `:tabclose` 关闭 `tab`
+* `:tabnext` 下一个, `:tabprevious` 上一个, `:tablast` 最后一个, `:tabfirst` 第一个
+* `nvim -p file1.txt file2.txt file3.txt` 在多个 `tab` 中打开文件
