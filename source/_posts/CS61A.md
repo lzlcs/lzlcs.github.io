@@ -12,26 +12,29 @@ categories: Course
 
 # Courses
 
-## Lecture01
+## Chapter 1
 
+### 1.1 Getting Started
+
+* 安装 Python: `sudo apt-get install python3
+* 使用命令 `python` 进入 Python 解释器, `>>>` 是提示符
 * `<C-p>`, `<C-n>` 获得历史记录中下一条 / 上一条命令
 * `<C-d>` 退出 `python` 解释器
 
-一个例子:
-```
-from urllib.request import urlopen
-shakespeare = urlopen('http://composingprograms.com/shakespeare.txt')
-words = set(shakespeare.read().decode().split())
-{w for w in words if len(w) == 6 and w[::-1] in words}
-```
-
 **永远不用担心错误, 直面它**
 
-## Lecture02
+### 1.2 Elements of Programming
+
+每一个强大的编程语言都有这样三种机制
+* 基元表达式和语句
+* 组合的方法
+* 抽象的方法
 
 * 所有表达式都可以使用函数调用表示法
 * `Python` 使用表达式树来计算表达式
 * `<C-l>` 清空屏幕
+
+### 1.3 Defining New Funtions
 
 * 定义函数
 ```
@@ -43,18 +46,133 @@ def <函数名>(<形式参数>):
 from <库名称> import <函数名称> 
 ```
 
-赋值语句就是把一个值和一个名称绑定, 程序用来维护这些内容的内存即环境
+`def` 语句和赋值语句就是把一个值和一个名称绑定, 且任何这个名字之前的绑定都会丢失
 连续赋值 ` A, B, C = 1, 2, 3 ` 
+
+程序用来维护这些内容的内存即环境, 程序用来维护这些内容的内存即环境
 当调用一个函数的时候, 就进入了以这个函数的环境中
-在这里寻找名称绑定的时候优先使用函数内部的变量名
+在这里寻找名称绑定的时候优先使用函数内部的变量名(包括形参列表)
 如果没有找到才会使用函数外的变量名
 
 * 纯函数: 函数执行功能并产生一个返回值, 所以更容易形成嵌套的表达式
 * 非纯函数: 函数在执行过程中执行一些其他的动作比如打印
 
-# Labs
+形参的名称并不影响函数功能
 
-## Lab00
+命名时的共同约定:
+1. 函数名, 变量名使用小写字母, 单词之间以下划线分隔
+2. 函数名, 变量名使用描述性的语言, 便于了解功能
+3. 避免使用单个字符, 除了它的作用显而易见
+4. 尽量不使用 l 或 o 等单个字符变量以免与数字混淆
+
+函数作为一层抽象, 用户并不需要了解它的内部实现
+
+### 1.4 Designing Funtions
+
+好的函数应该具备以下几个特点:
+1. 每个函数都应该只有一个具体的工作
+2. 不要重复自己的代码, 如果有, 请抽象成一个函数
+3. 对函数进行一般定义, 如 pow(x, 2) 可以取代 square(x), 所以只有 pow 在 Python 标准库中
+
+----------------------
+
+给函数写注释: 
+```python
+def square(a):
+    """
+    返回 a 的平方
+    """
+    return a * a
+```
+此时使用 `help(square)` 可以看到三个双引号包裹的内容, 按 q 退出
+
+在写 Python 程序的时候, 除了最简单的函数其他都要写注释
+
+```python
+pi = 3.14 # 圆周率近似为 3.14
+```
+使用 # 号开头的作为单行注释, 解释器忽略其后的内容
+
+
+----------------------
+
+函数的默认参数
+```python
+def fun1(a, b = 10):
+    print(a + b)
+```
+如果调用 `fun1(10)` 则会打印 20, 此时 b 的值默认为 10
+如果调用 `fun1(10, 20)` 则会打印 30, b 重新被定为 20
+
+注意具有默认参数的形参只能统一放在函数列表后方
+
+### 1.5 Control
+
+注意缩进时每个套件内都要使用相同的缩进方式, 否则会报错
+
+条件表达式
+1. False, True 两个布尔值, 注意仅 0, None, False 的值为 False
+2. >, <, <=, >=, ==, != 顾名思义
+3. or, and, not 与或非
+    1. or 的短路特性: A or B 当 A 为 True 时, 返回 A, 不再计算 B, 否则返回 B
+    2. and 的短路特性: A and B 当 A 为 False 时, 返回 A, 不再计算 B, 否则返回 A
+
+条件语句
+```python
+if <表达式>:
+    <套件>
+elif <表达式>:
+    <套件>
+else:
+    <套件>
+```
+
+循环语句
+```
+while <表达式>:
+    <循环主体>
+```
+注意使用 `<C-c>` 来结束无限循环
+
+测试语句
+1. assert
+```
+assert <表达式>
+```
+表达式为真时, assert 不会有任何效果, 当表达式为假时会报错
+
+2. doctest
+```python
+def fun(a)
+    """ print(a)
+
+    >>> fun(1)
+    1
+    >>> fun(2)
+    2
+    >>> fun(3)
+    4
+    """
+    return a
+from doctest import testmod
+testmod()
+```
+testmod 函数把定义过的函数并且有如此形式的函数全部做测试, 如果函数运行结果不符则报错
+当然可以单独测试某个函数
+```
+from doctest import run_docstring_examples
+run_docstring_examples(fun, globals(), True)
+```
+第一个参数是函数名字, 第二个参数为 globals() 的返回值, 第三个 True 表示你想看到测试过程
+
+### 1.6 Higher-Order Functions
+
+操纵函数的函数称为高阶函数, 把函数作为参数传入可以实现更高度的抽象
+
+
+
+
+# 完成 lab 的基础
 
 ### 安装
 
