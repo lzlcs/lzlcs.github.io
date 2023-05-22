@@ -159,7 +159,7 @@ testmod()
 ```
 testmod 函数把定义过的函数并且有如此形式的函数全部做测试, 如果函数运行结果不符则报错
 当然可以单独测试某个函数
-```
+```python
 from doctest import run_docstring_examples
 run_docstring_examples(fun, globals(), True)
 ```
@@ -168,9 +168,32 @@ run_docstring_examples(fun, globals(), True)
 ### 1.6 Higher-Order Functions
 
 操纵函数的函数称为高阶函数, 把函数作为参数传入可以实现更高度的抽象
+在本地定义的函数称为闭包
+把有两个参数 x, y 的函数 转化为 使用一个参数 x 的高阶函数返回一个参数为 y 的函数, 这种转换称为柯里化
 
+lambda 表达式动态创建函数值, 返回值是一个未命名的函数
+```python
+def combine(f, g)
+    return lambda x: f(g(x))
+combine(lambda x: x * x, lambda x: x + 1)
+s = lambda x: x * x * x
+s(12)
+```
 
-
+在 Python 中, 函数是一等公民, 它可以被传递, 分配给其他变量, 并作为参数传递给其他函数
+Python 装饰器本身是一个函数, 它可以修改被装饰函数的行为
+```python
+def decorator(func):
+    def wrapper(x):
+        # 在调用被装饰函数之前的额外逻辑
+        print("在调用被装饰函数之前的额外逻辑")
+        result = func(x)
+        # 在调用被装饰函数之后的额外逻辑
+        print("在调用被装饰函数之后的额外逻辑")
+        return result
+    return wrapper
+```
+    
 
 # 完成 lab 的基础
 
