@@ -16,7 +16,7 @@ categories: Course
 
 ### 1.1 Getting Started
 
-* 安装 Python: `sudo apt-get install python3
+* 安装 Python: `sudo apt-get install python3`
 * 使用命令 `python` 进入 Python 解释器, `>>>` 是提示符
 * `<C-p>`, `<C-n>` 获得历史记录中下一条 / 上一条命令
 * `<C-d>` 退出 `python` 解释器
@@ -102,7 +102,7 @@ def fun1(a, b = 10):
     print(a + b)
 ```
 如果调用 `fun1(10)` 则会打印 20, 此时 b 的值默认为 10
-如果调用 `fun1(10, 20)` 则会打印 30, b 重新被定为 20
+如果用 `fun1(10, 20)` 则会打印 30, b 重新被定为 20
 
 注意具有默认参数的形参只能统一放在函数列表后方
 
@@ -112,10 +112,10 @@ def fun1(a, b = 10):
 
 条件表达式
 1. False, True 两个布尔值, 注意仅 0, None, False 的值为 False
-2. >, <, <=, >=, ==, != 顾名思义
+2. \>, <, <=, >=, ==, != 顾名思义
 3. or, and, not 与或非
-    1. or 的短路特性: A or B 当 A 为 True 时, 返回 A, 不再计算 B, 否则返回 B
-    2. and 的短路特性: A and B 当 A 为 False 时, 返回 A, 不再计算 B, 否则返回 A
+   1. or 的短路特性: A or B 当 A 为 True 时, 返回 A, 不再计算 B, 否则返回 B
+    2. and 的短路特性: A and B 当 A 为 False 时, 返回 A, 不再计算 B, 否则返回 B
 
 条件语句
 ```python
@@ -127,7 +127,7 @@ else:
     <套件>
 ```
 
-循环语句
+环语句
 ```
 while <表达式>:
     <循环主体>
@@ -140,7 +140,6 @@ while <表达式>:
 assert <表达式>
 ```
 表达式为真时, assert 不会有任何效果, 当表达式为假时会报错
-
 2. doctest
 ```python
 def fun(a)
@@ -182,6 +181,7 @@ s(12)
 
 在 Python 中, 函数是一等公民, 它可以被传递, 分配给其他变量, 并作为参数传递给其他函数
 Python 装饰器本身是一个函数, 它可以修改被装饰函数的行为
+
 ```python
 def decorator(func):
     def wrapper(x):
