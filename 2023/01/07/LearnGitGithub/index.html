@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="" />
+  <meta name="author" content="lzl" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      Learn Git &amp; GitHub 
+      
+      
+      |
+    
+     lzl&#39;s blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">lzl</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          <a href="/categories/">Categories</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Learn Git & GitHub</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-01-07 10:39:49
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="Categories"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/Tools/" title="Tools">
+                    <b>#</b> Tools
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Git/" title="Git">
+                    #Git
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Tools/" title="Tools">
+                    #Tools
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>A note about learning Git.</p>
+<span id="more"></span>
+
+<h1 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h1><p>Git is a popular version control system.</p>
+<h2 id="Get-started"><a href="#Get-started" class="headerlink" title="Get started"></a>Get started</h2><h3 id="Install"><a href="#Install" class="headerlink" title="Install"></a>Install</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add-apt-repository ppa:git-core/ppa</span><br><span class="line">sudo apt-get install git</span><br></pre></td></tr></table></figure>
+
+<h3 id="Check-the-Git-version"><a href="#Check-the-Git-version" class="headerlink" title="Check the Git version"></a>Check the Git version</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure>
+
+<h3 id="Configure-git"><a href="#Configure-git" class="headerlink" title="Configure git"></a>Configure git</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name &quot;Your Name&quot;</span><br><span class="line">git config --global user.email &quot;email@example.com&quot;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Note: <code>--global</code> will set the name and email for every repository on this computer.<br>You can remove <code>--global</code> to set the information just for this repository.</p>
+</blockquote>
+<h3 id="Create-a-git-folder"><a href="#Create-a-git-folder" class="headerlink" title="Create a git folder"></a>Create a git folder</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir myproject</span><br><span class="line">cd myproject</span><br></pre></td></tr></table></figure>
+
+<h3 id="Initialize-git"><a href="#Initialize-git" class="headerlink" title="Initialize git"></a>Initialize git</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Note: Git creates a hidden folder called .git in the root directory of the repository to keep track of changes.</p>
+</blockquote>
+<h2 id="Add-new-files-to-git"><a href="#Add-new-files-to-git" class="headerlink" title="Add new files to git"></a>Add new files to git</h2><ul>
+<li>First, create a new file.</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure>
+
+<p>Now git is aware of the file, but has not added it to our repository.</p>
+<ul>
+<li>Tracked: files have been added to your repository.</li>
+<li>Untracked: files that are in your working directory, but not added to your repository.</li>
+</ul>
+<p><code>git status --short</code> can display the changes in a more compact way.</p>
+<blockquote>
+<p><code>??</code> Untracked files.<br><code>A</code> Files add to stage.<br><code>M</code> Modified files.<br><code>D</code> Deleted files.</p>
+</blockquote>
+<p>Use <code>git diff &lt;filename&gt;</code> to show the differences.</p>
+<h2 id="Git-staging-environment"><a href="#Git-staging-environment" class="headerlink" title="Git staging environment"></a>Git staging environment</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add &lt;filename&gt;</span><br><span class="line">git status</span><br></pre></td></tr></table></figure>
+
+<p>Use <code>git add -a</code> to add all files.</p>
+<h2 id="Git-commit"><a href="#Git-commit" class="headerlink" title="Git commit"></a>Git commit</h2><p><code>git commit -m &quot;&lt;message&gt;&quot;</code></p>
+<ul>
+<li>Use <code>git commit -a -m &quot;&lt;message&gt;&quot;</code> to commit without stage(don’t recommend).</li>
+<li>Use <code>git log</code> to view the historu of commits.</li>
+</ul>
+<h2 id="Git-help"><a href="#Git-help" class="headerlink" title="Git help"></a>Git help</h2><ul>
+<li><code>git commit --help</code> – See all the available options for the specific command.<ul>
+<li>Use <code>--help</code> to open the relevant Git manual page.</li>
+</ul>
+</li>
+<li><code>git help --all</code> – See all possible commands.<ul>
+<li><code>SHIFT + g</code> to the end of the list, <code>q</code> to exit.</li>
+</ul>
+</li>
+</ul>
+<h2 id="Git-branch"><a href="#Git-branch" class="headerlink" title="Git branch"></a>Git branch</h2><p>A branch is a new version of the main repository’s codebase.</p>
+<p>To add some new features to the <code>firstfile.cpp</code>, create a new branch.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch newbranch</span><br></pre></td></tr></table></figure>
+
+<p><code>git branch</code> can display all the branches.</p>
+<p><code>git checkout newbranch</code> can move our current workspace from the main branch to the new branch.</p>
+<blockquote>
+<p><code>git checkout -b newbranch</code> will create a new branch and move to it if it doesn’t exist.</p>
+</blockquote>
+<p>Make some changes to a file and add a new file.</p>
+<p><code>git status</code> – To check the status of the current branch.</p>
+<p><code>git add --all</code> – Add files to the staging environment.</p>
+<p>Now, <code>git checkout main</code> and <code>ls</code>, you’ll find that the file created just now is no longer exist.</p>
+<h2 id="Emergency-branch"><a href="#Emergency-branch" class="headerlink" title="Emergency branch"></a>Emergency branch</h2><p>Imagine you are not yet done with the new branch, but we need to fix an error on main.</p>
+<p>We can create a new branch called <code>bugFix</code> to deal with it without messing the two branches.</p>
+<p>Make some changes, <code>git add</code> and <code>git commit</code>, now we should merge two branches.</p>
+<h2 id="Git-merge"><a href="#Git-merge" class="headerlink" title="Git merge"></a>Git merge</h2><h3 id="Merge-branches"><a href="#Merge-branches" class="headerlink" title="Merge branches"></a>Merge branches</h3><p>Now <code>git checkout main</code> and <code>git merge bugFix</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git merge bugFix</span><br></pre></td></tr></table></figure>
+
+<p>After merging, this branch is useless, so we want to delete it.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -d bugFix</span><br></pre></td></tr></table></figure>
+
+<h3 id="Merge-conflicts"><a href="#Merge-conflicts" class="headerlink" title="Merge conflicts"></a>Merge conflicts</h3><p>Now we return to our newbranch to finish our work, make some changes to the <code>firstfile.cpp</code>.</p>
+<p>Then <code>git checkout main</code> and <code>git merge newbranch</code> to apply new changes.</p>
+<p>We failed, then use <code>git status</code> to check the status.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Unmerged paths:</span><br><span class="line">  (use &quot;git add &lt;file&gt;...&quot; to mark resolution)</span><br><span class="line">        both modified:   firstfile.cpp</span><br></pre></td></tr></table></figure>
+
+<p>Open the <code>firstfile.cpp</code> you’ll find there’s something new.</p>
+<p>Adjust the file to what you want, then git add and git commit -m “merged changes”.</p>
+<p>Delete the <code>newbranch</code>, then finish this part of work.</p>
+<h1 id="Git-and-Github"><a href="#Git-and-Github" class="headerlink" title="Git and Github"></a>Git and Github</h1><h2 id="Get-started-1"><a href="#Get-started-1" class="headerlink" title="Get started"></a>Get started</h2><p>Go to Github to sign up for an account and creat a new repository.</p>
+<blockquote>
+<p>Remember to use the same e-mail adress you used in the git config.</p>
+</blockquote>
+<h3 id="Push-local-repository-to-GitHub"><a href="#Push-local-repository-to-GitHub" class="headerlink" title="Push local repository to GitHub"></a>Push local repository to GitHub</h3><p>Copy the link of the repository paste the following command.</p>
+<p>Search for how to configure ssh.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add origin git@github.com:lzlcs/learngit.git</span><br></pre></td></tr></table></figure>
+
+<p>Now, push out main branch to the origin url, and set it as the default remote branch.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push --set-upstream origin main</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>-u</code> is the same as <code>--set-upstream</code>.</p>
+</blockquote>
+<h2 id="Edit-files-in-Github"><a href="#Edit-files-in-Github" class="headerlink" title="Edit files in Github"></a>Edit files in Github</h2><p>It’s simple, follow the instructions.</p>
+<h2 id="Git-pull-from-github"><a href="#Git-pull-from-github" class="headerlink" title="Git pull from github"></a>Git pull from github</h2><p>Use <code>pull</code> to get the most recent changes to your local copy.<br><code>pull</code> is a combination of 2 different commands: <code>fetch</code> and <code>merge</code>.</p>
+<h3 id="Git-fetch"><a href="#Git-fetch" class="headerlink" title="Git fetch"></a>Git fetch</h3><p><code>fetch</code> gets all the change history of a tracked branch.<br>Now check our <code>status</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">On branch main</span><br><span class="line">Your branch is behind &#x27;origin/main&#x27; by 1 commit, and can be fast-forwarded.</span><br><span class="line">  (use &quot;git pull&quot; to update your local branch)</span><br><span class="line"></span><br><span class="line">nothing to commit, working tree clean</span><br></pre></td></tr></table></figure>
+
+<p>We are behind the <code>origin/main</code> by 1 <code>commit</code>, let’s double check by viewing the <code>log</code>.<br>Also use <code>git diff</code> to show the differences between our local <code>main</code> and <code>origin/main</code>.</p>
+<p>So we can safely <code>merge</code>.</p>
+<h3 id="Git-merge-1"><a href="#Git-merge-1" class="headerlink" title="Git merge"></a>Git merge</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git merge origin/main</span><br><span class="line">git status</span><br></pre></td></tr></table></figure>
+<p>Everything is done.</p>
+<h3 id="Git-pull"><a href="#Git-pull" class="headerlink" title="Git pull"></a>Git pull</h3><p>Make another change to the <code>README.md</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull origin</span><br></pre></td></tr></table></figure>
+
+<h2 id="Push-to-Github"><a href="#Push-to-Github" class="headerlink" title="Push to Github"></a>Push to Github</h2><p>Try making some changes to our local git and pushing them to Github.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git commit -m &quot;xxxx&quot;</span><br><span class="line">git push origin</span><br><span class="line">git status</span><br></pre></td></tr></table></figure>
+
+<p>Go to Github to confirm that the repository has a new commmit.</p>
+<h2 id="Github-branch"><a href="#Github-branch" class="headerlink" title="Github branch"></a>Github branch</h2><p>Create a branch <code>beta</code> on Github and make some changes.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git pull origin</span><br><span class="line">git status</span><br><span class="line">git branch -a</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Use <code>git branch -a</code> to show all local and remote branches.<br>Use <code>git branch -r</code> to show remote branches only.</p>
+</blockquote>
+<p><code>git checkout beta</code> and <code>git pull</code> to check if it is all up to date.</p>
+<p>Now you can see the changes you made recently on branch <code>beta</code>.</p>
+<h2 id="Push-a-branch-to-Github"><a href="#Push-a-branch-to-Github" class="headerlink" title="Push a branch to Github"></a>Push a branch to Github</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b branch2</span><br></pre></td></tr></table></figure>
+
+<p>Make some changes.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git status</span><br><span class="line">git add </span><br><span class="line">git commit -m &quot;...&quot;</span><br><span class="line">git push origin branch2</span><br></pre></td></tr></table></figure>
+
+<p>In Github, we can see the changes and merge them into the branch <code>master</code> if we approve it.</p>
+<h2 id="Github-flow"><a href="#Github-flow" class="headerlink" title="Github flow"></a>Github flow</h2><ol>
+<li>Create a new branch</li>
+<li>Make changes and add commits</li>
+<li>Open a pull request</li>
+<li>Review</li>
+<li>Deploy</li>
+<li>Merge</li>
+</ol>
+<h3 id="Create-a-new-branch"><a href="#Create-a-new-branch" class="headerlink" title="Create a new branch"></a>Create a new branch</h3><p>If you want to try something new, you create a new branch.<br>Branching gives you an environment where you can make changes without affecting the main branch.</p>
+<p>When you make a new branch, you will always want to make it from the main branch.</p>
+<blockquote>
+<p>Using descriptive names for new branches, so everyone can understand what is happening.</p>
+</blockquote>
+<h3 id="Make-changes-and-add-commits"><a href="#Make-changes-and-add-commits" class="headerlink" title="Make changes and add commits"></a>Make changes and add commits</h3><p>When you reach a small milestone, add the changes into your branch by commit.</p>
+<blockquote>
+<p>Commit message are very important.</p>
+</blockquote>
+<h3 id="Open-a-pull-request"><a href="#Open-a-pull-request" class="headerlink" title="Open a pull request"></a>Open a pull request</h3><p>A Pull Request notifies people you have changes ready for them to consider or review.</p>
+<h3 id="Review"><a href="#Review" class="headerlink" title="Review"></a>Review</h3><p>When a Pull Request is made, it can be reviewed by whoever has the proper access to the branch.</p>
+<h3 id="Deploy"><a href="#Deploy" class="headerlink" title="Deploy"></a>Deploy</h3><p>GitHub allows you to deploy from a branch for final testing in production before merging with the master branch.</p>
+<h3 id="Merge"><a href="#Merge" class="headerlink" title="Merge"></a>Merge</h3><p>After exhaustive testing, you can merge the code into the master branch!</p>
+<h1 id="Git-contribute"><a href="#Git-contribute" class="headerlink" title="Git contribute"></a>Git contribute</h1><h2 id="Github-fork"><a href="#Github-fork" class="headerlink" title="Github fork"></a>Github fork</h2><h3 id="Fork-a-repository"><a href="#Fork-a-repository" class="headerlink" title="Fork a repository"></a>Fork a repository</h3><p>Click the <code>fork</code>.</p>
+<h2 id="Git-clone"><a href="#Git-clone" class="headerlink" title="Git clone"></a>Git clone</h2><h3 id="Clone-a-fork-from-Github"><a href="#Clone-a-fork-from-Github" class="headerlink" title="Clone a fork from Github"></a>Clone a fork from Github</h3><p><strong>Move back to the origin repository.</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git clone ....</span><br><span class="line">cd ....</span><br><span class="line">git status</span><br><span class="line">git log</span><br><span class="line">git remote -v </span><br></pre></td></tr></table></figure>
+<p>Raname: <code>git remote rename origin upstream</code>.</p>
+<p>Then fetch the URL of our own fork: <code>git remote add origin ...</code></p>
+<ul>
+<li>origin: we can read and write.</li>
+<li>upstream wo can read only.</li>
+</ul>
+<h2 id="Github-send-pull-request"><a href="#Github-send-pull-request" class="headerlink" title="Github send pull request"></a>Github send pull request</h2><p>Make some changes.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m &quot;&quot;</span><br><span class="line">git push origin</span><br></pre></td></tr></table></figure>
+
+<p>Now go to Github and pull request.</p>
+<h2 id="Git-ignore"><a href="#Git-ignore" class="headerlink" title="Git ignore"></a>Git ignore</h2><p>When sharing your code with others, there are often files or parts of your project, you do not want to share.</p>
+<h3 id="Create-gitignore"><a href="#Create-gitignore" class="headerlink" title="Create .gitignore"></a>Create .gitignore</h3><p><code>touch .gitignore</code></p>
+<blockquote>
+<p>It is also possible to have additional .gitignore files in subdirectories.<br>These only apply to files or folders within that directory.</p>
+</blockquote>
+<h2 id="Git-security"><a href="#Git-security" class="headerlink" title="Git security"></a>Git security</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096 -C &quot;...@...com&quot;</span><br><span class="line">ssh-add ~/.ssh/id_rsa</span><br><span class="line">clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+<p>Add ssh to Github.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@github.com</span><br><span class="line">git remote set-url remote-name git@github.com:username/repository.git</span><br></pre></td></tr></table></figure>
+
+<h1 id="Git-undo"><a href="#Git-undo" class="headerlink" title="Git undo"></a>Git undo</h1><h2 id="Git-revert"><a href="#Git-revert" class="headerlink" title="Git revert"></a>Git revert</h2><p>When we want to take a previous commit and add it as a new commit, keeping the log intact.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git log --oneline</span><br><span class="line">git revert HEAD --no-edit</span><br></pre></td></tr></table></figure>
+<p>Use <code>--no-edit</code> to skip the commit message editor (getting the default revert message).</p>
+<h2 id="Git-reset"><a href="#Git-reset" class="headerlink" title="Git reset"></a>Git reset</h2><ul>
+<li>Use <code>git log --pretty=oneline</code> to show the commit history.</li>
+<li>Use <code>git reset --hard HEAD^</code> to be the last version.<ul>
+<li><code>HEAD</code> is the current version, <code>HEAD^</code> is the previous version.</li>
+<li><code>HEAD~n</code> is the previous n version</li>
+</ul>
+</li>
+<li>Use <code>git reflog</code> to show your commands, you can find the version number to estoppel.</li>
+</ul>
+<h2 id="Git-amend"><a href="#Git-amend" class="headerlink" title="Git amend"></a>Git amend</h2><p>commit –amend is used to modify the most recent commit.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git commit -m &quot;Adding plines to reddme&quot;</span><br><span class="line">git commit --amend -m &quot;Added lines to README.md&quot;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>You should avoid making changes that rewrite history to remote repositories,<br>especially if others are working with them.</p>
+</blockquote>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2023/01/01/UseFullWebsites/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-01-07 10:39:49
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="Categories"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/Tools/" title="Tools">
+                        <b>#</b> Tools
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Git/" title="Git">
+                        #Git
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Tools/" title="Tools">
+                        #Tools
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2023/01/11/Learnvim/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Git"><span class="toc-text">Git</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Get-started"><span class="toc-text">Get started</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Install"><span class="toc-text">Install</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Check-the-Git-version"><span class="toc-text">Check the Git version</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Configure-git"><span class="toc-text">Configure git</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-a-git-folder"><span class="toc-text">Create a git folder</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Initialize-git"><span class="toc-text">Initialize git</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Add-new-files-to-git"><span class="toc-text">Add new files to git</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-staging-environment"><span class="toc-text">Git staging environment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-commit"><span class="toc-text">Git commit</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-help"><span class="toc-text">Git help</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-branch"><span class="toc-text">Git branch</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Emergency-branch"><span class="toc-text">Emergency branch</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-merge"><span class="toc-text">Git merge</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Merge-branches"><span class="toc-text">Merge branches</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Merge-conflicts"><span class="toc-text">Merge conflicts</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Git-and-Github"><span class="toc-text">Git and Github</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Get-started-1"><span class="toc-text">Get started</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Push-local-repository-to-GitHub"><span class="toc-text">Push local repository to GitHub</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Edit-files-in-Github"><span class="toc-text">Edit files in Github</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-pull-from-github"><span class="toc-text">Git pull from github</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-fetch"><span class="toc-text">Git fetch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-merge-1"><span class="toc-text">Git merge</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-pull"><span class="toc-text">Git pull</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Push-to-Github"><span class="toc-text">Push to Github</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Github-branch"><span class="toc-text">Github branch</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Push-a-branch-to-Github"><span class="toc-text">Push a branch to Github</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Github-flow"><span class="toc-text">Github flow</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-a-new-branch"><span class="toc-text">Create a new branch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Make-changes-and-add-commits"><span class="toc-text">Make changes and add commits</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Open-a-pull-request"><span class="toc-text">Open a pull request</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Review"><span class="toc-text">Review</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy"><span class="toc-text">Deploy</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Merge"><span class="toc-text">Merge</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Git-contribute"><span class="toc-text">Git contribute</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Github-fork"><span class="toc-text">Github fork</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Fork-a-repository"><span class="toc-text">Fork a repository</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-clone"><span class="toc-text">Git clone</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Clone-a-fork-from-Github"><span class="toc-text">Clone a fork from Github</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Github-send-pull-request"><span class="toc-text">Github send pull request</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-ignore"><span class="toc-text">Git ignore</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-gitignore"><span class="toc-text">Create .gitignore</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-security"><span class="toc-text">Git security</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Git-undo"><span class="toc-text">Git undo</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-revert"><span class="toc-text">Git revert</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-reset"><span class="toc-text">Git reset</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git-amend"><span class="toc-text">Git amend</span></a></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2023 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Learn%20Git%20%26%20GitHub + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F01%2F07%2FLearnGitGithub%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/01/07/LearnGitGithub/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
