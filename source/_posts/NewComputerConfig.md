@@ -47,4 +47,39 @@ tags:
 [下载](https://link.zhihu.com/?target=https%3A//www.nerdfonts.com/font-downloads) NerdFonts, 并在 Ubuntu 中选择该字体
 [检测](https://link.zhihu.com/?target=https%3A//www.nerdfonts.com/cheat-sheet) 字体是否安装成功
 
+## Ubuntu 配置
+
+`sudo apt update && sudo apt upgrade -y`
+
+### 配置代理
+
+```bash
+export hostip=$(cat /etc/resolv.conf |grep -oP '(?<=nameserver\ ).*')
+export https_proxy="http://${hostip}:7890"
+export http_proxy="http://${hostip}:7890"
+export all_proxy="socks5://${hostip}:7890"
+```
+
+
+### Git 配置
+
+```bash
+git config --global user.name lzl
+git config --global user.email 3012386836@qq.com
+ssh-keygen -t rsa -C "3012386836@qq.com"
+```
+复制 `~/.ssh/id_rsa.pub` 中内容, 到 github 上添加 ssh 密钥
+
+
+### 安装 Hexo
+
+* 安装 nvm: `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash`, 重启终端
+* 安装 node, npm: `nvm install node`
+* 安装 hexo: `npm install -g hexo-cli`
+    * ```bash
+    git clone -b source git@github.com:lzlcs/lzlcs.github.io.git
+    mv lzlcs.github.io Blog
+    cd Blog
+    npm install
+    ```
 
