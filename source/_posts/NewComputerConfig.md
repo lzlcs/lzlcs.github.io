@@ -49,7 +49,11 @@ tags:
 
 ## Ubuntu 配置
 
-`sudo apt update && sudo apt upgrade -y`
+```bash
+rm -rf .config/
+git clone git@github.com:lzlcs/.config.git .config
+sudo apt update && sudo apt upgrade -y
+```
 
 ### 配置代理
 
@@ -76,10 +80,54 @@ ssh-keygen -t rsa -C "3012386836@qq.com"
 * 安装 nvm: `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash`, 重启终端
 * 安装 node, npm: `nvm install node`
 * 安装 hexo: `npm install -g hexo-cli`
-    * ```bash
+    * 
+    ```bash
     git clone -b source git@github.com:lzlcs/lzlcs.github.io.git
     mv lzlcs.github.io Blog
     cd Blog
     npm install
     ```
 
+### 安装 nvim lvim
+
+下载 nvim 安装包，解压
+```bash
+echo 'export PATH="~/Apps/nvim/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+安装 pip
+```bash
+sudo apt install python-is-python3 -y
+wget https://bootstrap.pypa.io/get-pip.py
+python get-pip.py
+echo 'export PATH="~/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+rm get-pip.py
+```
+
+安装 cargo
+```bash
+sudo apt install cargo -y
+```
+
+安装 lazygit
+
+```bash
+cd ~/Apps/
+LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+tar xf lazygit.tar.gz lazygit
+sudo install lazygit /usr/local/bin
+rm lazygit.tar.gz
+```
+
+安装 lvim
+
+```bash
+LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
+echo 'export PATH="~/.cargo/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+### Clone 各种项目
