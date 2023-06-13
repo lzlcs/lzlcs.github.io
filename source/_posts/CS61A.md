@@ -10,7 +10,51 @@ categories: Course
 
 [Lab 和 hw 的 Github 地址](https://github.com/lzlcs/Courses)
 
-# Courses
+
+# 完成 lab 的基础
+
+### 安装
+
+* 安装: WSL2 & WindowsTerminal
+* 安装 `pyhton3`: `sudo apt install python3`
+* 安装编辑器: `neovim`
+
+### 使用终端
+
+* `~` 表示 `home` 目录
+* `echo $HOME$` 显示 `home` 目录的路径
+* `pwd` 显示当前目录路径
+
+> 注意分辨你在终端中还是 `python` 解释器中
+
+### 组织文件
+
+* `ls` 列出当前目录下所有文件
+* `cd directoryname` 进入子目录
+    * `cd ..` 进入父目录
+* `mkdir directoryname` 创建一个文件夹
+* `unzip lab00.zip` 解压文件
+* `mv PATH1 PATH2` 移动文件
+
+### `Python` 基础
+
+* `python3` 进入 `python` 解释器
+* 算数表达式 `+`, `-`, `*`, `%`.
+  `**` (幂), `/`(浮点除法), `//`(整除).
+* 一些被 `'` 或者  `"` 包含的字符序列
+* 赋值语句: `=`.
+
+### 完成作业
+
+* `python3 ok -q python-basics -u --local` 在 `lab00` 目录下
+    * `--local` 跳过邮箱验证
+* 在 `lab00.py` 补全代码, `python3 ok --local`.
+
+### 有用的 `python` 命令行中命令
+
+* `-i` 逐行运行 `python`
+
+# Textbook
 
 ## Chapter 1
 
@@ -193,48 +237,16 @@ def decorator(func):
         return result
     return wrapper
 ```
-    
 
-# 完成 lab 的基础
+### 1.7 Recusive Functions
 
-### 安装
+一个在内部调用自身的函数称作递归函数
 
-* 安装: WSL2 & WindowsTerminal
-* 安装 `pyhton3`: `sudo apt install python3`
-* 安装编辑器: `neovim`
+* 递归基本结构
+1. 一个条件判断语句, 是判断当递归进入最简单的情况时的边界情况
+2. 相信你下一层递归的结果, 然后借此来计算本层的递归结果
+类似一种归纳证明的模式
+递归函数可以避免一些本地名称分配的问题, 不需要很多变量即可实现所需功能
 
-### 使用终端
-
-* `~` 表示 `home` 目录
-* `echo $HOME$` 显示 `home` 目录的路径
-* `pwd` 显示当前目录路径
-
-> 注意分辨你在终端中还是 `python` 解释器中
-
-### 组织文件
-
-* `ls` 列出当前目录下所有文件
-* `cd directoryname` 进入子目录
-    * `cd ..` 进入父目录
-* `mkdir directoryname` 创建一个文件夹
-* `unzip lab00.zip` 解压文件
-* `mv PATH1 PATH2` 移动文件
-
-### `Python` 基础
-
-* `python3` 进入 `python` 解释器
-* 算数表达式 `+`, `-`, `*`, `%`.
-  `**` (幂), `/`(浮点除法), `//`(整除).
-* 一些被 `'` 或者  `"` 包含的字符序列
-* 赋值语句: `=`.
-
-### 完成作业
-
-* `python3 ok -q python-basics -u --local` 在 `lab00` 目录下
-    * `--local` 跳过邮箱验证
-* 在 `lab00.py` 补全代码, `python3 ok --local`.
-
-### 有用的 `python` 命令行中命令
-
-* `-i` 逐行运行 `python`
-
+* 两个互相调用的函数称作互递归, 有些互递归的函数可以转换为普通递归
+* 一个函数多次调用自己就是树递归
