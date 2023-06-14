@@ -242,7 +242,7 @@ def decorator(func):
 
 一个在内部调用自身的函数称作递归函数
 
-* 递归基本结构
+递归基本结构
 1. 一个条件判断语句, 是判断当递归进入最简单的情况时的边界情况
 2. 相信你下一层递归的结果, 然后借此来计算本层的递归结果
 类似一种归纳证明的模式
@@ -254,3 +254,165 @@ def decorator(func):
 ## Chapter 2
 
 ### 2.1 Introduction 
+
+`type` 函数可以检测任何值的类型
+
+* 数字类型: `int`, `float`, `complex`
+    * 注意 float 类型是个近似表示, 有系统误差
+
+### 2.2 Data Abstraction
+
+将程序中处理数据表示的部分和处理数据操作的部分分离开来的设计方法称为数据抽象
+
+列表: 通过方括号中的一系列用逗号隔开的表达式构建而成
+```python
+pair = [10, 20]
+```
+访问方式: 
+1. 使用变量
+    ```python
+        x, y = pair
+    ```
+2. 使用下标访问 `pair[0]`, `pair[1]`
+3. `getitem(pair, 0)`
+
+使用数据抽象的时候, 最好让函数不依赖于特定表述, 从而方便维护
+
+### 2.3 Sequences
+
+`list` 是一个可以有任意长度的序列, 有很多的内置行为
+
+```python
+seq = [1, 3, 4, 5]
+len(seq) # 输出 seq 长度
+[1, 2] + seq # + 代表连接序列
+seq * 2 # * 代表复制, 即 * 2 就是复制两次
+```
+
+当然, `list` 可以包含很多数据类型, 包括 `list` 自己, 这样就形成了二维 `list`
+
+`for` 语句可以遍历序列的每一个元素
+
+```python
+for item in seq:
+    print(item)
+```
+`for` 还可以用来拆包
+```python
+pairs = [[1, 2], [2, 2], [2, 3], [4, 4]]
+for x, y in pairs:
+    print(x, ' ', y)
+```
+
+`range(a, b)` 左开右闭, a 默认为 0
+```python
+for i in range(20, 40):
+    print(i)
+# 当 for 后面定义的名称在循环中用不到时, 应使用 _
+# 这不是硬性要求, 但是这是一个习惯
+for _ in range(40):
+    print("Hello World!")
+```
+
+列表推导式, 当想对序列中每个元素做相同的操作时
+```python
+seq2 = [x + 1 for x in seq]
+seq3 = [x for x in seq if (25 % x == 0)]
+# 一般形式
+[<映射表达式> for <名称> in <序列表达式> if <筛选表达式>]
+```
+
+聚合: 把序列中的值经过某种运算最后留下一个值, 如 `min`, `max`, `sum`等
+
+列表成员
+```python
+seq = [1, 3, 4, 5]
+3 in seq # 输出 True
+6 in seq # 输出 False
+6 not in seq # 输出 True
+```
+
+切片: `seq[a:b]` 表示下标为 a~b 的这些元素组成的序列, a 默认为 0, b 默认为 `list` 长度
+
+空列表: `not list == True`
+
+------------------
+字符串: `string`, 由单引号或双引号包围的任意文本
+
+字符串有长度, 支持用下标选择某个字符, 支持 `+`, `*`, 成员
+
+三个引号可以表示多行字符串
+
+字符串强制转换: 可以转换数字, 列表
+
+-------------
+
+用列表作为其他列表元素的能力被称为数据类型的闭包属性
+
+组合的结果本身可以使用相同的方法进行组合, 则这种方法有闭包属性
+
+可以使用列表来构造一棵树
+```python
+def tree(root_label, branches=[]):
+    for branch in branches:
+        assert is_tree(branch), 'branches must be trees'
+    return [root_label] + list(branches)
+def label(tree):
+    return tree[0]
+def branches(tree):
+    return tree[1:]
+def is_tree(tree):
+    if type(tree) != list or len(tree) < 1:
+        return False
+    for branch in branches(tree):
+        if not is_tree(branch):
+            return False
+    return True
+def is_leaf(tree):
+    return not branches(tree)
+```
+
+```python
+# 构建斐波那契树
+def fib_tree(n):
+    if n == 0 or n == 1:
+        return tree(n)
+    else:
+        left, right = fib_tree(n-2), fib_tree(n-1)
+        fib_n = label(left) + label(right)
+        return tree(fib_n, [left, right])
+```
+
+----------
+可以使用列表构建链表
+```python
+empty = 'empty'
+def is_link(s):
+    """s is a linked list if it is empty or a (first, rest) pair."""
+    return s == empty or (len(s) == 2 and is_link(s[1]))
+def link(first, rest):
+    """Construct a linked list from its first element and the rest."""
+    assert is_link(rest), "rest must be a linked list."
+    return [first, rest]
+def first(s):
+    """Return the first element of a linked list s."""
+    assert is_link(s), "first only applies to linked lists."
+    assert s != empty, "empty linked list has no first element."
+    return s[0]
+def rest(s):
+    """Return the rest of the elements of a linked list s."""
+    assert is_link(s), "rest only applies to linked lists."
+    assert s != empty, "empty linked list has no rest."
+    return s[1]
+def len_link(s):
+    """Return the length of linked list s."""
+    length = 0
+    while s != empty:
+        s, length = rest(s), length + 1
+    return length
+def getitem_link(s, i):
+    """Return the element at index i of linked list s."""
+    while i > 0:
+        s, i = rest(s), i - 1
+    return first(s)
+```
