@@ -318,6 +318,7 @@ for _ in range(40):
 ```python
 seq2 = [x + 1 for x in seq]
 seq3 = [x for x in seq if (25 % x == 0)]
+seq4 = [x if (x % 2 == 0) else x + 1 for x in seq]
 # 一般形式
 [<映射表达式> for <名称> in <序列表达式> if <筛选表达式>]
 ```
@@ -416,3 +417,124 @@ def getitem_link(s, i):
         s, i = rest(s), i - 1
     return first(s)
 ```
+
+### 2.4 Mulable Data
+
+对象把数据值和行为结合在一起 
+1. 对象具有属性: `<表达式>.<属性名称>`
+2. 对象具有方法: `<表达式>.<方法名称>`
+
+可变对象: 列表, 字典, 集合
+不可变对象: 整数, 浮点数, 字符串, 元组
+
+```python
+a = [1, 2, 3]
+b = a
+# 此时 a, b 指向同一个列表
+b += [4] # a 也会被改变
+print(a) 
+```
+可以使用列表复制来避免这个问题
+```python
+c = list(a)
+c += [5]
+print(a) # a 没有受到上一条语句的影响
+```
+
+`is` 可以检测两个对象所指的列表是否是同一个列表, 这比 `==` 限制条件更强
+```python
+c.pop()
+c == a # True
+c is a # False
+```
+
+
+元组 (tuple) 是一个不可变对象, 类似 list
+```python
+t = (1, 2, [2, 3])
+t[2].pop() # 如果 tuple 中的元素是可变对象, 那就可以改变这个元素的值
+# 但是需要使用 可变对象自身的方法
+# t[2] += [4] Error
+t[2].append(4) # 可行
+# t[0] = 3 不可行, 整数类型不可变
+print(t)
+```
+
+字典 (dictionary) 是一个可变对象, 可以以任何不可变对象为索引 \
+当然, 使用元组作为索引的时候, 元组内不能包含可变对象
+
+```python
+t = { "A": 5 }
+t.get("A", 0) # 第一个参数为简直, 第二个参数为默认值 (如果键值不存在才返回)
+t.get("B", 0)
+```
+还有使用 for 来创建一个字典的方法
+```
+a = { x: x + 1 for x in range(3) }
+```
+
+`nonlocal` 关键字: 使得内嵌函数能使用上一级函数的变量 \
+实际应用
+```python
+def my_save(money):
+    def out(x):
+        nonlocal money
+        if (x > money):
+            print("余额不足")
+        else:
+            money -= x
+        return money
+    return out
+
+money = my_save(100)
+print(money(10))
+print(money(80))
+print(money(20))
+```
+可变对象不需要 nonlocal 关键字, 因为他们指向的内存是同一个
+
+### 2.5 
+
+## Chapter 4
+
+### 4.1
+
+### 4.2 Implict Sequences
+
+序列可以不显性地创造, 可以在用到这个值的时候延迟计算
+```python
+r = range(100, 100000000)
+print(r[11234214])
+```
+
+迭代器: python 中按顺序处理数据的方式
+```python
+p = [2, 3, 5]
+it = iter(p)
+print(next(it))
+print(next(it))
+print(next(it))
+print(next(it)) # StopIteration
+```
+类似的, 对于迭代器, 多个名字指向的是同一个迭代器, 对迭代器使用 iter 函数也返回它自己而不是一个副本
+```python
+it2 = it1
+next(it2) # StopIteration
+it3 = iter(p)
+next(it3)
+it4 = iter(it3)
+next(it4)
+```
+迭代器就可以像这样每次计算出下一个迭代器, 从而实现顺序访问
+
+通常来说, `range()`, `list`, `dictionary`, `set`, `tuple` 是可以被迭代的对象 \
+特殊的, 迭代器本身也是可迭代对象, 因为它可以作为 `iter()` 函数的参数
+
+但是, `dictionary`, `set` 这些对象的值改变不影响迭代器, 键的增加和删除会让之前的迭代器全部失效
+
+内置迭代器: 如 `map`, `zip` 等
+
+
+
+
+
