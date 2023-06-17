@@ -427,6 +427,7 @@ def getitem_link(s, i):
 可变对象: 列表, 字典, 集合
 不可变对象: 整数, 浮点数, 字符串, 元组
 
+列表:
 ```python
 a = [1, 2, 3]
 b = a
@@ -448,6 +449,14 @@ c == a # True
 c is a # False
 ```
 
+列表的其他常用方法
+* `append(el)`: el加到末尾。返回None。
+* `extend(lst)`: 在后方连接lst。返回None。
+* `insert(i, el)`: 在索引i处插入el。返回None。
+* `remove(el)`: 移除第一个el。返回None。如果 el 不在列表中会报错
+* `pop(i)`: 移除并返回索引i处的元素。
+
+--------
 
 元组 (tuple) 是一个不可变对象, 类似 list
 ```python
@@ -493,7 +502,86 @@ print(money(20))
 ```
 可变对象不需要 nonlocal 关键字, 因为他们指向的内存是同一个
 
-### 2.5 
+### 2.5 Object-Orient Programming
+
+对象是具有属性和方法的值
+定义类, 类中每个方法的第一个参数都是 `self`, 但是在调用的时候不用传入这个参数
+```python
+class <name>:
+    <suite>
+```
+初始化对象的方法有特定的名字 `__init__()`, 称作构造函数 \
+通过赋值将对象绑定到新名称不会创建一个新对象
+
+点表达式: `<expression>.<name>`, 通过点表达式访问类内部的属性和方法
+
+```
+getattr(a, "xxx") # 调用名称为 xxx 的属性
+hasattr(a, "xxx") # 查询是否有名为 xxx 的属性
+```
+有两种方法调用类内部定义的函数
+```
+<类名称>.<函数名>(实例化名称, 1)
+<实例化名称>.<函数名>(1)
+```
+命名约定:
+1. 类名称使用驼峰命名法
+2. 属性名称使用下划线分割由小写字母组成的单词
+3. 以下划线开头的名称通常是由类内部的方法访问, 而不是由外部访问
+
+对于每个实例化对象, 有些属性一直不变
+```python
+class Account:
+    interest = 0.02  # 一个类属性
+    def __init__(self, account_holder):
+        self.balance = 0
+        self.holder = account_holder
+    # 这里可以定义其他方法
+
+Account.interest = 0.04 # 这种方法会改变所有实例化对象的 interest 属性
+# 单独改变某一实例化对象的 interest 属性不会影响其他实例化对象
+```
+-----
+继承: 子类可以覆盖基类特定的属性和方法, 未指定的内容则视为和基类相同
+```python
+class Account:
+    """一个具有非负余额的银行账户。"""
+    interest = 0.02
+    def __init__(self, account_holder):
+        self.balance = 0
+        self.holder = account_holder
+    def deposit(self, amount):
+        """将账户余额增加指定金额并返回新的余额。"""
+        self.balance = self.balance + amount
+        return self.balance
+    def withdraw(self, amount):
+        """将账户余额减少指定金额并返回新的余额。"""
+        if amount > self.balance:
+            return 'Insufficient funds'
+        self.balance = self.balance - amount
+        return self.balance
+
+class CheckingAccount(Account):
+    """一个收取取款费用的银行账户。"""
+    withdraw_charge = 1
+    interest = 0.01
+    def withdraw(self, amount):
+        return Account.withdraw(self, amount + self.withdraw_charge)
+```
+多重继承: 一个子类可以继承自多个基类
+```python
+class SavingsAccount(Account):
+    deposit_charge = 2
+    def deposit(self, amount):
+        return Account.deposit(self, amount - self.deposit_charge)
+
+class AsSeenOnTVAccount(CheckingAccount, SavingsAccount):
+    def __init__(self, account_holder):
+        self.holder = account_holder
+        self.balance = 1  # 一美元免费！
+```
+如果多个基类都有同一个方法, 继承的顺序不在本节讨论范围内
+
 
 ## Chapter 4
 
@@ -532,7 +620,30 @@ next(it4)
 
 但是, `dictionary`, `set` 这些对象的值改变不影响迭代器, 键的增加和删除会让之前的迭代器全部失效
 
-内置迭代器: 如 `map`, `zip` 等
+内置迭代器:
+* `map(f, iterable)` - 为可迭代对象中的每个元素 x 创建一个 f(x) 的迭代器。在某些情况下，计算这个可迭代对象中的值列表将给我们与 [func(x) for x in iterable] 相同的结果。但是，请记住，迭代器可以具有无限的值，因为它们是惰性求值的，而列表不能具有无限的元素。
+* `filter(f, iterable)` - 为可迭代对象中满足 f(x) 的每个元素 x 创建一个迭代器。
+* `zip(iterables*)` - 创建一个迭代器，其中包含来自每个可迭代对象的对应元素的元组。
+* `reversed(iterable)` - 以逆序创建一个包含输入可迭代对象中所有元素的迭代器。
+* `list(iterable)` - 创建一个包含输入的可迭代对象中所有元素的列表。
+* `tuple(iterable)` - 创建一个包含输入的可迭代对象中所有元素的元组。
+* `sorted(iterable)` - 创建一个包含输入的可迭代对象中所有元素的排序列表。
+* `reduce(f, iterable)` - 必须导入 functools。将两个参数函数 f 从左到右累积地应用于可迭代对象的项，以将序列减少为单个值。
+
+for 语句就是使用可迭代对象的迭代器进行循环的, 可以使用 while 来模拟
+```python
+try:
+    while (True):
+        x = next(it)
+        print(x)
+except StopIteration:
+    pass
+```
+-------
+
+生成器函数是一类特殊的函数, 使用 `yield` 而不是 `return` 来返回一系列元素 \
+每次调用生成器的 `next` 方法时, 生成器函数会运行到下一个 `yield` 语句为止
+
 
 
 
