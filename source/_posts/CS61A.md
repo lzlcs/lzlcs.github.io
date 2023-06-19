@@ -583,6 +583,94 @@ class AsSeenOnTVAccount(CheckingAccount, SavingsAccount):
 如果多个基类都有同一个方法, 继承的顺序不在本节讨论范围内
 
 
+### 2.9 Recusive Objects
+
+对象可以把其他对象当作属性值, 这样的对象称为递归对象
+
+链表类:
+1. 空链表用空元组表示, 长度为零, 没有元素
+2. 内置方法名字为 `__len__` 时, 当使用 python 内置函数 `len` 的时候就会调用这个方法
+
+```python
+def link_expression(s):
+    """返回一个表示s的字符串。"""
+    if s.rest is Link.empty:
+        rest = ''
+    else:
+        rest = ', ' + link_expression(s.rest)
+    return 'Link({0}{1})'.format(s.first, rest)
+
+def join_link(s, separator):
+    """ 链表输出更紧凑 """
+    if s is Link.empty:
+        return ""
+    elif s.rest is Link.empty:
+        return str(s.first)
+    else:
+        return str(s.first) + separator + join_link(s.rest, separator)
+
+def map_link(f, s):
+    if s is Link.empty:
+        return s
+    else:
+        return Link(f(s.first), map_link(f, s.rest))
+
+def filter_link(f, s):
+    if s is Link.empty:
+        return s
+    else:
+        filtered = filter_link(f, s.rest)
+        if f(s.first):
+            return Link(s.first, filtered)
+        else:
+            return filtered
+
+class Link:
+    empty = ()
+    def __init__(self, first, rest=empty):
+        assert rest is Link.empty or isinstance(rest, Link)
+        # instance 是内置函数 
+        # 如果 rest 是 Link 的实例或者是 Link的某个子类的实例, 返回 True
+        self.first = first
+        self.rest = rest
+    def __getitem__(self, i):
+        if i == 0:
+            return self.first
+        else:
+            return self.rest[i-1]
+    def __len__(self):
+        return 1 + len(self.rest)
+    __repr__ = link_expression
+
+```
+
+树的实现
+```python
+class Tree:
+    def __init__(self, label, branches=()):
+        self.label = label
+        for branch in branches:
+            assert isinstance(branch, Tree)
+        self.branches = branches
+
+    def __repr__(self):
+        if self.branches:
+            return 'Tree({0}, {1})'.format(self.label, repr(self.branches))
+        else:
+            return 'Tree({0})'.format(repr(self.label))
+
+    def is_leaf(self):
+        return not self.branches
+```
+集合的实现:
+1. 通过链表
+2. 通过有序序列
+3. 通过二叉搜索树, 随机插入元素时复杂度较优
+4. 通过平衡树, 任意元素插入时复杂度较优
+
+python 内部集合的实现: 基于哈希的一种方法, 超出课程讨论范围
+
+
 ## Chapter 4
 
 ### 4.1
