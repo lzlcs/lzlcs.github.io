@@ -671,6 +671,108 @@ class Tree:
 python 内部集合的实现: 基于哈希的一种方法, 超出课程讨论范围
 
 
+## Chapter 3
+
+### 3.1 Introduction
+
+本章重点介绍程序本身, 研究解释器的设计和执行程序时他们创建的计算过程
+
+### 3.2 Functional Programming
+
+本节介绍 `Scheme` 语言的一个子集, 只使用表达式, 专门用于符号计算, 没有可变值
+
+`Scheme` 完全使用前缀表示法, 使用小括号来分割操作符和操作数
+```Scheme
+(+ 1 3)
+(>= 2 1)
+(if <condition> <consequent> <alternative>)
+(and <e1> ... <en>)
+(or <e1> ... <en>)
+(not <e1>)
+(define pi 3.14)
+(define (square x) (* x x))
+(lambda (x) (x * x)) 
+; 匿名函数, 功能等同于上一句
+(square 21)
+(square (+ 5 2))
+(define x (cons 1 2))
+(car x) 
+; 第一个
+(crd x) 
+; 第二个 
+
+(list 1 2 3 4)
+(car) 
+; 1
+(crd)
+; 2 3 4
+```
+
+### 3.3 Exceptions
+
+在设计程序时, 应该时刻注意程序中有可能出现的错误 \
+设计持久服务的程序更应该对错误具有健壮性
+
+```python
+try:
+    <try suite>
+except <exception class> as <name>:
+    <except suite>
+...
+```
+
+异常对象的应用: 第一章中牛顿插值中出现 ValueError 时返回最后一次猜测
+```python
+class IterImproveError(Exception):
+    def __init__(self, last_guess):
+        self.last_guess = last_guess
+def improve(update, done, guess=1, max_updates=1000):
+    k = 0
+    try:
+        while not done(guess) and k < max_updates:
+            guess = update(guess)
+            k = k + 1
+        return guess
+    except ValueError:
+        raise IterImproveError(guess)
+def find_zero(f, guess=1):
+    def done(x):
+        return f(x) == 0
+    try:
+        return improve(newton_update(f), done, guess)
+    except IterImproveError as e:
+        return e.last_guess
+```
+
+### 3.4 Interpreters for Languages with Combination
+
+元语言抽象: 一种以其他语言为基础建立语言的技术
+
+现在来用 python 实现一个 scheme 格式的计算器\
+它将以字符串为输入, 并将这些表达式求值后返回结果 \
+如果输入的字符串不符合语法规则, 程序将引发适当的异常
+
+实现一个 Pair 类来存储表达式树
+```python
+expr = Pair('+', Pair(Pair('*', Pair(3, Pair(4, nil))), Pair(5, nil)))
+print(expr) # (+ (* 3 4) 5)
+```
+
+解释器分为词法分析器和语法分析器
+1. 词法分析器
+    ```python
+    tokenize_line('(+ 1 (* 2.3 45))')
+    ['(', '+', 1, '(', '*', 2.3, 45, ')', ')']
+    ```
+2. 语法分析器: 一个树递归的过程
+
+解释器: 解析, 评估, 应用, 评估/应用 循环
+
+
+
+### 3.5 Interpreters for Languages with Abstraction
+
+
 ## Chapter 4
 
 ### 4.1
