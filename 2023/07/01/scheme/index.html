@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="" />
+  <meta name="author" content="lzl" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      Scheme 学习笔记 
+      
+      
+      |
+    
+     lzl&#39;s blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">lzl</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          <a href="/categories/">Categories</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Scheme 学习笔记</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-07-01 16:52:51
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="Categories"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/Language/" title="Language">
+                    <b>#</b> Language
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Scheme/" title="Scheme">
+                    #Scheme
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h1><ol>
+<li>安装 <code>MIT scheme</code>: <code>sudo apt-get install mit-scheme</code></li>
+<li>在命令行输入 <code>scheme</code> 进入 <code>scheme</code> 解释器</li>
+</ol>
+<h1 id="基本表达式"><a href="#基本表达式" class="headerlink" title="基本表达式"></a>基本表达式</h1><p><code>scheme</code> 中一对括号代表一次计算的步骤, 括号中的计算式采用前缀表达式 <br>形如这些由括号, 标记, 分隔符组成的式子, 被称为 <code>S-表达式</code></p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="built_in">+</span></span> <span class="number">1</span> <span class="number">2</span>) <span class="comment">;3</span></span><br><span class="line">(<span class="name"><span class="built_in">+</span></span> <span class="number">1</span> <span class="number">2</span> <span class="number">4</span>) <span class="comment">;7</span></span><br></pre></td></tr></table></figure>
+<p>当然括号可以嵌套</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="built_in">*</span></span> (<span class="name"><span class="built_in">+</span></span> <span class="number">1</span> <span class="number">3</span>) (<span class="name"><span class="built_in">-</span></span> <span class="number">3</span> <span class="number">1</span>)) <span class="comment">;8</span></span><br></pre></td></tr></table></figure>
+<p>像 <code>+</code>, <code>1</code>, <code>2</code> 这些基本表达式被称为原子(<code>atom</code>)<br>每个表达式用空格, 制表符或换行符来分割</p>
+<h2 id="四则运算"><a href="#四则运算" class="headerlink" title="四则运算"></a>四则运算</h2><ol>
+<li><code>+</code>, <code>-</code>, <code>*</code></li>
+<li><code>/</code> 注意<code>scheme</code>会处理分数, 比如 <figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="built_in">/</span></span> <span class="number">3</span> <span class="number">4</span>) <span class="comment">;3/4</span></span><br><span class="line">(<span class="name"><span class="built_in">/</span></span> <span class="number">29</span> <span class="number">3</span> <span class="number">7</span>) <span class="comment">;29/21</span></span><br></pre></td></tr></table></figure>
+ 函数 <code>exact-&gt;inexact</code> 用于把分数转换为小数</li>
+</ol>
+<h2 id="其他运算"><a href="#其他运算" class="headerlink" title="其他运算"></a>其他运算</h2><ol>
+<li><code>quotient</code> 整除, <code>modulo</code> 取模, <code>sqrt</code> 求平方根</li>
+<li><code>sin</code>, <code>cos</code>, <code>tan</code>, <code>asin</code>, <code>acos</code>, <code>atan</code></li>
+<li><code>(exp a b)</code> 求指数, <code>(log x)</code> 求以 <code>e</code> 为底的对数</li>
+</ol>
+<h1 id="生成表-list"><a href="#生成表-list" class="headerlink" title="生成表 (list)"></a>生成表 (<code>list</code>)</h1><h2 id="Cons-单元"><a href="#Cons-单元" class="headerlink" title="Cons 单元"></a>Cons 单元</h2><p>表的元素称为 <code>Cons单元</code>,是一个存放了两个地址的内存空间</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="built_in">cons</span></span> <span class="number">1</span> <span class="number">2</span>) <span class="comment">;(1 . 2)</span></span><br><span class="line">(<span class="name"><span class="built_in">cons</span></span> (<span class="name"><span class="built_in">cons</span></span> <span class="number">1</span> <span class="number">3</span>) (<span class="name"><span class="built_in">cons</span></span> <span class="number">2</span> <span class="number">3</span>)) <span class="comment">;((1 . 3) 2 . 3)</span></span><br></pre></td></tr></table></figure>
+<p><code>cons</code> 分配了两个地址空间, 一个指向 1, 一个指向 2 , <code>cons</code> 也是 <code>construction</code> 的简称 <br>指向 1 的部分被称作 <code>car</code> -&gt; <code>Contents of the Address part of the Register</code> <br>指向 2 的部分被称作 <code>cdr</code> -&gt; <code>Contents of the Department part of the Register</code></p>
+<h2 id="表"><a href="#表" class="headerlink" title="表"></a>表</h2><p>表是一个由 <code>Cons单元</code> 串起来的类似链表的结构, 末尾为空列表 <code>&#39;()</code></p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="built_in">cons</span></span> <span class="number">2</span> (<span class="name"><span class="built_in">cons</span></span> <span class="number">3</span> (<span class="name"><span class="built_in">cons</span></span> <span class="number">4</span> &#x27;()))) <span class="comment">;(2 3 4)</span></span><br><span class="line">(<span class="name">cosn</span> x y) <span class="comment">;如果 y 是个表, 那么就把 x 插到表头</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="原子"><a href="#原子" class="headerlink" title="原子"></a>原子</h2><p>不使用 <code>cons</code> 来构建的元素都为原子 (<code>atom</code>)<br>如 数字, 字符, 字符串, 空表</p>
+<h2 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h2><p><code>quote</code> 阻止表达式被求值, 可以简写成 <code>&#39;</code></p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="built_in">quote</span></span> (<span class="name"><span class="built_in">+</span></span> <span class="number">3</span> <span class="number">5</span>)) <span class="comment">;(+ 3 5)</span></span><br><span class="line">&#x27;(+ <span class="number">3</span> <span class="number">5</span>) <span class="comment">;(+ 3 5)</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="特殊形式"><a href="#特殊形式" class="headerlink" title="特殊形式"></a>特殊形式</h2><p>除了 <code>quote</code>, <code>define</code>, <code>lambda</code>, <code>if</code>, <code>set!</code> 等都是特殊形式</p>
+<h2 id="car-和-cdr"><a href="#car-和-cdr" class="headerlink" title="car 和 cdr"></a><code>car</code> 和 <code>cdr</code></h2><figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">;; 这里使用引用就是不让表达式 (2 3 4) 被求值, 也无法求值</span></span><br><span class="line">(<span class="name"><span class="built_in">car</span></span> &#x27;(<span class="number">2</span> <span class="number">3</span> <span class="number">4</span>)) <span class="comment">;2</span></span><br><span class="line">(<span class="name"><span class="built_in">cdr</span></span> &#x27;(<span class="number">2</span> <span class="number">3</span> <span class="number">4</span>)) <span class="comment">;(3 4)</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="list"><a href="#list" class="headerlink" title="list"></a><code>list</code></h2><p><code>list</code> 函数可以有多个参数, 构建任意长度的表</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="built_in">list</span></span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> &#x27;(<span class="number">3</span> <span class="number">4</span>) &#x27;((<span class="number">3</span> <span class="number">4</span> <span class="number">5</span>) (<span class="number">4</span>))) <span class="comment">;(2 3 4 (3 4) ((3 4 5) (4)))</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="定义函数"><a href="#定义函数" class="headerlink" title="定义函数"></a>定义函数</h1><ol>
+<li>定义变量(没有参数的函数) <figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="built_in">define</span></span> x <span class="number">5</span>) </span><br></pre></td></tr></table></figure></li>
+<li>定义函数的两种方法<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="built_in">define</span></span> func </span><br><span class="line">  (<span class="name"><span class="built_in">lambda</span></span> (arguments)</span><br><span class="line">    (<span class="name"><span class="built_in">+</span></span> arguments <span class="number">5</span>)))</span><br><span class="line"><span class="comment">;; 以下是短形式</span></span><br><span class="line">(<span class="name"><span class="built_in">define</span></span> (<span class="name">func</span> arguments)</span><br><span class="line">  (<span class="name"><span class="built_in">+</span></span> arguments <span class="number">5</span>))</span><br></pre></td></tr></table></figure>
+使用 <code>(load [filename])</code> 载入文件从而测试函数</li>
+</ol>
+<h1 id="条件分支"><a href="#条件分支" class="headerlink" title="条件分支"></a>条件分支</h1><ol>
+<li><p><code>if</code> 表达式: <code>(if condition process1 process2)</code> <br> 如果 <code>condition</code> 为真, 则执行 <code>process1</code>, 否则 <code>process2</code>, 这两个都是 <code>S-表达式</code></p>
+</li>
+<li><p><code>and</code> 和 <code>or</code> 接受多个参数, 有短路特性</p>
+</li>
+<li><p><code>cond</code> 表达式: 字面意思, 很好懂</p>
+ <figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="built_in">cond</span></span> </span><br><span class="line">  (<span class="name">condition1</span> process1)</span><br><span class="line">  (<span class="name">condition2</span> process2)</span><br><span class="line">  ....</span><br><span class="line">  (<span class="name"><span class="built_in">else</span></span> process_else))</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>其他做出判断的函数</p>
+<ol>
+<li>函数 <code>null?</code> 表示表是否为空</li>
+<li><code>eq?</code> 比较两个参数的地址, <code>eqv?</code> 比较两个参数的值(不能为表或字符串) <br><code>equal?</code> 比较值(适用于字符串和表)</li>
+<li><code>pair?</code>, <code>list?</code> 顾名思义, 注意空表是 <code>list</code> 不是 <code>pair</code></li>
+<li><code>=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;=</code> 接受任意数量的数字参数</li>
+<li><code>char=?</code>, <code>char&lt;?</code>, <code>char&gt;?</code>, <code>char&lt;=</code>, <code>char&gt;=</code></li>
+<li><code>string=?</code>, <code>string-ci=?</code></li>
+</ol>
+<h1 id="局部变量"><a href="#局部变量" class="headerlink" title="局部变量"></a>局部变量</h1><figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="built_in">let</span></span> ((<span class="name">name1</span> value1)</span><br><span class="line">      (<span class="name">name2</span> value2)</span><br><span class="line">      ....</span><br><span class="line">      (<span class="name">namen</span> valuen))</span><br><span class="line">  (<span class="name">body</span>))</span><br></pre></td></tr></table></figure>
+<p><code>letrec</code> 替代 <code>let</code> 之后可以允许变量递归调用自己</p>
+<p>注意这些局部变量只能在 <code>body</code> 中使用</p>
+<h2 id="递归和尾递归"><a href="#递归和尾递归" class="headerlink" title="递归和尾递归"></a>递归和尾递归</h2><p>普通的线性递归转换为尾递归的方法就是把结果传到参数里, 这样可以直接返回, 避免空间占用</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="built_in">define</span></span> (<span class="name">fact</span> n)</span><br><span class="line">  (<span class="name"><span class="built_in">if</span></span> (<span class="name"><span class="built_in">=</span></span> n <span class="number">1</span>) </span><br><span class="line">    <span class="number">1</span></span><br><span class="line">    (<span class="name"><span class="built_in">*</span></span> n fact (<span class="name"><span class="built_in">-</span></span> n <span class="number">1</span>))))</span><br><span class="line">(<span class="name"><span class="built_in">define</span></span> (<span class="name">fact</span> n res)</span><br><span class="line">  (<span class="name"><span class="built_in">if</span></span> (<span class="name"><span class="built_in">=</span></span> n <span class="number">1</span>) </span><br><span class="line">    res</span><br><span class="line">    (<span class="name">fact</span> (<span class="name"><span class="built_in">-</span></span> n <span class="number">1</span>) (<span class="name"><span class="built_in">*</span></span> n res))))</span><br></pre></td></tr></table></figure>
+
+<h1 id="高阶函数"><a href="#高阶函数" class="headerlink" title="高阶函数"></a>高阶函数</h1><p>类似 <code>python</code>, 略</p>
+<h1 id="副作用"><a href="#副作用" class="headerlink" title="副作用"></a>副作用</h1><p><code>begin</code> 表达式后可跟多个参数, 依次执行这些参数之后返回最后一个参数结果</p>
+<h1 id="宏"><a href="#宏" class="headerlink" title="宏"></a>宏</h1><h2 id="Common-Lisp-式"><a href="#Common-Lisp-式" class="headerlink" title="Common Lisp 式"></a>Common Lisp 式</h2><p>编写代码的代码, 在CS61A的 Project4 中实现的是这种形式</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">`() 括号里的东西都被引用</span><br><span class="line">,x 解除x的引用</span><br><span class="line">,@x 把作为列表的x展开</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2023/06/04/NewComputerConfig/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-07-01 16:52:51
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="Categories"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/Language/" title="Language">
+                        <b>#</b> Language
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Scheme/" title="Scheme">
+                        #Scheme
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E6%9C%9F%E5%87%86%E5%A4%87"><span class="toc-text">前期准备</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-text">基本表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E5%88%99%E8%BF%90%E7%AE%97"><span class="toc-text">四则运算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E8%BF%90%E7%AE%97"><span class="toc-text">其他运算</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E8%A1%A8-list"><span class="toc-text">生成表 (list)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Cons-%E5%8D%95%E5%85%83"><span class="toc-text">Cons 单元</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8"><span class="toc-text">表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E5%AD%90"><span class="toc-text">原子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E7%94%A8"><span class="toc-text">引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E5%BD%A2%E5%BC%8F"><span class="toc-text">特殊形式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#car-%E5%92%8C-cdr"><span class="toc-text">car 和 cdr</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#list"><span class="toc-text">list</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0"><span class="toc-text">定义函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E5%88%86%E6%94%AF"><span class="toc-text">条件分支</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="toc-text">局部变量</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%92%E5%BD%92%E5%92%8C%E5%B0%BE%E9%80%92%E5%BD%92"><span class="toc-text">递归和尾递归</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0"><span class="toc-text">高阶函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%AF%E4%BD%9C%E7%94%A8"><span class="toc-text">副作用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%8F"><span class="toc-text">宏</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Common-Lisp-%E5%BC%8F"><span class="toc-text">Common Lisp 式</span></a></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2023 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Scheme%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0 + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F07%2F01%2Fscheme%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/07/01/scheme/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>

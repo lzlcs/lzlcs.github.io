@@ -11,7 +11,7 @@
   
   <title>
     
-      CS61A (Fall2022) 
+      编程入门:CS61A (Fall2022) 
       
       
       |
@@ -147,7 +147,7 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">CS61A (Fall2022)</div>
+      <div class="post-title">编程入门:CS61A (Fall2022)</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
@@ -183,6 +183,12 @@
                 <span class="span--tag mr-8">
                   <a href="/tags/Scheme/" title="Scheme">
                     #Scheme
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/SQL/" title="SQL">
+                    #SQL
                   </a>
                 </span>
                 
@@ -500,6 +506,23 @@ testmod 函数把定义过的函数并且有如此形式的函数全部做测试
 <li><code>reduce(f, iterable)</code> - 必须导入 functools。将两个参数函数 f 从左到右累积地应用于可迭代对象的项，以将序列减少为单个值。</li>
 </ul>
 <h2 id="for-语句就是使用可迭代对象的迭代器进行循环的-可以使用-while-来模拟"><a href="#for-语句就是使用可迭代对象的迭代器进行循环的-可以使用-while-来模拟" class="headerlink" title="for 语句就是使用可迭代对象的迭代器进行循环的, 可以使用 while 来模拟"></a>for 语句就是使用可迭代对象的迭代器进行循环的, 可以使用 while 来模拟<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">True</span>):</span><br><span class="line">        x = <span class="built_in">next</span>(it)</span><br><span class="line">        <span class="built_in">print</span>(x)</span><br><span class="line"><span class="keyword">except</span> StopIteration:</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure></h2><p>生成器函数是一类特殊的函数, 使用 <code>yield</code> 而不是 <code>return</code> 来返回一系列元素 <br>每次调用生成器的 <code>next</code> 方法时, 生成器函数会运行到下一个 <code>yield</code> 语句为止</p>
+<h1 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h1><p><code>SQL</code> 是一种声明式语言, 程序是描述结果, 解释器指出如何生成结果<br>命令式语言: 程序是计算过程的描述, 解释器执行该过程</p>
+<ol>
+<li><code>select</code> 语句从零创建一个新表, 或者从之前的表中创建<ul>
+<li><code>select</code> 语句总是包含以逗号分割的列描述来说明表</li>
+<li>一个列描述是一个表达式, 后面可以接 <code>as</code> 和表的名称</li>
+<li><code>select [expression] as [name], [expression] as [name]....;</code></li>
+<li><code>select [columns] from [table] where [condition] order by [order]</code></li>
+<li>所有的 <code>SQL</code> 语句都以分号结尾</li>
+</ul>
+</li>
+<li><code>creat table</code> 为表创建一个全局名称<ul>
+<li><code>creat table [name] as [select statement]</code></li>
+</ul>
+</li>
+<li><code>analyze</code>, <code>delete</code>, <code>explain</code>, <code>insert</code>, <code>replace</code>, <code>update</code></li>
+</ol>
+<p>安装 <code>sqlite</code> 来解释 <code>SQL</code> 代码</p>
 
       </div>
       
@@ -550,6 +573,12 @@ testmod 函数把定义过的函数并且有如此形式的函数全部做测试
                       </a>
                     </span>
                     
+                    <span class="span--tag mr-8">
+                      <a href="/tags/SQL/" title="SQL">
+                        #SQL
+                      </a>
+                    </span>
+                    
                   </span>
               
           </div>
@@ -572,7 +601,7 @@ testmod 函数把定义过的函数并且有如此形式的函数全部做测试
     <div class="title">Contents</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%8C%E6%88%90-lab-%E7%9A%84%E5%9F%BA%E7%A1%80"><span class="toc-text">完成 lab 的基础</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%BB%88%E7%AB%AF"><span class="toc-text">使用终端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%84%E7%BB%87%E6%96%87%E4%BB%B6"><span class="toc-text">组织文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python-%E5%9F%BA%E7%A1%80"><span class="toc-text">Python 基础</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8C%E6%88%90%E4%BD%9C%E4%B8%9A"><span class="toc-text">完成作业</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E7%94%A8%E7%9A%84-python-%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%AD%E5%91%BD%E4%BB%A4"><span class="toc-text">有用的 python 命令行中命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Textbook"><span class="toc-text">Textbook</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter-1"><span class="toc-text">Chapter 1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-Getting-Started"><span class="toc-text">1.1 Getting Started</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-Elements-of-Programming"><span class="toc-text">1.2 Elements of Programming</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-Defining-New-Funtions"><span class="toc-text">1.3 Defining New Funtions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-Designing-Funtions"><span class="toc-text">1.4 Designing Funtions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-Control"><span class="toc-text">1.5 Control</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-Higher-Order-Functions"><span class="toc-text">1.6 Higher-Order Functions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-7-Recusive-Functions"><span class="toc-text">1.7 Recusive Functions</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter-2"><span class="toc-text">Chapter 2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Introduction"><span class="toc-text">2.1 Introduction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Data-Abstraction"><span class="toc-text">2.2 Data Abstraction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-Sequences"><span class="toc-text">2.3 Sequences</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-Mulable-Data"><span class="toc-text">2.4 Mulable Data</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-Object-Orient-Programming"><span class="toc-text">2.5 Object-Orient Programming</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8E%E6%AF%8F%E4%B8%AA%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%AF%B9%E8%B1%A1-%E6%9C%89%E4%BA%9B%E5%B1%9E%E6%80%A7%E4%B8%80%E7%9B%B4%E4%B8%8D%E5%8F%98"><span class="toc-text">对于每个实例化对象, 有些属性一直不变123456789class Account:    interest &#x3D; 0.02  # 一个类属性    def __init__(self, account_holder):        self.balance &#x3D; 0        self.holder &#x3D; account_holder    # 这里可以定义其他方法Account.interest &#x3D; 0.04 # 这种方法会改变所有实例化对象的 interest 属性# 单独改变某一实例化对象的 interest 属性不会影响其他实例化对象</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-9-Recusive-Objects"><span class="toc-text">2.9 Recusive Objects</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter-3"><span class="toc-text">Chapter 3</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-Introduction"><span class="toc-text">3.1 Introduction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-Functional-Programming"><span class="toc-text">3.2 Functional Programming</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Exceptions"><span class="toc-text">3.3 Exceptions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-Interpreters-for-Languages-with-Combination"><span class="toc-text">3.4 Interpreters for Languages with Combination</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-Interpreters-for-Languages-with-Abstraction"><span class="toc-text">3.5 Interpreters for Languages with Abstraction</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter-4"><span class="toc-text">Chapter 4</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1"><span class="toc-text">4.1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-Implict-Sequences"><span class="toc-text">4.2 Implict Sequences</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#for-%E8%AF%AD%E5%8F%A5%E5%B0%B1%E6%98%AF%E4%BD%BF%E7%94%A8%E5%8F%AF%E8%BF%AD%E4%BB%A3%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%BF%AD%E4%BB%A3%E5%99%A8%E8%BF%9B%E8%A1%8C%E5%BE%AA%E7%8E%AF%E7%9A%84-%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8-while-%E6%9D%A5%E6%A8%A1%E6%8B%9F"><span class="toc-text">for 语句就是使用可迭代对象的迭代器进行循环的, 可以使用 while 来模拟123456try:    while (True):        x &#x3D; next(it)        print(x)except StopIteration:    pass</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%8C%E6%88%90-lab-%E7%9A%84%E5%9F%BA%E7%A1%80"><span class="toc-text">完成 lab 的基础</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E7%BB%88%E7%AB%AF"><span class="toc-text">使用终端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%84%E7%BB%87%E6%96%87%E4%BB%B6"><span class="toc-text">组织文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python-%E5%9F%BA%E7%A1%80"><span class="toc-text">Python 基础</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8C%E6%88%90%E4%BD%9C%E4%B8%9A"><span class="toc-text">完成作业</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E7%94%A8%E7%9A%84-python-%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%AD%E5%91%BD%E4%BB%A4"><span class="toc-text">有用的 python 命令行中命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Textbook"><span class="toc-text">Textbook</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter-1"><span class="toc-text">Chapter 1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-Getting-Started"><span class="toc-text">1.1 Getting Started</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-Elements-of-Programming"><span class="toc-text">1.2 Elements of Programming</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-Defining-New-Funtions"><span class="toc-text">1.3 Defining New Funtions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-Designing-Funtions"><span class="toc-text">1.4 Designing Funtions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-Control"><span class="toc-text">1.5 Control</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-Higher-Order-Functions"><span class="toc-text">1.6 Higher-Order Functions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-7-Recusive-Functions"><span class="toc-text">1.7 Recusive Functions</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter-2"><span class="toc-text">Chapter 2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Introduction"><span class="toc-text">2.1 Introduction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Data-Abstraction"><span class="toc-text">2.2 Data Abstraction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-Sequences"><span class="toc-text">2.3 Sequences</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-Mulable-Data"><span class="toc-text">2.4 Mulable Data</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-Object-Orient-Programming"><span class="toc-text">2.5 Object-Orient Programming</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8E%E6%AF%8F%E4%B8%AA%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%AF%B9%E8%B1%A1-%E6%9C%89%E4%BA%9B%E5%B1%9E%E6%80%A7%E4%B8%80%E7%9B%B4%E4%B8%8D%E5%8F%98"><span class="toc-text">对于每个实例化对象, 有些属性一直不变123456789class Account:    interest &#x3D; 0.02  # 一个类属性    def __init__(self, account_holder):        self.balance &#x3D; 0        self.holder &#x3D; account_holder    # 这里可以定义其他方法Account.interest &#x3D; 0.04 # 这种方法会改变所有实例化对象的 interest 属性# 单独改变某一实例化对象的 interest 属性不会影响其他实例化对象</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-9-Recusive-Objects"><span class="toc-text">2.9 Recusive Objects</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter-3"><span class="toc-text">Chapter 3</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-Introduction"><span class="toc-text">3.1 Introduction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-Functional-Programming"><span class="toc-text">3.2 Functional Programming</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Exceptions"><span class="toc-text">3.3 Exceptions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-Interpreters-for-Languages-with-Combination"><span class="toc-text">3.4 Interpreters for Languages with Combination</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-Interpreters-for-Languages-with-Abstraction"><span class="toc-text">3.5 Interpreters for Languages with Abstraction</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter-4"><span class="toc-text">Chapter 4</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1"><span class="toc-text">4.1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-Implict-Sequences"><span class="toc-text">4.2 Implict Sequences</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#for-%E8%AF%AD%E5%8F%A5%E5%B0%B1%E6%98%AF%E4%BD%BF%E7%94%A8%E5%8F%AF%E8%BF%AD%E4%BB%A3%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%BF%AD%E4%BB%A3%E5%99%A8%E8%BF%9B%E8%A1%8C%E5%BE%AA%E7%8E%AF%E7%9A%84-%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8-while-%E6%9D%A5%E6%A8%A1%E6%8B%9F"><span class="toc-text">for 语句就是使用可迭代对象的迭代器进行循环的, 可以使用 while 来模拟123456try:    while (True):        x &#x3D; next(it)        print(x)except StopIteration:    pass</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL"><span class="toc-text">SQL</span></a></li></ol>
       
     </div>
   </div>
@@ -858,7 +887,7 @@ testmod 函数把定义过的函数并且有如此形式的函数全部做测试
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + CS61A%20(Fall2022) + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F05%2F08%2FCS61A%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8%3ACS61A%20(Fall2022) + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F05%2F08%2FCS61A%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
