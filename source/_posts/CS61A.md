@@ -1,10 +1,11 @@
 ---
-title: CS61A (Fall2022)
+title: 编程入门:CS61A (Fall2022)
 date: 2023-05-08 21:21:36
 tags: 
 - Course
 - Python
 - Scheme
+- SQL
 categories: Course
 ---
 
@@ -836,6 +837,21 @@ except StopIteration:
 
 
 
+# SQL
 
+`SQL` 是一种声明式语言, 程序是描述结果, 解释器指出如何生成结果
+命令式语言: 程序是计算过程的描述, 解释器执行该过程
+
+1. `select` 语句从零创建一个新表, 或者从之前的表中创建
+    * `select` 语句总是包含以逗号分割的列描述来说明表
+    * 一个列描述是一个表达式, 后面可以接 `as` 和表的名称
+    * `select [expression] as [name], [expression] as [name]....;`
+    * `select [columns] from [table] where [condition] order by [order]`
+    * 所有的 `SQL` 语句都以分号结尾
+2. `creat table` 为表创建一个全局名称
+    * `creat table [name] as [select statement]`
+3. `analyze`, `delete`, `explain`, `insert`, `replace`, `update`
+
+安装 `sqlite` 来解释 `SQL` 代码
 
 
