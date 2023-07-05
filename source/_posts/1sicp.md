@@ -4,10 +4,15 @@ date: 2023-07-02 15:04:05
 mathjax: true
 tags:
 - Scheme
+- Python
 - SICP
 categories: 
 - Book
 ---
+
+习题和书中代码使用 `python` 重写
+
+-----
 
 # Chapter 1: 构造函数抽象
 
@@ -309,23 +314,18 @@ def fib(n):
 两者相加即为答案
 
 其中分类的标准是有没有使用第一种硬币, 第一组都没有使用, 第二组一定使用
-```scheme
-(define (change a)
-  (define (to x)
-    (cond ((= x 1) 1)
-          ((= x 2) 5)
-          ((= x 3) 10)
-          ((= x 4) 25)
-          ((= x 5) 50)))
-
-  (define (change-iter cur type)
-    (cond ((= cur 0) 1)
-          ((< cur 0) 0)
-          ((= type 0) 0)
-          (else (+ (change-iter cur (- type 1))
-                   (change-iter (- cur (to type)) type)))))
-
-  (change-iter a 5))
+```python
+def change(a):
+    def to(x):
+        tmp = [0, 1, 5, 10, 25, 50]
+        return tmp[x]
+    def iter(cur, which):
+        if (cur == 0):
+            return 1
+        if (cur < 0) or (which == 0):
+            return 0
+        return iter(cur, which - 1) + iter(cur - to(which), which)
+    return iter(a, 5)
 ```
 其中冗余计算和斐波那契数列中的一样, 这可以通过记忆化来实现优化
 
@@ -344,18 +344,22 @@ $R(n)$ 表示计算函数在处理 $n$ 规模的问题时所需要的资源量 \
 
 线性求幂 \
 时间 $\Theta(n)$, 空间 $\Theta(n)$
-```scheme
-(define (pow a b)
-  (cond ((= b 0) 1)
-        (else (* a (pow a (- b 1))))))
+```python
+def my_pow(a, b):
+    if (b == 0):
+        return 1
+    else:
+        return a * my_pow(a, b - 1)
 ```
-时间 $\Theta(n)$, 空间 $\Theta(1)$
-```scheme
-(define (pow a b)
-  (define (pow-iter cur count)
-    (cond ((= count b) cur)
-          (else (pow-iter (* cur a) (+ count 1)))))
-  (pow-iter 1 0))
+时间 $\Theta(n)$, 空间 $\Theta(1)$ (`scheme` 中空间复杂度)
+```python
+def my_pow(a, b):
+    def iter(count, res):
+        if (count == b):
+            return res
+        else:
+            return iter(count + 1, res * a)
+    return iter(0, 1)
 ```
 快速幂: \
 每个整数都可以进行二进制拆分, 基于这样的思想来进行快速幂, 假设底数为 $a$
@@ -363,11 +367,16 @@ $R(n)$ 表示计算函数在处理 $n$ 规模的问题时所需要的资源量 \
 2. 如果这个数 $b$ 是奇数, 那么计算它的 $a \times a^{b - 1}$
 
 总体来说问题规模每次缩减一半, 时间空间复杂度都是 $\Theta(logn)$ 的
-```scheme
-(define (fast-pow a b)
-  (cond ((zero? b) 1)
-        ((even? b) (square (fast-pow a (/ b 2))))
-        (else (* a (fast-pow a (- b 1))))))
+```python
+def square(x):
+    return x * x
+def fast_pow(a, b):
+    if (b == 0):
+        return 1
+    elif (b % 2 == 0):
+        return square(pow(a, b // 2))
+    else:
+        return pow(a, b - 1)
 ```
 
 ### 1.2.5 最大公约数
@@ -375,10 +384,12 @@ $R(n)$ 表示计算函数在处理 $n$ 规模的问题时所需要的资源量 \
 欧几里得算法 $GCD(a, b) = GCD(b, a \% b)$ \
 当 $b$ 为 0的时候返回 $a$ 为最大公约数
 
-```scheme
-(define (GCD a b)
-  (cond ((zero? b) a)
-        (else (GCD b (remainder a b)))))
+```python
+def GCD(a, b):
+    if (b == 0):
+        return a
+    else:
+        return GCD(b, a % b)
 ```
 
 拉梅定理: $GCD$ 递归了 k 层, 这对数中较小的数一定大于第 k 个斐波那契数列 \
@@ -390,17 +401,23 @@ $R(n)$ 表示计算函数在处理 $n$ 规模的问题时所需要的资源量 \
 
 1. 结论: 只需要寻找 $\sqrt n$ 个因子就可以找出全部因子 \
    证明: 如果 $d$ 是 $n$ 的因子, $n / d$ 也必然是 $n$ 的因子, 而两者不可能同时大于 $\sqrt n$
-   ```scheme
-   (define (min-divisor n)
-     (define (divides? x) (= (remainder n x) 0))
-     (define (iter cur)
-         (cond ((> (square cur) n) n)
-               ((divides? cur) cur)
-               (else (iter (+ cur 1)))))
-     (iter 2))
+   ```python
+    def square(x):
+        return x * x
+    def min_divisor(n):
+        def divide(x):
+            return n % x == 0
+        def iter(cur):
+            if (square(cur) > n):
+                return n
+            elif (divide(cur)):
+                return cur
+            else:
+                return iter(cur + 1)
+        return iter(2)
 
-   (define (prime? x)
-     (= (min-divisor x) x))
+    def is_prime(x):
+        return min_divisor(x) == x
    ```
 2. 费马检查
     > 费马小定理: 如果 $n$ 是一个素数, $a$ 是小于 $n$ 的任意正整数, $a$ 的 $n$ 次方与 $a$ 模 $n$ 同余
@@ -412,19 +429,26 @@ $R(n)$ 表示计算函数在处理 $n$ 规模的问题时所需要的资源量 \
 
     > 然则这种检测方式不一定准确, 满足这个性质的非素数称作 $Carmicheal$ 数 \
     > 但在很大的素数面前, 碰到$Carmicheal$ 数的概率极低极低
-    ```scheme
-    (define (prime? n)
-      (define (pow a b m)
-        (cond ((= b 0) 1)
-              ((odd? b) (remainder (* a (pow a (- b 1) m)) m))
-              (else (remainder (square (pow a (/ b 2) m)) m))))
-      (define (calc times)
-        (define (test a)
-          (= (pow a n n) a))
-        (cond ((= times 0) #t)
-              ((not (test (+ 1 (random (- n 1))))) #f)
-              (else (calc (- times 1)))))
-      (calc 5))
+    ```python
+    def is_prime(p):
+        def pow(a, b):
+            if (b == 0):
+                return 1 % p
+            elif (b % 2 == 0):
+                return square(pow(a, b // 2)) % p
+            else:
+                return a * pow(a, b - 1) % p
+
+        def check(x):
+            return pow(x, p) == x
+        def calc(times):
+            if (times == 0):
+                return True
+            elif (not check(random.randint(1, p - 1))):
+                return False
+            else:
+                return calc(times - 1)
+        return calc(5)
     ```
 3. $Miller-Robin$ 素数检测
     * 根据费马小定理变形: $a^{n-1}\equiv 1(mod \; n)$
@@ -439,29 +463,35 @@ $R(n)$ 表示计算函数在处理 $n$ 规模的问题时所需要的资源量 \
     4. 如果 $x^2 \equiv 1 (mod \; p)$, 但是 $x \not \equiv (1或p-1) (mod \; p)$ 则 $p$ 一定不是素数
     5. 此时的 $x$ 就是书中所说的非平凡平方根
 
-    ```scheme
-    (define (prime? p)
-      (define (nontrivial-square-root x)
-        (if (and (not (= x 1))
-                 (not (= x (- p 1)))
-                 (= 1 (remainder (square x) p)))
-            0
-            (remainder (square x) p)))
-    
-      (define (pow a b)
-        (cond ((zero? b) 1)
-              ((even? b) (nontrivial-square-root (pow a (/ b 2))))
-              (else (remainder (* a (pow a (- b 1))) p))))
-    
-      (define (test?)
-        (= 1 (pow (+ 1 (random (- p 1))) 
-                  (- p 1))))
-    
-      (define (iter times)
-        (cond ((= times 0) #t)
-              ((test?) (iter (- times 1)))
-              (else #f)))
-      (iter 7))
+    ```python
+    def miller_robin(p):
+        def nontrivial_square_root(x):
+            tmp = square(x) % p
+            if ((x != 1) and (x != p - 1) and (tmp == 1)):
+                return 0
+            else:
+                return tmp
+
+        def pow(a, b):
+            if (b == 0):
+                return 1
+            elif (b % 2 == 1):
+                return a * pow(a, b - 1) % p
+            else:
+                return nontrivial_square_root(pow(a, b // 2))
+
+        def test():
+            return pow(random.randint(1, p - 1), p - 1) == 1
+
+        def iter(times):
+            if (times == 0):
+                return True
+            elif (test()):
+                return iter(times - 1)
+            else:
+                return False
+
+        return iter(7)
     ```
 
 ## 1.3 用高阶函数做抽象
@@ -471,76 +501,58 @@ $R(n)$ 表示计算函数在处理 $n$ 规模的问题时所需要的资源量 \
 ### 1.3.1 函数作为参数
 
 书中所说的范围内整数和, 范围内整数立方和, 计算 $\pi$ 序列三个函数都有相同的模式
-```scheme
-(define (sum a b)
-  (if (> a b)
-      0
-      (+ (term a)
-         (sum (next a) b))))
+```python
+def sum(a, b):
+    if (a > b):
+        return 0
+    else:
+        return (<term>(a) + sum(<next>(a), b))
 ```
 与数学中的 $\Sigma$ 类似, 这个高阶函数表达的是求和的概念
-```scheme
-(define (sum term next a b)
-  (if (> a b)
-      0
-      (+ (term a)
-         (sum term next (next a) b))))
+```python
+def sum(term, a, to, b):
+    if (a > b):
+        return 0
+    else:
+        return (term(a) + sum(term, to(a), to, b))
 ```
 这才是完整的高阶函数, 使用实例:
-```scheme
-(define (cube x) (* x x x))
-(define (identity x) x)
-(define (inc x) (+ x 1))
-(define (pi-sum a b)
-  (define (pi-term x) (/ 1.0 (* x (+ x 2))))
-  (define (pi-next x) (+ x 4))
-  (* 8 (sum pi-term pi-next a b)))
+```python
+import sys
+sys.setrecursionlimit(10000000)
 
-(display (sum cube inc 1 10))
-(newline)
-(display (sum identity inc 1 10))
-(newline)
-(display (pi-sum 1 1000))
+def cube(x):
+    return x * x * x
+def identity(x):
+    return x
+def inc(x):
+    return x + 1
+def pi_sum(a, b):
+    def pi_term(x):
+        return 1 / (x * (x + 2))
+    def pi_to(x):
+        return x + 4
+    return 8 * sum(pi_term, a, pi_to, b)
+
+print(sum(cube, 1, inc, 10))
+print(sum(identity, 1, inc, 10)) 
+print(pi_sum(1, 10000))
 ```
 
 ### 1.3.2 用 $Lambda$ 构造过程
 
 $lambda$ 就是所谓匿名函数, 基本语法如下
 
-```scheme
-(lambda (<formal-parameters>) (<body>))
+```python
+lambda <形参列表>: <函数体>
 ```
-其实
-```scheme
-(define (inc x) (+ x 1))
-(define inc (lambda (x) (+ 1 x)))
-```
-两者作用相同, 第一行只是第二行的简化版本 \
-$lambda$ 的优势在于, 把函数当作参数传入的时候, 不需要给函数命名, 从而省去麻烦
+
+$lambda$ 的优势在于, 把函数当作参数传入的时候, 不需要给函数命名, 从而省去麻烦 \
 $lambda$ 也可以当作运算符使用
-```scheme
-((lambda (x) (* 2 x)) 5)
-```
 
-**$let$**可以创建局部变量, 一般形式如下:
-```scheme
-(let ((<var1> <exp1>)
-      (<var1> <exp1>)
-      (<var1> <exp1>)
-      ...)
-  <body>)
+```python
+print((lambda x: x + 1)(5))
 ```
-和以下形式等价
-```scheme
-((lambda (var1 var2 var3)
-    (body))
-  (exp1 exp2 exp3))
-```
-
-* $let$ 中的变量只能在后面的 $body$ 中使用, 相当于建立局部变量约束
-* $let$ 中的变量是由外部的变量计算而来, 当形参重名的时候要注意这点
-* 当然可以用内部 $define$ 来创建变量, 但约定俗成的是 $define$ 定义过程, $let$ 定义变量
-
 
 ### 1.3.3 过程作为一般性的方法
 1. 区间这般寻找方程的根: 主要是根据零点存在定理的二分法
@@ -661,43 +673,56 @@ def sqrt2(x):
 
 ### 1.1
 
-```scheme
-10 ;10
-(+ 3 5 4) ;12
-(- 9 1) ;8
-(/ 6 2) ;3
-(+ (* 2 4) (- 4 6)) ;6
-(define a 3) ;a
-(define b (+ a 1)) ;b
-(+ a b (* a b)) ;19
-(= a b) ;#f
-(if (and (> b a) (< b (* a b)))
-    b
-    a) ;4
-(cond ((= a 4) 6)
-      ((= b 4) (+ 6 7 a))
-      (else 25) ;16
-(+ 2 (if (> b a) b a)) ;6
-(* (cond ((> a b) a)
-         ((< a b) b)
-         (else -1))
-   (+ a 1)) ;16
+```python
+10 #10
+3 + 5 + 4 # 12
+9 - 1 #8
+6 / 2 #3
+(2 * 4) + (4 - 6) #6
+a = 3
+b = a + 1
+a + b + (a * b) # 19
+a == b # False
+if ((b > a) and (b < (a * b))):
+    return b
+else:
+    return a # 4
+
+if (a == 4):
+    return 6
+elif (b == 4):
+    return 6 + 7 + a
+else:
+    return 25 #16
+
+2 + (b if (b > a) else a) #6
+
+x = 0
+if (a > b):
+    x = a
+elif (a < b):
+    x = b
+else: 
+    x = -1
+x * (a + 1) #16
 ```
 
 ### 1.2
 
-```scheme
-(/ (+ 5 4 (- 2 (- 3 (+ 6 (/ 4 5)))))
-   (* 3 (- 6 2) (- 2 7)))
+```python
+(5 + 4 + (2 - (3 - (6 + 4 / 5)))) / (3 * (6 - 2) * (2 - 7))
 ```
 
 ### 1.3
 
-```scheme
-(define (process a b c)
-    (cond ((and (<= a b) (<= a c)) (+ b c))
-          ((and (<= b a) (<= b c)) (+ a c))
-          ((and (<= c a) (<= c b)) (+ a b))))
+```python
+def process(a, b, c):
+    if (a <= b) and (a <= c):
+        return b + c
+    elif (b <= a) and (b <= c):
+        return a + c
+    elif (c <= a) and (c <= b):
+        return a + b
 ```
 
 ### 1.4
@@ -709,13 +734,12 @@ def sqrt2(x):
 ### 1.5
 
 1. 正则序:
-```scheme
-(test 0 (p))
-(if (= x 0) 0 (p)) ; 在 (p) 这里无限展开, 发生错误
+```python
+# 在 (p) 这里无限展开, 发生错误
 ```
 2. 应用序
-```scheme
-0 ; 不计算 (p) 的结果, 因为谓词为真
+```python
+0 # 不计算 (p) 的结果, 因为谓词为真
 ```
 
 ### 1.6
@@ -726,24 +750,27 @@ def sqrt2(x):
 
 ### 1.7
 
-```scheme
-(define (new-good-enough? last guess x)
-  (< (abs (- (/ last guess) 1)) 0.001)) 
-
-(define (sqrt last guess x)
-    (cond ((new-good-enough? last guess x) guess)
-          (else (sqrt guess (improve guess x) x))))
+```python
+def new_good_enough(last, guess, x):
+    return abs(last / guess - 1) < 0.0001
+def sqrt(last, guess, x):
+    if (new_good_enough(last, guess, x)):
+        return guess
+    else:
+        return sqrt(guess, improve(guess, x), x)
 ```
 
 ### 1.8
 
-```scheme
-(define (new-improve guess x)
-  (/ (+ (/ x (* guess guess)) (* 2 guess)) 3.0))
+```python
+def new_improve(guess, x):
+    return (x / square(guess) + 2 * guess) / 3.0
 
-(define (calc last guess x)
-    (cond ((new-good-enough? last guess x) guess)
-          (else (calc guess (new-improve guess x) x))))
+def calc(last, guess, x):
+    if (new_good_enough(last, guess, x)):
+        return guess
+    else:
+        return calc(guess, new_improve(guess, x), x)
 ```
 
 ### 1.9
@@ -773,10 +800,10 @@ def sqrt2(x):
 
 ### 1.10
 
-```scheme
-(A 1 10) ;1024
-(A 2 4)  ;65536
-(A 3 3)  ;65536
+```python
+A(1, 10) # 1024
+A(2, 4) # 65536
+A(3, 3) # 65536
 ```
 
 $f(x)=2x$ \
@@ -786,32 +813,32 @@ $h(x)=2\uparrow\uparrow n$
 ### 1.11
 
 递归
-```scheme
-(define (calc a b c)
-  (+ (* 3 a) (* 2 b) c))
-
-(define (f n)
-  (cond ((< n 3) n)
-        (else (calc (f (- n 3)) (f (- n 2)) (f (- n 1))))))
+```python
+def calc(a, b, c)
+    return 3 * a + 2 * b + c
+def f(n):
+    if (n < 3):
+        return n
+    else:
+        return calc(f(n - 3), f(n - 2), f(n - 1))
 ```
 迭代
-```scheme
-(define (f n)
-  (define (calc a b c)
-    (+ (* 3 a) (* 2 b) c))
-  (define (f-iter a b c counter)
-    (cond ((= counter n) c)
-          (else (f-iter b c (calc a b c) (+ counter 1)))))
-  (if (< n 3) n (f-iter 0 1 2 2)))
+```python
+def f(n):
+    def iter(a, b, c, count):
+        if (count == n):
+            return c
+        return iter(b, c, calc(a, b, c), count + 1)
+    return n if (n < 3) else iter(0, 1, 2, 2)
 ```
 
 ### 1.12
 
-```scheme
-(define (pascal row col)
-  (cond ((or (= row col) (= col 0)) 1)
-        (else (+ (pascal (- row 1) col)
-                 (pascal (- row 1) (- col 1))))))
+```python
+def pascal(row, col):
+    if ((row == col) or (col == 0)):
+        return 1
+    return pascal(row - 1, col) + pascal(row - 1, col - 1)
 ```
 
 ### 1.13
@@ -845,35 +872,46 @@ $$
 二进制分割, $2^11 = 2^1 \times 2^2 \times 2^8$  \
 `cur` 保存 2 的几次幂, 如果 `count` 是奇数就乘到答案里
 
-```scheme
-(define (fast-pow a b)
-  (define (pow-iter res cur count)
-    (cond ((zero? count) res)
-          ((even? count) (pow-iter res (square cur) (/ count 2)))
-          (else (pow-iter (* res cur) cur (- count 1)))))
-  (pow-iter 1 a b))
+```python
+def fast_pow(a, b):
+    def iter(res, cur, count):
+        if (count == 0):
+            return res
+        elif (count % 2 == 0):
+            return iter(res, cur * cur, count / 2)
+        else:
+            return iter(res * cur, cur, count - 1)
+    return iter(1, a, b)
 ```
 
 ### 1.17
 
-```scheme
-(define (double x) (+ x x))
-(define (halve x) (/ x 2))
-(define (mul a b)
-  (cond ((zero? b) 0)
-        ((even? b) (mul (double a) (halve b)))
-        (else (+ a (mul a (- b 1))))))
+```python
+def double(x):
+    return x + x
+def halve(x):
+    return x / 2
+def mul(a, b):
+    if (b == 0):
+        return 0
+    elif (b % 2 == 0):
+        return mul(double(a), halve(b))
+    else:
+        return a + mul(a, b - 1)
 ```
 
 ### 1.18
 
-```scheme
-(define (mul a b)
-  (define (iter res cur count)
-    (cond ((zero? count) res)
-          ((even? count) (iter res (double cur) (halve count)))
-          (else (iter (+ res cur) cur (- count 1)))))
-  (iter 0 a b))
+```python
+def mul(a, b):
+    def iter(res, cur, count):
+        if (count == 0):
+            return res
+        elif (count % 2 == 0):
+            return iter(res, double(cur), halve(count))
+        else:
+            return iter(res + cur, cur, count - 1)
+    return iter(0, a, b)
 ```
 
 ### 1.19
@@ -887,29 +925,23 @@ $$
 \end{align}
 $$
 所以 $p' = p^2+q^2$, $q'= 2pq+q^2$
-```scheme
-(define (fib n)
-  (define (fib-iter a b p q counter)
-    (cond ((= counter 0) b)
-          ((even? counter)
-            (fib-iter a 
-                      b
-                      (+ (square p) (square q))
-                      (+ (* 2 p q) (square q))
-                      (/ counter 2)))
-          (else
-            (fib-iter (+ (* b q) (* a q) (* a p))
-                      (+ (* b p) (* a q))
-                      p
-                      q
-                      (- counter 1)))))
-  (fib-iter 1 0 0 1 n))
+```python
+def fib(n):
+    def iter(a, b, p, q, count):
+        if (count == 0):
+            return b
+        elif (count % 2 == 0):
+            return iter(a, b, (p * p + q * q), (2 * p * q + q * q), count / 2)
+        else:
+            return iter(b * q + a * q + a * p, 
+                        b * p + a * q, p, q, count - 1)
+    return iter(1, 0, 0, 1, n)
 ```
 
 ### 1.20 
 
 正则序展开过长, 省略: 共18次 `remainder` \
-应用序展开: 共四次 `remainder`
+应用序展开: 共4次 `remainder`
 ```scheme
 (GCD 206 40)
 (GCD 40 6)
@@ -928,40 +960,36 @@ $$
 
 ### 1.22
 
-这里使用 `scheme` 记录时间
-```scheme
-(define (timed-prime-test n)
-  (newline)
-  (display n)
-  (start-prime-test n (runtime)))
+```python
+import time
 
-(define (start-prime-test n start-time)
-  (if (prime? n)
-      (report-prime (- (runtime) start-time))))
+x = 13 
+l, r = fast_pow(10, x), fast_pow(10, x + 1)
 
-(define (report-prime elapsed-time)
-  (display " *** ")
-  (display elapsed-time))
+starttime = time.time() 
 
-(define (search-for-primes l r)
-  (cond ((= r l) 'exit)
-        ((prime? l) (timed-prime-test l))
-        (else (search-for-primes (+ l 1) r))))
+for i in range(l, r):
+    if (is_prime_simple(i)):
+        print(i)
+        break
+
+endtime = time.time()
+print("time: ", (endtime - starttime))
+```
+在 $10^{11} 到 10^{12}$ 寻找
+```python
+100000000003
+time:  0.1265561580657959
+```
+在 $10^{12} 到 10^{13}$ 寻找
+```python
+1000000000039
+time:  0.41858363151550293
 ```
 在 $10^{13} 到 10^{14}$ 寻找
-```scheme
+```python
 10000000000037
- *** 1.2599999999999998
-```
-在 $10^{14} 到 10^{15}$ 寻找
-```scheme
-100000000000031
- *** 4.06
-```
-在 $10^{15} 到 10^{16}$ 寻找
-```scheme
-1000000000000037
- *** 12.66
+time:  1.2202045917510986
 ```
 
 总体上符合 $\sqrt 10$的规律
@@ -969,34 +997,39 @@ $$
 ### 1.23
 
 改 `next` 函数之后:
-```scheme
-(define (next x)
-  (cond ((= x 2) 3)
+```python
+def next(n):
+    if (n == 2):
+        return 3
+    return n + 2
 ```
-在 $10^{13} 到 10^{14}$ 寻找
-```scheme
+```python
+100000000003
+time:  0.07922077178955078
+1000000000039
+time:  0.26198792457580566
 10000000000037
- *** .8400000000000001
+time:  0.6970314979553223
 ```
-在 $10^{14} 到 10^{15}$ 寻找
-```scheme
-100000000000031
-  *** 2.6
-```
-在 $10^{15} 到 10^{16}$ 寻找
-```scheme
-1000000000000037
- *** 8.220000000000002
-```
-
-近似于 1.5 的倍率, 原因可能和系统调用, 资源占用等方面有关
 
 ### 1.24
 
-使用新的素数检测之后, 检测 \
-$10^{400}$ 的素数是 0.03 秒左右
-$10^{500}$ 的素数是 0.04 秒左右
-$10^{1000}4 的素数是 0.4 秒左右
+使用新的素数检测之后, 检测 100 个素数的平均时间:
+
+$10^{100}$
+time:  0.00022767770169961331 \
+$10^{200}$
+time:  0.0010467009110884233 \
+$10^{300}$
+time:  0.002386471237799134 \
+$10^{400}$
+time:  0.005082491672400272 \
+$10^{500}$
+time:  0.00900224724201241 \
+$10^{600}$
+time:  0.014897625855725221 \
+$10^{700}$
+time:  0.023792396892200817 
 
 不符合预期的结果可能因为系统内部自身调度的原因
 
@@ -1012,30 +1045,12 @@ $10^{1000}4 的素数是 0.4 秒左右
 
 ### 1.27
 
-```scheme
-(define (check n)
-  (define (pow a b m)
-    (cond ((= b 0) 1)
-          ((odd? b) (remainder (* a (pow a (- b 1) m)) m))
-          (else (remainder (square (pow a (/ b 2) m)) m))))
-  (define (calc times)
-    (define (test a)
-      (= (pow a n n) a))
-    (cond ((= times 2) #t)
-          ((not (test (- times 1))) #f)
-          (else (calc (- times 1)))))
-  (calc n))
-
-(define (find-carmicheal cur n)
-  (cond ((= n cur) 'exit)
-        ((and (not (prime? cur)) (check cur)) 
-         (begin (newline)
-                (display cur)
-                (find-carmicheal (+ cur 1) n)))
-        (else (find-carmicheal (+ cur 1) n))))
-
-(find-carmicheal 2 1000000)
+```python
+for x in range(2, int(1e6)):
+    if (is_prime_simple(x) != is_prime(x)):
+        print(x)
 ```
+
 10万之内的 $Carmicheal$ 数
 ```
 561
@@ -1062,119 +1077,142 @@ $Miller-Robin$ 放在正文了
 
 ### 1.29
 
-```scheme
-(define (sum term next a b)
-  (if (> a b)
-      0
-      (+ (term a)
-         (sum term next (next a) b))))
 
-(define (simpson f a b n)
-  (define h (/ (- b a) n))
+$Simpson$
+```python
+def simpson(f, a, b, n):
+    h = (b - a) / n
+    def k(x):
+        if (x == 0) or (x == n):
+            return 1
+        elif (x % 2 == 0):
+            return 2
+        else:
+            return 4
 
-  (define (k x)
-    (cond ((or (= 0 x) (= n x)) 1)
-          ((even? x) 2)
-          ((odd? x) 4)))
+    def y(x):
+        return f(a + x * h)
+    def term(x):
+        return k(x) * y(x)
+    def inc(x):
+        return x + 1
 
-  (define (y x) (f (+ a (* x h))))
-  (define (term x) (* (k x) (y x)))
-  (define (inc x) (+ x 1))
+    return h * sum(term, 0.0, inc, n) / 3.0
 
-  (/ (* h (sum term inc 0.0 n)) 3.0))
-
-(define (cube x) (* x x x))
-
-(newline)
-(display (simpson cube 0.0 1.0 100))
-(newline)
-(display (simpson cube 0.0 1.0 1000))
-(newline)
+print(simpson(cube, 0.0, 1.0, 100))
+print(simpson(cube, 0.0, 1.0, 1000))
+```
+```
+0.24999999999999992
+0.2500000000000003
+```
+普通积分
+```
+0.249999875000001
+0.24999999874993412
 ```
 
 ### 1.30
 
-```scheme
-(define (sum term a next b)
-  (define (iter a result)
-    (if (> a b)
-        result
-        (iter (next a) (+ result (term a)))))
-  (iter a 0))
+```python
+def sum(term, a, to, b):
+    def iter(count, res):
+        if (count > b):
+            return res
+        else:
+            return iter(to(count), res + term(count))
+    return iter(a, 0)
 ```
 
 ### 1.31
-```scheme
-(define (product f next a b)
-  (cond ((> a b) 1)
-        (else (* (f a) (product f next (next a) b)))))
+```python
+def product(f, a, to, b):
+    if (a > b):
+        return 1
+    else:
+        return f(a) * product(f, to(a), to, b)
 
-(define (product-new f next a b)
-  (define (iter count res)
-    (cond ((> count b) res)
-          (else (iter (next count) (* res (f count))))))
-  (iter a 1))
+def product_new(f, a, to, b):
+    def iter(count, res):
+        if (count > b):
+            return res
+        else:
+            return iter(to(count), res * f(count))
+    return iter(a, 1)
 
-(define (identify x) x)
-(define (inc x) (+ x 1))
+def identity(x):
+    return x
+def inc(x):
+    return x + 1
+def factorial(n):
+    return product(identity, 1, inc, n)
 
-(define (factorial n)
-  (product identify inc 1 n))
+def get_pi(n):
+    def pi_term(f, g, x):
+        if (x % 2 == f):
+            return x + 2
+        if (x % 2 == g):
+            return x + 1
+    def upper_term(x):
+        return pi_term(0, 1, x)
+    def lower_term(x):
+        return pi_term(1, 0, x)
 
-(define (get-pi n)
-  (define (pi-term f? g? x) 
-    (cond ((f? x) (+ x 2))
-          ((g? x) (+ x 1))))
-  (define (upper-term x) (pi-term even? odd? x))
-  (define (lower-term x) (pi-term odd? even? x))
+    return 4 * product_new(upper_term, 1, inc, n) / product_new(lower_term, 1, inc, n)
 
-  (* 4.0 (/ (product-new upper-term inc 1 n)
-            (product-new lower-term inc 1 n))))
-
-(newline)
-(display (factorial 6)) ;
-(newline)
-(display (get-pi 10000))
+print(factorial(6))
+print(get_pi(10000))
 ```
 
 ### 1.32
 
-递归
-```scheme
-(define (accumulate opt init term next a b)
-  (cond ((> a b) init)
-        (else (opt (term a) 
-                   (accumulate opt init term next (next a) b)))))
-```
-迭代
-```scheme
-(define (accumulate opt init term next a b)
-  (define (iter count res)
-    (cond ((> count b) res)
-          (else (iter (next count) (opt res
-                                        (term count))))))
-  (iter a init))
+```python
+def add(a, b):
+    return a + b
+def mul(a, b):
+    return a * b
 
+def accumulate(opt, init, term, a, to, b):
+    if (a > b):
+        return init
+    else:
+        return opt(term(a), accumulate(opt, init, term, to(a), to, b))
+
+def accumulate_new(opt, init, term, a, to, b):
+    def iter(count, res):
+        if (count > b):
+            return res
+        else:
+            return iter(to(count), opt(res, term(count)))
+    return iter(init)
+
+print(accumulate(add, 0, cube, 1, inc, 10))
+print(accumulate(mul, 1, identity, 1, inc, 5))
 ```
+
 ### 1.33
 
-```scheme
-(define (filter-accumulate opt init term next filter a b)
-  (cond ((> a b) init)
-        ((filter a) (opt (term a)
-                         (filter-accumulate opt init term next filter 
-                                            (next a) b)))
-        (else (filter-accumulate opt init term next filter (next a) b))))
+```python
+def filter_accumulate(opt, init, term, filt, a, to, b):
+    if (a > b):
+        return init
+    tmp = filter_accumulate(opt, init, term, filt, to(a), to, b)
+    if (filt(a)):
+        return opt(a, tmp)
+    return tmp
 
-(define (identify x) x)
-(define (inc x) (+ x 1))
+def q_a(a, b):
+    return filter_accumulate(add, 0, identity, miller_robin, a, inc, b)
 
-(define (question_a a b)
-  (filter-accumulate + 0 identify inc prime? a b))
-
-(define (question_b n)
-  (define (filter x) (= 1 (GCD x n)))
-  (filter-accumulate * 1 identify inc filter 1 (- n 1)))
+def GCD(a, b):
+    if (b == 0):
+        return a
+    else:
+        return GCD(b, a % b)
+def q_b(n):
+    def filt(x):
+        return GCD(x, n) == 1
+    return filter_accumulate(mul, 1, identity, filt, 1, inc, n - 1)
 ```
 
 ### 1.34
