@@ -669,9 +669,7 @@ def sqrt2(x):
 
 # 练习
 
-## 1
-
-### 1.1
+## 1.1
 
 ```python
 10 #10
@@ -707,13 +705,13 @@ else:
 x * (a + 1) #16
 ```
 
-### 1.2
+## 1.2
 
 ```python
 (5 + 4 + (2 - (3 - (6 + 4 / 5)))) / (3 * (6 - 2) * (2 - 7))
 ```
 
-### 1.3
+## 1.3
 
 ```python
 def process(a, b, c):
@@ -725,13 +723,13 @@ def process(a, b, c):
         return a + b
 ```
 
-### 1.4
+## 1.4
 
 函数行为: `a` + (`b` 的绝对值) \
 如果 `b > 0` 操作符为 `+` \
 如果 `b < 0` 操作符为 `-`
 
-### 1.5
+## 1.5
 
 1. 正则序:
 ```python
@@ -742,13 +740,13 @@ def process(a, b, c):
 0 # 不计算 (p) 的结果, 因为谓词为真
 ```
 
-### 1.6
+## 1.6
 
 结果是死循环, `scheme` 以应用序求值, 对于 `new-if` 这个函数 \
 需要求出实参的每一个值, 所以就会陷入无限递归中, 失去了 `if` 的短路特性
 
 
-### 1.7
+## 1.7
 
 ```python
 def new_good_enough(last, guess, x):
@@ -760,7 +758,7 @@ def sqrt(last, guess, x):
         return sqrt(guess, improve(guess, x), x)
 ```
 
-### 1.8
+## 1.8
 
 ```python
 def new_improve(guess, x):
@@ -773,7 +771,7 @@ def calc(last, guess, x):
         return calc(guess, new_improve(guess, x), x)
 ```
 
-### 1.9
+## 1.9
 
 第一个: 递归计算函数
 ```scheme
@@ -798,7 +796,7 @@ def calc(last, guess, x):
 9
 ```
 
-### 1.10
+## 1.10
 
 ```python
 A(1, 10) # 1024
@@ -810,7 +808,7 @@ $f(x)=2x$ \
 $g(x)=2^n$ \
 $h(x)=2\uparrow\uparrow n$
 
-### 1.11
+## 1.11
 
 递归
 ```python
@@ -832,7 +830,7 @@ def f(n):
     return n if (n < 3) else iter(0, 1, 2, 2)
 ```
 
-### 1.12
+## 1.12
 
 ```python
 def pascal(row, col):
@@ -841,7 +839,7 @@ def pascal(row, col):
     return pascal(row - 1, col) + pascal(row - 1, col - 1)
 ```
 
-### 1.13
+## 1.13
 
 $$
 \begin{align}
@@ -855,19 +853,19 @@ $$
 \end{align}
 $$
 
-### 1.14
+## 1.14
 
 ![img](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/QQ截图20230703174405.47ncpxb1kgc0.webp)
 空间 $\Theta(n)$ \
 时间 [$\Theta(n^5$)](https://sicp-solutions.net/post/sicp-solution-exercise-1-14/)
 
-### 1.15 
+## 1.15 
 
 1. 5次, 因为 $0.1 \times 3^5$ 才能大于 $12.15$
 2. 每次问题规模缩小三分之一, 而且为递归计算函数, 空间时间都是 $\Theta(logn)$
 
 
-### 1.16
+## 1.16
 
 二进制分割, $2^11 = 2^1 \times 2^2 \times 2^8$  \
 `cur` 保存 2 的几次幂, 如果 `count` 是奇数就乘到答案里
@@ -884,7 +882,7 @@ def fast_pow(a, b):
     return iter(1, a, b)
 ```
 
-### 1.17
+## 1.17
 
 ```python
 def double(x):
@@ -900,7 +898,7 @@ def mul(a, b):
         return a + mul(a, b - 1)
 ```
 
-### 1.18
+## 1.18
 
 ```python
 def mul(a, b):
@@ -914,7 +912,7 @@ def mul(a, b):
     return iter(0, a, b)
 ```
 
-### 1.19
+## 1.19
 
 基于矩阵乘法的矩阵快速幂求斐波那契数列
 
@@ -938,7 +936,7 @@ def fib(n):
     return iter(1, 0, 0, 1, n)
 ```
 
-### 1.20 
+## 1.20 
 
 正则序展开过长, 省略: 共18次 `remainder` \
 应用序展开: 共4次 `remainder`
@@ -950,7 +948,7 @@ def fib(n):
 (GCD 2 0)
 ```
 
-### 1.21
+## 1.21
 
 ```scheme
 199
@@ -958,7 +956,7 @@ def fib(n):
 7
 ```
 
-### 1.22
+## 1.22
 
 ```python
 import time
@@ -994,7 +992,7 @@ time:  1.2202045917510986
 
 总体上符合 $\sqrt 10$的规律
 
-### 1.23
+## 1.23
 
 改 `next` 函数之后:
 ```python
@@ -1012,7 +1010,7 @@ time:  0.26198792457580566
 time:  0.6970314979553223
 ```
 
-### 1.24
+## 1.24
 
 使用新的素数检测之后, 检测 100 个素数的平均时间:
 
@@ -1033,17 +1031,17 @@ time:  0.023792396892200817
 
 不符合预期的结果可能因为系统内部自身调度的原因
 
-### 1.25
+## 1.25
 
 不能, 在最后一起取模的话, 函数内部计算数值过大, 时间复杂度过高
 
-### 1.26 
+## 1.26 
 
 他使用这种是树形递归, 每层节点数是上一层的二倍
 
 一共有 $logn$ 层, 节点数 1 2 4 ..., 根据等比数列求和公式可得复杂度 $\Theta(n)$
 
-### 1.27
+## 1.27
 
 ```python
 for x in range(2, int(1e6)):
@@ -1071,11 +1069,11 @@ for x in range(2, int(1e6)):
 75361
 ```
 
-### 1.28
+## 1.28
 
 $Miller-Robin$ 放在正文了
 
-### 1.29
+## 1.29
 
 
 $Simpson$
@@ -1112,7 +1110,7 @@ print(simpson(cube, 0.0, 1.0, 1000))
 0.24999999874993412
 ```
 
-### 1.30
+## 1.30
 
 ```python
 def sum(term, a, to, b):
@@ -1124,7 +1122,7 @@ def sum(term, a, to, b):
     return iter(a, 0)
 ```
 
-### 1.31
+## 1.31
 ```python
 def product(f, a, to, b):
     if (a > b):
@@ -1164,7 +1162,7 @@ print(factorial(6))
 print(get_pi(10000))
 ```
 
-### 1.32
+## 1.32
 
 ```python
 def add(a, b):
@@ -1190,7 +1188,7 @@ print(accumulate(add, 0, cube, 1, inc, 10))
 print(accumulate(mul, 1, identity, 1, inc, 5))
 ```
 
-### 1.33
+## 1.33
 
 ```python
 def filter_accumulate(opt, init, term, filt, a, to, b):
@@ -1215,19 +1213,19 @@ def q_b(n):
     return filter_accumulate(mul, 1, identity, filt, 1, inc, n - 1)
 ```
 
-### 1.34
+## 1.34
 
 发生错误 \
 展开之后是 `(2 2)` 
 
-### 1.35
+## 1.35
 
 $\phi$ 是方程 $x^2 - x - 1 =0$ 的根, 变形一下可得 $f(x) = 1 + \frac 1 x$ 的不动点是 $\phi$
 ```python
 print(fixed_point(lambda x: 1 + 1 / x, 1.0))
 ```
 
-### 1.36
+## 1.36
 
 ```python
 def damp():
@@ -1237,7 +1235,7 @@ print(fixed_point(lambda x: log(1000) / log(x), 2.0)) ;34 步
 print(damp())                                         ;9 步
 ```
 
-### 1.37
+## 1.37
 
 至少要 11 次才能到 $0.618$ 的精度 \
 递归
@@ -1263,21 +1261,21 @@ def cont_frac(n, d, k):
     return calc(k, 0)
 ```
 
-### 1.38
+## 1.38
 
 ```python
 print(2 + cont_frac(lambda x: 1.0, 
                     lambda x: 2 * (x + 1) / 3 if (x % 3 == 2) else 1.0, 100))
 ```
 
-### 1.39
+## 1.39
 ```python
 def tan_cf (x, k):
     return cont_frac(lambda b: x if (b == 1) else -x * x,
                      lambda b: 2 * b - 1, k)
 ```
 
-### 1.40
+## 1.40
 
 ```python
 def cubic(a, b, c):
@@ -1286,7 +1284,7 @@ def cubic(a, b, c):
 print(newton_method(cubic(2, 5, 5), 1.0))
 ```
 
-### 1.41
+## 1.41
 
 ```python
 def double(func):
@@ -1297,7 +1295,7 @@ def inc(x):
 print(double(double(double(inc)))(5)) ;13
 ```
 
-### 1.42
+## 1.42
 
 ```python
 def inc(x):
@@ -1310,7 +1308,7 @@ def compose(f, g):
 print(compose(square, inc)(6))
 ```
 
-### 1.43
+## 1.43
 
 ```python
 def square(x):
@@ -1328,7 +1326,7 @@ def repeat(f, n):
 print(repeat(square, 2)(5))
 ```
 
-### 1.44
+## 1.44
 
 ```python
 def smooth(f):
@@ -1341,7 +1339,7 @@ print(smooth(square)(5))
 print(smooth_n(square, 10)(5))
 ```
 
-### 1.45
+## 1.45
 
 ```python
 import math
@@ -1351,7 +1349,7 @@ def n_root(x, n):
 ```
 由实验可知, 平均的阻尼次数是 $\lfloor log_2^n \rfloor$
 
-### 1.46
+## 1.46
 
 ```python
 def interative_improve(good_enough, improve):
