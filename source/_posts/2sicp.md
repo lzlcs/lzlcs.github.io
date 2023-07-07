@@ -123,6 +123,329 @@ print(x_point(z), y_point(z))
 
 ### 2.1.4 拓展练习: 区间算数
 
+```python
+class Interval:
+    upper, lower = 0, 0
+    def __init__(self, a, b):
+        self.lower, self. upper = a, b
+
+    def lbound(self):
+        return self.lower
+    def ubound(self):
+        return self.upper
+    def get(self, other):
+        return self.lbound(), self.ubound(), other.lbound(), other.ubound()
+
+    def __add__(self, other):
+        a, b, c, d = self.get(other)
+        return Interval(a + c, b + d)
+
+    def __sub__(self, other):
+        a, b, c, d = self.get(other)
+        return Interval(a - d, b - c)
+
+    def __mul__(self, other):
+        a, b, c, d = self.get(other)
+        lst = [a * c, a * d, b * c, b * d]
+        return Interval(min(lst), max(lst))
+
+
+    def __truediv__(self, other):
+        _, _, c, d = self.get(other)
+        if (c <= 0 and d >= 0):
+            raise AssertionError("除以跨零区间")
+
+        return self * Interval(1 / d, 1 / c)
+
+    def width(self):
+        return (self.ubound() - self.lbound()) / 2.0
+
+    def __str__(self):
+        return f"({self.lower}, {self.upper})"
+
+class CenterWidthInterval(Interval):
+    def __init__(self, c, w):
+        super().__init__(c - w, c + w)
+
+class PercentInterval(Interval):
+    percent = 0
+    def __init__(self, x, p):
+        super().__init__(x * (1 - p), x * (1 + p))
+        self.percent = p
+    def get_percent(self):
+        return self.percent
+
+def part1(r1, r2):
+    return r1 * r2 / (r1 + r2)
+
+def part2(r1, r2):
+    one = Interval(1, 1)
+    return one / (one / r1 + one / r2)
+
+a = PercentInterval(100, 0.5)
+b = PercentInterval(100, 0.5)
+
+c = PercentInterval(100, 0.0)
+print(c / c)
+print(part1(a, b))
+print(part2(a, b))
+```
+
+## 2.2 层次性数据和闭包性质
+
+在 **盒子和指针** 表示方式中, 每个对象表示为一个指向盒子的 **指针**, 盒子里包含着对象的表示 \
+
+**闭包性质**: 通过它组合起数据对象的结果本身还可以通过同样的操作再进行组合
+
+### 2.2.1 序列(链表)的表示
+
+使用 `python` 中的 `list`
+```python
+def cons(val, lst):
+    if (not isinstance(lst, List)):
+        return List([val] + [lst])
+    return List([val] + lst.val)
+
+def create_list(*args):
+    return List(*args)
+
+class List:
+    def __init__(self, *args):
+        self.val = list(args)
+
+    def car(self):
+        return self.val[0]
+    def cdr(self):
+        return List(*self.val[1:])
+
+    def list_ref(self, n):
+        return self.val[n]
+
+    def length(self):
+        return len(self.val)
+
+    def append(self, other):
+        return List(*(self.val + other.val))
+
+    def last_pair(self):
+        return self.val[self.length() - 1]
+
+    def reverse(self):
+        return List(*reversed(self.val))
+
+    def __str__(self):
+        res = "("
+        for x in self.val:
+            res += " " + str(x)
+        return res + ')'
+```
+使用链表
+```python
+class Pair:
+    def __init__(self, a = None, b = None):
+        self.x, self.y = a, b
+
+    def cons(self, a, b):
+        return Pair(a, b)
+    def car(self):
+        return self.x
+    def cdr(self):
+        return self.y
+    def is_null(self):
+        return self.y == self.x == None
+
+    def creat_list(self, *args):
+        res = None 
+        for arg in reversed(args):
+            res = self.cons(arg, res)
+        return res if res != None else Pair()
+
+    def len(self):
+        count, tmp = 1, self.y
+        while (isinstance(tmp, Pair)):
+            tmp, count = tmp.cdr(), count + 1
+        return 0 if self.x == None else count
+
+    def list_ref(self, n):
+        count, tmp = 1, self.y
+        while (isinstance(tmp, Pair) and count < n):
+            tmp, count = tmp.cdr(), count + 1
+        if (not isinstance(tmp, Pair)):
+            raise IndexError("n 过大")
+        return tmp.car()
+
+    def append(self, other):
+        if (self.cdr() != None):
+            return self.cons(self.car(), self.cdr().append(other)) # type: ignore
+        else:
+            return self.cons(self.car(), other)
+
+    def reverse(self, prev = None):
+        if (self.is_null()):
+            return prev
+
+        if (self.cdr() == None):
+            return self.cons(self.car(), prev)
+        
+        rest = self.cdr()
+        self.y = prev
+
+        return rest.reverse(self) # type: ignore
+
+    def last_pair(self):
+        tmp = self
+        while (isinstance(tmp.y, Pair) and (not tmp.y.is_null())):
+            tmp = tmp.y
+        return Pair(tmp.car())
+        
+    def to_string(self, cur):
+        res = ""
+        if isinstance(cur.x, Pair):
+            res = '(' + self.to_string(cur.x) + ')'
+        elif cur.x != None:
+            res = str(cur.x)
+        if isinstance(cur.y, Pair):
+            res += ' ' + self.to_string(cur.y)
+        elif cur.y != None:
+            res += " . " + str(cur.y)
+
+        return res
+
+
+    def __str__(self):
+        return '(' + self.to_string(self) + ')'
+
+```
+
+### 2.2.2 层次性结构
+
+```python
+class TreeNode:
+    def __init__(self, value = None, children = None):
+        self.value = value
+        self.children = children or []
+
+    def add_child(self, child_node):
+        self.children.append(child_node)
+
+    def __str__(self):
+        return self._str_recursive(self)
+
+    def is_leaf(self):
+        return len(self.children) == 0
+
+    def count_leaves(self):
+
+        def iter(cur_node):
+            if (cur_node.is_leaf()):
+                return 1
+            return sum([iter(x) for x in cur_node.children])
+
+        return iter(self)
+
+
+    def deep_reverse(self):
+    
+        def iter(cur_node):
+            if (cur_node.is_leaf()):
+                return TreeNode(cur_node.value)
+            new_children = []
+            for child in cur_node.children:
+                new_children += [iter(child)]
+            return TreeNode(cur_node.value, reversed(new_children))
+            
+        return iter(self)
+
+    def fringe(self):
+
+        def iter(cur_node):
+            if (cur_node.is_leaf()):
+                return [cur_node.value]
+            res = []
+            for child in cur_node.children:
+                res += iter(child)
+            return res
+
+        return iter(self)
+
+    def map(self, proc):
+
+        def iter(cur_node):
+            res = []
+            for child in cur_node.children:
+                res += [iter(child)]
+            return TreeNode(proc(cur_node.value), res)
+
+        return iter(self)
+
+        
+    def square(self):
+        def square(x):
+            return x * x
+        return self.map(square)
+
+
+    def _str_recursive(self, node, level = 0):
+        indent = " " * level
+        res = f"{indent}{node.value}\n"
+
+        for child in node.children:
+            res += self._str_recursive(child, level + 1)
+        return res
+
+
+root = TreeNode(1)
+node_b = TreeNode(2)
+node_c = TreeNode(3)
+node_d = TreeNode(4)
+node_e = TreeNode(5)
+node_f = TreeNode(6)
+
+root.add_child(node_b)
+root.add_child(node_c)
+node_b.add_child(node_d)
+node_b.add_child(node_e)
+node_c.add_child(node_f)
+
+# 打印树
+print(root)
+print(root.count_leaves())
+print(root.deep_reverse())
+print(root.fringe())
+print(root.map(lambda x: x * x))
+print(root.square())
+
+```
+
+### 2.2.3 序列作为一种约定的界面
+
+工作的过程可以抽象为一下几步: 枚举器, 过滤器, 转换器, 累计器 
+
+```python
+def sum_odd_squares(cur):
+    if (cur.is_leaf()):
+        if (cur.value % 2 == 1):
+            return cur.value * cur.value
+        return 0
+
+    res = 0 
+    for child in cur.children:
+        res += sum_odd_squares(child)
+    return res
+
+def even_fibs(n):
+    a, b = 0, 1
+    res = []
+    for _ in range(n):
+        tmp = a + b
+        a, b = b, tmp
+        if (tmp % 2 == 0):
+            res.append(tmp)
+    return res
+```
+
+以上这两个函数都混杂了各个步骤, 不利于程序的抽象表达
+
 
 
 
@@ -458,8 +781,261 @@ print(part2(a, b))
 设计: ...?
 
 
+## 2.17 
+
+见正文
+
+## 2.18
+
+见正文
+
+## 2.19
+
+```python
+def car(lst):
+    return lst[0]
+def cdr(lst):
+    return lst[1:]
+
+def no_more(coin_values):
+    return len(coin_values) == 0
+
+def first_denomination(coin_values):
+    return car(coin_values)
+
+def except_first_denomination(coin_values):
+    return cdr(coin_values)
 
 
+def cc(amount, coin_values):
+    if (amount == 0):
+        return 1
+    if (amount < 0 or no_more(coin_values)):
+        return 0
+    
+    value = first_denomination(coin_values)
+    a = cc(amount, except_first_denomination(coin_values))
+    b = cc(amount - value, coin_values)
+    return a + b
 
+us_coins = [50, 25, 10, 5, 1]
+uk_coins = [100, 50, 25, 10, 5, 2, 1, 0.5]
+
+print(cc(100, uk_coins))
+```
+
+不会, 因为组合方式是一定的
+
+## 2.20
+
+```python
+def same_parity(*args):
+    tmp, res = args[0] % 2, []
+    for arg in args:
+        if (arg % 2 == tmp):
+            res.append(arg)
+    return res
+
+print(same_parity(1, 2, 3, 4, 5, 6, 7))
+print(same_parity(2, 3, 4, 5, 6, 7))
+```
+
+## 2.21
+
+```python
+def square_list_items_1(lst):
+    res = []
+    for x in lst:
+        res.append(x * x)
+    return res
+
+def map(lst, proc):
+    res = []
+    for x in lst:
+        res.append(proc(x))
+    return res
+
+def square_list_items_2(list):
+    return map(list, lambda x: x * x)
+
+lst = [1, 2, 3, 4]
+print(square_list_items_1(lst))
+print(square_list_items_2(lst))
+```
+
+## 2.22
+
+第一个程序是每次把结果放在开头
+第二个程序是把一个 `list` `cons` 在一个 `atom` 上
+
+## 2.23
+
+```python
+def for_each(lst, proc):
+    if (len(lst) == 0):
+        return
+    proc(lst[0])
+    for_each(lst[1:], proc)
+```
+
+## 2.24
+
+```scheme
+(1 (2 (3 4)))
+
+1 
+  2
+    3
+    4
+```
+
+## 2.25
+
+```python
+x = [1, 3, [5, 7], 9]
+y = [[7]]
+z = [1, [2, [3, [4, [5, [6, 7]]]]]]
+
+def car(lst):
+    return lst[0]
+def cdr(lst):
+    return lst[1:]
+
+print(car(cdr(car(cdr(cdr(x))))))
+print(car(car(y)))
+print(car(cdr(car(cdr(car(cdr(car(cdr((car(cdr((car(cdr(z)))))))))))))))
+```
+
+## 2.26
+
+```Scheme
+(1 2 3 4 5 6)
+((1 2 3) 4 5 6)
+((1 2 3) (4 5 6))
+```
+## 2.27
+
+见正文
+
+## 2.28
+
+见正文
+
+## 2.29
+
+```python
+class Mobile:
+    def __init__(self, l = None, r = None):
+        self.left, self.right = l, r
+
+    def left_branch(self):
+        return self.left
+
+    def right_branch(self):
+        return self.right
+
+    def total_weight(self):
+
+        def iter(cur_node):
+            if isinstance(cur_node, Mobile):
+                a = iter(cur_node.left_branch().branch_structure()) # type: ignore
+                b = iter(cur_node.right_branch().branch_structure()) # type: ignore
+                return a + b
+            
+            return cur_node
+
+        return iter(self)
+
+    def is_balance(self):
+
+        def check(cur_node):
+            if isinstance(cur_node, Mobile):
+                lb = cur_node.left_branch()
+                rb = cur_node.right_branch()
+
+                assert(lb != None and rb != None)
+
+                ls = lb.branch_structure()
+                rs = rb.branch_structure()
+
+                lw = ls if type(ls) == int else ls.total_weight()
+                rw = rs if type(rs) == int else rs.total_weight()
+
+                ll, rl = lb.branch_length(), rb.branch_length()
+
+                if (lw * ll != rw * rl):
+                    return False
+    
+                return check(ls) and check(rs)
+                
+            return True
+
+        return check(self)
+
+class Branch:
+    def __init__(self, l, s):
+        self.length, self.structure = l, s
+
+    def branch_length(self):
+        return self.length
+
+    def branch_structure(self):
+        return self.structure
+
+lb = Branch(2, 3)
+rb = Branch(3, 2)
+m = Mobile(lb, rb)
+
+lb2 = Branch(2, m)
+rb2 = Branch(5, 2)
+m2 = Mobile(lb2, rb2)
+
+print(m2.total_weight())
+print(m2.is_balance())
+```
+
+只需要对选择函数做修改即可
+
+## 2.30
+
+```python
+def square(self):
+
+    def square(x):
+        return x * x
+    def iter(cur_node):
+        res = []
+        for child in cur_node.children:
+            res += [iter(child)]
+        return TreeNode(square(cur_node.value), res)
+
+    return iter(self)
+```
+
+```python
+print(root.map(lambda x: x * x))
+print(root.square())
+```
+
+## 2.31
+
+```python
+def square_tree(cur_node):
+    return cur_node.map(lambda x: x * x)
+```
+
+## 2.32
+
+```python
+def subsets(s):
+    if (s == []):
+        return [[]]
+    rest = subsets(s[1:])
+    return rest + list(map(lambda x: [s[0]] + x, rest))
+
+```
+
+先拿出第一个元素, 找出后面所有元素形成的子集 \
+然后把每个子集前面加上这第一个元素, 在算上原来的子集, 就是新子集
 
 
