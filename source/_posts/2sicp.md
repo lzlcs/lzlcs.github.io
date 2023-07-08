@@ -446,7 +446,104 @@ def even_fibs(n):
 
 以上这两个函数都混杂了各个步骤, 不利于程序的抽象表达
 
+```python
+def add(a, b):
+    return a + b
 
+def car(lst):
+    return lst[0]
+def cdr(lst):
+    return list(lst[1:])
+
+def cons(a, b):
+    return [a] + b
+
+def filter(predicate, lst):
+    return [x for x in lst if predicate(x)]
+
+def accumulate(op, initial, lst):
+    res = initial
+    for x in reversed(lst):
+        res = op(x, res)
+    return res
+
+def enumerate_interval(low, high):
+    return [x for x in range(low, high + 1)]
+
+def enumerate_tree(cur_node):
+    if (cur_node.is_leaf()):
+        return [cur_node.value]
+
+    res = []
+    for x in cur_node.children:
+        res += enumerate_tree(x)
+    return res
+
+
+def sum_odd_squares_new(cur_node):
+    lst = enumerate_tree(cur_node)
+    lst = filter(lambda x: x % 2 == 1, lst)
+    lst = map(lambda x: x * x, lst)
+    return accumulate(add, 0, lst)
+
+@cache
+def fib(x):
+    if (x <= 1):
+        return 1
+    return fib(x - 1) + fib(x - 2)
+
+def even_fibs_new(n):
+    lst = enumerate_interval(0, n)
+    lst = map(fib, lst)
+    lst = filter(lambda x: x % 2 == 0, lst)
+    return accumulate(cons, None, lst)
+```
+
+抽象出 `enumerate`, `map`, `filter`, `accumulate` 进行模块化设计
+
+范围广大的许多操作都可以表述为序列操作
+
+**嵌套映射**
+
+```python
+def make_pairs(n):
+    lst = accumulate(append, [], 
+                     list(map(lambda i: list(map(lambda j: [i, j], 
+                                                 enumerate_interval(1, i - 1))),
+                              enumerate_interval(1, n))))
+    lst = filter(lambda x: is_prime(sum(x)), lst)
+    return list(map(lambda x: [*x, sum(x)], lst))
+```
+
+```python
+def permutations(lst):
+    if (lst == []):
+        return [[]]
+    
+    tmp = permutations(lst[1:])
+
+    res = []
+    for x in tmp:
+        for i in range(len(tmp[0]) + 1):
+            res += [x[:i] + [lst[0]] + x[i:]]
+
+    return res
+
+def flatmap(proc, seq):
+    return accumulate(append, [], list(map(proc, seq)))
+
+def remove(item, sequence):
+    return filter(lambda x: not (x == item), sequence)
+
+def permutations_new(s):
+    if (s == []):
+        return [[]]
+    return flatmap(lambda x: list(map(lambda p: [x] + p,
+                                     permutations(remove(x, s)))), s)
+
+print(permutations([1, 2, 3]))
+print(permutations_new([1, 2, 3]))
+```
 
 
 # 练习
@@ -1037,5 +1134,206 @@ def subsets(s):
 
 先拿出第一个元素, 找出后面所有元素形成的子集 \
 然后把每个子集前面加上这第一个元素, 在算上原来的子集, 就是新子集
+
+## 2.33
+
+```python
+def map_new(p, seq):
+    return accumulate(lambda x, y: cons(p(x), y), [], seq)
+    
+def append(lst1, lst2):
+    return accumulate(cons, lst2, lst1)
+
+def length(seq):
+    return accumulate(lambda x, y: y + 1, 0, seq)
+```
+def horner_eval(x, coefficient_sequence):
+    return accumulate(lambda this_coeff, higher_terms: this_coeff + higher_terms * x, 
+                      0, coefficient_sequence)
+
+## 2.34
+
+```python
+def horner_eval(x, coefficient_sequence):
+    return accumulate(lambda this_coeff, higher_terms: this_coeff + higher_terms * x, 
+                      0, coefficient_sequence)
+```
+
+## 2.35
+
+```python
+def count_leaves_new(cur_node):
+    return accumulate(lambda x, y: y + 1, 0, 
+                      list(map(lambda x: x, enumerate_tree(cur_node))))
+
+```
+
+## 2.36
+
+```python
+def accumulate_n(op, init, seqs):
+
+    def firsts(seqs):
+        return [car(x) for x in seqs]
+
+    def rests(seqs):
+        return [cdr(x) for x in seqs]
+
+    if (len(car(seqs)) == 0):
+        return []
+    return cons(accumulate(op, init, firsts(seqs)),
+                accumulate_n(op, init, rests(seqs)))
+```
+
+## 2.37
+
+```python
+def mul(a, b):
+    return a * b
+
+def matrix_vector(m, v):
+    return list(map(lambda mi: accumulate(add, 0, accumulate_n(mul, 1, [mi, v])), m))
+
+def transpose(m):
+    return accumulate_n(cons, [], m)
+
+def matrix_matrix(m, n):
+    cols = transpose(n)
+    return list(map(lambda mi: matrix_vector(cols, mi), m))
+```
+
+## 2.38
+
+```python
+def ford_left(op, initial, lst):
+    res = initial
+    for x in lst:
+        res = op(res, x)
+    return res
+
+def div(a, b):
+    return a / b
+print(accumulate(div, 1, [1, 2, 3]))
+print(ford_left(div, 1, [1, 2, 3]))
+
+def my_list(*args):
+    return list(args)
+
+print(accumulate(my_list, [], [1, 2, 3]))
+print(ford_left(my_list, [], [1, 2, 3]))
+```
+
+## 2.39
+
+```python
+def reverse(seq):
+    return accumulate(lambda x, y: y + [x], [], seq)
+def reverse_new(seq):
+    return ford_left(lambda x, y: [y] + x, [], seq)
+
+print(reverse([1, 2, 3]))
+print(reverse_new([1, 2, 3]))
+```
+
+## 2.40
+
+```python
+def unique_pairs(n):
+    return flatmap(lambda x: list(map(lambda y: [x, y], 
+                                      enumerate_interval(1, x - 1))),
+                   enumerate_interval(1, n))
+
+def prime_sum_pairs(n):
+    tmp = unique_pairs(n)
+    tmp = filter(lambda pair: is_prime(sum(pair)), tmp)
+    return list(map(lambda pair: [*pair, sum(pair)], tmp))
+
+print(prime_sum_pairs(6))
+```
+
+## 2.41
+
+```python
+def unique_triple(n):
+    return flatmap(lambda x: list(map(lambda y: [x] + y,
+                                     unique_pairs(x - 1))),
+                   enumerate_interval(1, n))
+
+def question_2_41(n, s):
+    tmp = unique_triple(n)
+    tmp = filter(lambda x: sum(x) == s, tmp)
+    return sorted(tmp)
+```
+
+## 2.42
+
+```python
+def queens(board_size):
+
+    empty_board = [[]]
+
+    def is_safe(k, positions):
+        cur = positions[k - 1]
+        rest = positions[:k - 1]
+        if (rest.count(cur) != 0):
+            return False
+
+        for i in range(0, k - 1):
+            if (k - i - 1 == abs(positions[i] - cur)):
+                return False
+        
+        return True 
+
+    def adjoin_position(new_row, k, rest_of_queens):
+        return rest_of_queens + [new_row]
+
+    def queen_cols(k):
+        if (k == 0):
+            return empty_board
+        return filter(lambda positions: is_safe(k, positions),
+                      flatmap(lambda rest_of_queens: 
+                                list(map(lambda new_row: 
+                                           adjoin_position(new_row, k, rest_of_queens),
+                                         enumerate_interval(1, board_size))),
+                              queen_cols(k - 1)))
+
+    return queen_cols(board_size)
+```
+
+不抽象版本
+```python
+def new_queen(n, cur, state):
+    def is_safe(k, positions):
+        cur = positions[k]
+        rest = positions[:k]
+        if (rest.count(cur) != 0):
+            return False
+
+        for i in range(0, k):
+            if (k - i == abs(positions[i] - cur)):
+                return False
+        
+        return True 
+
+    if (n == cur):
+        return [state]
+
+    res = []
+    for row in range(n):
+        if (is_safe(cur, state + [row])):
+            res += new_queen(n, cur + 1, state + [row])
+
+    return res
+```
+
+## 2.43
+
+原来是枚举 `queen_cols(k - 1)` 次 `enumerate_interval` \
+现在是枚举 `enumerate_interval` 次 `queen_cols(k - 1)`
+
+看似没有区别, 实际上原来往下递归之后结果就保存住了 \
+改代码之后往下递归被重复执行了 `board_size` 次 \
+所以大概时间是 $T * board\_size$ 次
+
 
 
