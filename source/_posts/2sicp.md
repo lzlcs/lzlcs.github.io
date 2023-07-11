@@ -545,6 +545,150 @@ print(permutations([1, 2, 3]))
 print(permutations_new([1, 2, 3]))
 ```
 
+### 2.2.4 实例: 一个图形语言
+
+语言中只有一种元素, 称为画家
+
+勉强写了个分形的程序, 不能完成全部的 `painter` 功能 \
+无法确认代码的正确性, 故跳过
+
+```python
+identity = lambda x: x
+
+class Picture:
+
+    def __init__(self, length = 0, width = 0, atom = True):
+        self.l, self.w = length, width
+        self.strs = [" " * length for _ in range(width)]
+        if (atom):
+            self.strs[0] = "*" * length
+            self.strs[width - 1] = "*" * length
+
+            for i in range(1, length - 1):
+                pre = self.strs[i][:i]
+                aft = self.strs[i][i + 1:]
+                self.strs[i] = pre + "*" + aft
+
+    def beside(self, other):
+        res = Picture(self.l + other.l, self.w, False)
+        for i in range(self.w):
+            res.strs[i] = self.strs[i] + other.strs[i]
+        return res
+
+    def below(self, other):
+        res = Picture(self.l, self.w + other.w, False)
+        res.strs = other.strs + self.strs
+        return res
+
+    def flip_vert(self):
+        res = Picture(self.l, self.w, False)
+        res.strs = list(reversed(self.strs.copy()))
+        return res
+
+    def flip_horiz(self):
+        res = Picture(self.l, self.w, False)
+        for i in range(self.w):
+            res.strs[i] = self.strs[i][::-1]
+        return res
+
+    def flip_pairs(self):
+        tmp = self.beside(self.flip_vert())
+        return tmp.below(tmp)
+
+    def right_split(self, n):
+
+        def helper(painter, count):
+            if (count == 0):
+                return painter
+            smaller = helper(Picture(painter.l // 2, painter.w // 2), count - 1)
+            return painter.beside(smaller.below(smaller))
+
+        return helper(self, n)
+
+    def up_split(self, n):
+        def helper(painter, count):
+            if (count == 0):
+                return painter
+            smaller = helper(Picture(painter.l // 2, painter.w // 2), count - 1)
+            return painter.below(smaller.beside(smaller))
+
+        return helper(self, n)
+
+    def corner_split(self, n):
+        
+        def helper(painter, count):
+            if (count == 0):
+                return painter
+
+            tmp = Picture(painter.l // 2, painter.w // 2)
+            up = tmp.up_split(count - 1)
+            right = tmp.right_split(count - 1)
+
+            top_left = up.beside(up)
+            bottom_right = right.below(right)
+
+            corner = helper(tmp, count - 1)
+
+            return painter.below(top_left).beside(bottom_right.below(corner))
+
+        return helper(self, n)
+
+    def square_limit(self, n):
+        quarter = self.corner_split(n)
+        half = quarter.flip_horiz().beside(quarter)
+        return half.flip_vert().below(half)
+
+
+    def show(self):
+        for s in self.strs:
+            print(s)
+
+class Picture_new(Picture):
+
+    def square_of_four(self, tl, tr, bl, br):
+        def helper(painter):
+            top = tl(painter).beside(tr(painter))
+            bottom = bl(painter).beside(br(painter))
+            return bottom.below(top)
+        return helper
+
+    def flip_pairs(self):
+        combine4 = self.square_of_four(identity, Picture_new.flip_vert,
+                                       identity, Picture_new.flip_vert)
+        return combine4(self)
+
+    def square_limit(self, n):
+        def rotate180(painter):
+            return painter.flip_vert().flip_horiz()
+        combine4 = self.square_of_four(Picture_new.flip_horiz, identity, 
+                                       rotate180,              Picture_new.flip_vert)
+        return combine4(self.corner_split(n))
+
+    def split(self, proc1, proc2):
+
+        def helper(painter, count):
+            if (count == 0):
+                return painter
+            smaller = helper(Picture(painter.l // 2, painter.w // 2), count - 1)
+            return proc1(painter, proc2(smaller, smaller))
+
+        return lambda n: helper(self, n)
+
+    def right_split(self, n):
+        return self.split(Picture.beside, Picture.below)(n)
+    def up_split(self, n):
+        return self.split(Picture.below, Picture.beside)(n)
+```
+
+## 2.3 符号数据
+
+### 2.3.1 引号
+
+`scheme` 语法, 略去
+
+### 2.3.2 实例: 符号求导
+
+
 
 # 练习
 
@@ -1334,6 +1478,45 @@ def new_queen(n, cur, state):
 看似没有区别, 实际上原来往下递归之后结果就保存住了 \
 改代码之后往下递归被重复执行了 `board_size` 次 \
 所以大概时间是 $T * board\_size$ 次
+
+
+## 2.44 ~ 2.52
+
+目前以作者能力无法实现 `painter`, 故无法运行代码 \
+难以确认作业代码的正确性, 故跳过
+
+## 2.53
+
+```scheme
+(a b c)
+((george))
+(y1 y2)
+#f
+#f
+#t
+```
+
+## 2.54
+
+```python
+def equal(lst1, lst2):
+    if (len(lst1) != len(lst2)):
+        return False
+    for i in range(len(lst1)):
+        if (lst1[i] != lst2[i]):
+            return False
+    return True
+
+```
+
+## 2.55
+
+```scheme
+(car ''abracadabra)
+(car '(quote abracadabra))
+(car (quote abracadabra))
+quote
+```
 
 
 
