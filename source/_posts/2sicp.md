@@ -688,6 +688,435 @@ class Picture_new(Picture):
 
 ### 2.3.2 实例: 符号求导
 
+简单的实现
+```python
+def is_variable(e):
+    return type(e) != int and type(e) != list
+
+def is_same_variable(v1, v2):
+    return is_variable(v1) and is_variable(v2) and (v1 == v2)
+
+def is_sum(e):
+    return type(e) == list and e[0] == '+'
+
+def addend(e):
+    return e[1]
+
+def augend(e):
+    return e[2]
+
+def make_sum(a1, a2):
+    if (a1 == 0 or a2 == 0):
+        return a1 or a2
+    if (is_number(a1) and is_number(a2)):
+        return a1 + a2
+    return ['+', a1, a2]
+
+def is_product(e):
+    return type(e) == list and e[0] == '*'
+
+def multiplier(e):
+    return e[1]
+
+def multiplicand(e):
+    return e[2]
+
+def make_product(m1, m2):
+    if (m1 == 0 or m2 == 0):
+        return 0
+    if (m1 == 1):
+        return m2
+    if (m2 == 1):
+        return m1
+    if (is_number(m1) and is_number(m2)):
+        return m1 * m2
+    return ['*', m1, m2]
+
+def is_number(x):
+    return type(x) == int
+
+def deriv(exp, var):
+    if (is_number(exp)):
+        return 0
+    elif (is_variable(exp)):
+        return int(is_same_variable(exp, var))
+    elif (is_sum(exp)):
+        return make_sum(deriv(addend(exp), var),
+                        deriv(augend(exp), var))
+    elif (is_product(exp)):
+        return make_sum(make_product(multiplier(exp),
+                                     deriv(multiplicand(exp), var)),
+                        make_product(deriv(multiplier(exp), var),
+                                     multiplicand(exp)))
+
+    raise AssertionError("表达式不合法")
+```
+
+功能更全面的实现:
+```python
+class Expression:
+    def __init__(self, val = None):
+        self.val = val
+
+    def is_variable(self):
+        return type(self.val) != int and type(self.val) != list
+
+    def is_same_variable(self, other):
+        return self.is_variable() and other.is_variable() and self.val == other.val
+
+    def is_number(self):
+        return type(self.val) == int
+
+    def type_exp(self, which):
+        return type(self.val) == list and self.val[0] == which
+
+    def is_sum(self):
+        return self.type_exp('+')
+
+    def is_product(self):
+        return self.type_exp('*')
+
+    def is_exponentiation(self):
+        return self.type_exp("**") and self.second().is_number()
+
+    def __add__(self, other):
+        a1, a2 = self.val, other.val
+        if (a1 == 0):
+            return Expression(a2)
+        if (a2 == 0):
+            return Expression(a1)
+        if (is_number(a1) and is_number(a2)):
+            return Expression(a1 + a2)
+        return Expression(['+', a1, a2])
+
+    def __mul__(self, other):
+        m1, m2 = self.val, other.val
+        if (m1 == 0 or m2 == 0):
+            return Expression(0)
+        if (m1 == 1):
+            return Expression(m2)
+        if (m2 == 1):
+            return Expression(m1)
+        if (is_number(m1) and is_number(m2)):
+            return Expression(m1 * m2)
+        return Expression(['*', m1, m2])
+
+    def __pow__(self, other):
+        p1, p2 = self.val, other.val
+        if (p2 == 1):
+            return Expression(p1)
+        if (p2 == 0):
+            return Expression(1)
+
+        return Expression(["**", p1, p2])
+
+    def first(self):
+        if (type(self.val) == list):
+            return Expression(self.val[1])
+        raise AssertionError()
+
+    def second(self):
+        if (type(self.val) == list):
+            if (len(self.val) > 3):
+                return Expression([self.val[0], *self.val[2:]])
+            return Expression(self.val[2])
+        raise AssertionError()
+
+    def deriv(self, var):
+
+        def helper(exp, var):
+            if (exp.is_number()):
+                return Expression(0)
+            elif (exp.is_variable()):
+                return Expression(int(exp.is_same_variable(var)))
+            elif (exp.is_sum()):
+                return helper(exp.first(), var) + helper(exp.second(), var)
+            elif (exp.is_product()):
+                return exp.first() * helper(exp.second(), var) + \
+                       helper(exp.first(), var) * exp.second()
+
+            elif (exp.is_exponentiation()):
+                a, b = exp.first(), exp.second()
+                return b * (a ** Expression(b.val - 1)) * helper(a, var)
+
+            raise AssertionError("表达式不合法")
+
+        return helper(self, Expression(var))
+
+    def __str__(self):
+        return str(self.val)
+
+```
+
+## 2.3.3 集合的表示
+
+朴素不可重复集合: 
+1. `union_set`, $\Theta(n^2)$
+2. `intersection_set`, $\Theta(n^2)$
+3. `is_element_of_set`, $\Theta(n)$ 
+4. `adjoin_set`, $\Theta(n)$
+
+```python
+class Set:
+    def __init__(self):
+        self.val = []
+
+    def union_set(self, other): 
+        res = Set()
+        for x in other.val:
+            if (self.is_element_of_set(x)):
+                res.val.append(x)
+        return res
+
+    def intersection_set(self, other):
+        res = Set()
+        for x in other.val:
+            res.adjoin_set(x)
+        for x in self.val:
+            res.adjoin_set(x)
+        return res
+
+    def is_element_of_set(self, val):
+        for x in self.val:
+            if val == x:
+                return True
+        return False
+
+    def adjoin_set(self, val):
+        if (not self.is_element_of_set(val)):
+            self.val.append(val)
+
+    def __str__(self):
+        return str(self.val)
+
+```
+
+二叉搜索树:
+
+```python
+class Node:
+    def __init__(self, val = None, left = None, right = None):
+        self.val, self.left, self.right = val, left, right
+
+    def __str__(self):
+        return str(self.val)
+
+class BST:
+    def __init__(self, lst = None):
+        lst = [] if lst == None else lst
+
+        def list_to_tree(lst):
+            if (len(lst) == 0):
+                return None
+            l_size = len(lst) // 2
+            return Node(lst[l_size], list_to_tree(lst[:l_size]), 
+                                     list_to_tree(lst[l_size + 1:]))
+
+        self.root = list_to_tree([-1e9] + lst + [1e9])
+
+    def is_element_of_set(self, val):
+        
+        def helper(cur_node):
+            if (cur_node == None):
+                return False
+            if (cur_node.val == val):
+                return True
+            if (cur_node.val < val):
+                return helper(cur_node.right)
+            if (cur_node.val > val):
+                return helper(cur_node.left)
+
+        return helper(self.root)
+
+    def adjoin_set(self, val):
+
+        def helper(cur_node):
+            if (cur_node == None):
+                return Node(val)
+            if (cur_node.val < val):
+                cur_node.right = helper(cur_node.right)
+            if (cur_node.val > val):
+                cur_node.left = helper(cur_node.left)
+            return cur_node
+
+        self.root = helper(self.root)
+
+        
+    def tree_to_list(self):
+        
+        def helper(cur_node):
+            if (cur_node == None):
+                return []
+            tmp = cur_node.val
+            res = helper(cur_node.left)
+            if (tmp != 1e9 and tmp != -1e9):
+                res.append(cur_node.val)
+            res += helper(cur_node.right)
+            return res
+
+        return helper(self.root)
+
+    def union_set(self, other):
+        a, b = self.tree_to_list(), other.tree_to_list()
+
+        i, j, n, m = 0, 0, len(a), len(b)
+        res = []
+        while (i < n and j < m):
+            if (a[i] < b[j]):
+                res.append(a[i])
+                i = i + 1
+            if (a[i] > b[j]):
+                res.append(b[j])
+                j = j + 1
+            if (a[i] == b[j]):
+                res.append(a[i])
+                i, j = i + 1, j + 1
+        while (i < n):
+            res.append(a[i])
+            i = i + 1
+        while (j < m):
+            res.append(b[j])
+            j = j + 1
+
+        return BST(res)
+
+    def intersection_set(self, other):
+        a, b = self.tree_to_list(), other.tree_to_list()
+        i, j, n, m, res = 0, 0, len(a), len(b), []
+        while (i < n and j < m):
+            if (a[i] < b[j]):
+                i = i + 1
+            if (a[i] > b[j]):
+                j = j + 1
+            if (a[i] == b[j]):
+                res.append(a[i])
+                i, j = i + 1, j + 1
+        return BST(res)
+
+    def __str__(self):
+
+        def helper(cur_node, depth):
+            if (cur_node == None):
+                return ""
+            res = ""
+            if (cur_node.val != 1e9 and cur_node.val != -1e9):
+                res = " " * depth * 5 + str(cur_node.val) + "\n"
+            res += helper(cur_node.left, depth + 1) + \
+                   helper(cur_node.right, depth + 1)
+            return res
+
+        return helper(self.root, 0)
+```
+
+### 2.3.4 实例: 哈夫曼编码树
+
+编码方式: 
+1. 定长编码: 用相同位数的二进制码表示字符, 占用空间大
+2. 变长编码: 频繁出现的字符指定较短的二进制码\
+    如何解决何时到达字符结尾:
+    1. 类似摩斯电码, 加间隔符
+    2. 使用前缀码, 每个字符的完整编码都不是其他字符的前缀, 如 `Haffman` 编码
+
+
+`Haffman` 树: 树叶代表被编码的符号, 其余节点表示一个集合, 包含其下树叶的所有符号 \
+符号的权重只在构建哈夫曼树的时候才能用到, 在编码和解码的时候不需要使用
+
+1. 编码: 在哈夫曼树上, 向左走表示增加 0, 向右走表示增加 1
+2. 解码: 对于字符串, 在哈夫曼树上走, 0 表示左走, 1 表示右走, 走到叶子节点就是这段编码完成\
+         回到根节点继续解码
+3. 生成哈夫曼树: 每次取权重最小的两个点合并
+
+```python
+class Leaf:
+    def __init__(self, symbol, weight):
+        self.symbol, self.weight = symbol, weight
+    
+class CodeTree:
+    def __init__(self, left, right):
+        self.left, self.right = left, right
+        self.symbol = left.symbol + right.symbol
+        self.weight = left.weight + right.weight
+
+    def choose_branch(self, x):
+        if (x == 0):
+            return self.left
+        if (x == 1):
+            return self.right
+        raise AssertionError('表达式不合法')
+
+    def decode(self, bits):
+
+        def decode_1(bits, cur_branch):
+            if (len(bits) == 0):
+                return []
+            next_branch = cur_branch.choose_branch(bits[0])
+            if (isinstance(next_branch, Leaf)):
+                return [next_branch.symbol] + decode_1(bits[1:], self)
+            return decode_1(bits[1:], next_branch)
+
+        return decode_1(bits, self)
+
+    def encode(self, message):
+        def in_tree(char, cur_branch):
+            return char in cur_branch.symbol
+
+        def encode_symbol(char, cur_branch):
+            if (isinstance(cur_branch, Leaf)):
+                return []
+            if (in_tree(char, cur_branch.left)):
+                return [0] + encode_symbol(char, cur_branch.left)
+            if (in_tree(char, cur_branch.right)):
+                return [1] + encode_symbol(char, cur_branch.right)
+            raise AssertionError(f"不存在字母{char}")
+        
+        if (len(message) == 0):
+            return []
+        return encode_symbol(message[0], self) + \
+               self.encode(message[1:])
+
+def adjoin_set(x, lst):
+    if (len(lst) == 0):
+        return [x]
+    if (x.weight < lst[0].weight):
+        return [x] + lst
+    return [lst[0]] + adjoin_set(x, lst[1:])
+
+def make_leaf_set(pairs):
+    if (len(pairs) == 0):
+        return []
+    pair = pairs[0]
+    return adjoin_set(Leaf(pair[0], pair[1]),
+                      make_leaf_set(pairs[1:]))
+
+def successive_merge(lst):
+
+    if (len(lst) == 0):
+        return None
+    if (len(lst) == 1):
+        return lst[0]
+    
+    a, b = lst[0], lst[1]
+    new_tree = CodeTree(a, b)
+    return successive_merge(adjoin_set(new_tree, lst[2:]))
+
+
+def generate_huffman_tree(pairs):
+    return successive_merge(make_leaf_set(pairs))
+
+
+sample_tree = CodeTree(Leaf('A', 4),
+                       CodeTree(Leaf('B', 2),
+                                CodeTree(Leaf('D', 1),
+                                         Leaf('C', 1))))
+
+sample_tree = generate_huffman_tree([['A', 4], ['B', 2], ['C', 1], ['D', 1]])
+
+assert(isinstance(sample_tree, CodeTree))
+
+print(sample_tree.decode([0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0]))
+print(sample_tree.encode(['A', 'D', 'A', 'B', 'B', 'C', 'A']))
+```
+
 
 
 # 练习
@@ -1519,4 +1948,284 @@ quote
 ```
 
 
+## 2.56 
 
+见正文 "功能更全面的实现" 的 `is_exponentiation` 和 `__pow__` 函数
+
+## 2.57
+
+在正文 "功能更全面的实现" 中 `second` 函数多加两行代码即可
+
+## 2.58
+
+更改 
+```python
+class MidExpression(Expression):
+    def first(self):
+        if (type(self.val) == list):
+            return MidExpression(self.val[0])
+        raise AssertionError()
+
+    def type_exp(self, which):
+        return type(self.val) == list and self.val[1] == which
+
+    def __pow__(self, other):
+        p1, p2 = self.val, other.val
+        if (p2 == 1):
+            return MidExpression(p1)
+        if (p2 == 0):
+            return MidExpression(1)
+
+        return MidExpression([p1, "**", p2])
+
+    def __add__(self, other):
+        a1, a2 = self.val, other.val
+        if (a1 == 0):
+            return MidExpression(a2)
+        if (a2 == 0):
+            return MidExpression(a1)
+        if (is_number(a1) and is_number(a2)):
+            return MidExpression(a1 + a2)
+        return MidExpression([a1, "+", a2])
+
+    def __mul__(self, other):
+        m1, m2 = self.val, other.val
+        if (m1 == 0 or m2 == 0):
+            return MidExpression(0)
+        if (m1 == 1):
+            return MidExpression(m2)
+        if (m2 == 1):
+            return MidExpression(m1)
+        if (is_number(m1) and is_number(m2)):
+            return MidExpression(m1 * m2)
+        return MidExpression([m1, "*", m2])
+
+
+```
+
+至于不带括号的表达式, 需要构建表达式树 \
+无法通过修改谓词和选择函数来解决
+
+## 2.59
+
+见正文 `union`
+
+## 2.60
+
+1. `adjoin_set`, $\Theta(1)$
+2. `union_set`, $\Theta(n)$
+其他复杂度相同
+
+但是这样做总体复杂度的系数比较大 \
+在插入操作较多时建议使用这种, 否则使用上一种
+
+```python
+class MultiSet:
+    def __init__(self, lst = None):
+        self.val = lst if lst != None else []
+
+    def is_element_of_set(self, val):
+        for x in self.val:
+            if (x == val):
+                return True
+        return False
+
+    def adjoin_set(self, val):
+        self.val.append(val)
+
+    def union_set(self, other):
+        return MultiSet(self.val + other.val)
+
+    def intersection_set(self, other):
+        res = MultiSet()
+        for x in other.val:
+            if (self.is_element_of_set(x)):
+                res.val.append(x)
+        return res
+
+    def __str__(self):
+        return str(self.val)
+```
+
+## 2.61 ~ 2.62
+
+```python
+class SortedSet:
+    def __init__(self):
+        self.val = []
+    def copy(self):
+        res = SortedSet()
+        for x in self.val:
+            res.val.append(x)
+        return res
+
+    def is_element_of_set(self, val):
+        for x in self.val:
+            if (x == val):
+                return True
+            if (x > val):
+                return False
+
+        return False
+
+    def adjoin_set(self, val):
+        pos, n = 0, len(self.val)
+        while (pos < n and val > self.val[pos]):
+            pos = pos + 1
+        if (pos == n or (pos < n and val != self.val[pos])):
+            self.val.insert(pos, val)
+
+
+    def union_set(self, other):
+        i, j, n, m = 0, 0, len(self.val), len(other.val)
+        res = SortedSet()
+        while (i < n and j < m):
+            if (self.val[i] < other.val[j]):
+                res.val.append(self.val[i])
+                i = i + 1
+            if (self.val[i] > other.val[j]):
+                res.val.append(other.val[j])
+                j = j + 1
+            if (self.val[i] == other.val[j]):
+                res.val.append(self.val[i])
+                i, j = i + 1, j + 1
+        while (i < n):
+            res.val.append(self.val[i])
+            i = i + 1
+        while (j < m):
+            res.val.append(other.val[j])
+            j = j + 1
+        return res
+
+
+    
+    def __str__(self):
+        return str(self.val)
+```
+
+## 2.63
+
+产生同样结果 \
+第一种方法使用 `append` 复杂度为 $\Theta(n)$, 总复杂度为 $\Theta(n^2)$ \
+第二种方法使用 `cons` 复杂度为 $\Theta(1)$, 总复杂度为 $\Theta(n)$
+
+第二种方法更优
+
+## 2.64
+
+往下递归, 左半部分是左子树, 右半部分是右子树
+
+```python
+7
+     3
+          1
+          5
+     11
+          9
+```
+
+## 2.65
+
+见正文
+
+## 2.66
+
+残缺版, 没有 `key` 函数
+
+```python
+def lookup(given_key, dir):
+    if (dir == None):
+        return False
+    entry_key = key(dir.val)
+    if (entry_key == given_key):
+        return dir.val
+    if (entry_key > given_key):
+        return lookup(given_key, dir.right)
+    if (entry_key < given_key):
+        return lookup(given_key, dir.left)
+```
+
+
+## 2.67
+
+```python
+ADABBCA
+```
+
+## 2.68
+
+见正文
+
+得到结果相同
+
+## 2.69
+
+见正文
+
+## 2.70
+
+```python
+tree = generate_huffman_tree([["a", 2], ["na", 16], ["boom", 1], ["sha", 3],
+                              ["get", 2], ["yip", 9], ["job", 2], ["wah", 1]])
+
+assert(isinstance(tree, CodeTree))
+
+print(tree.encode(["get", "a", "job"]))
+print(tree.encode(["sha", "na", "na", "na", "na", "na", "na", "na", "na"]))
+print(tree.encode(["get", "a", "job"]))
+print(tree.encode(["sha", "na", "na", "na", "na", "na", "na", "na", "na"]))
+print(tree.encode(["wah", "yip", "yip", "yip", "yip", "yip", "yip", "yip", "yip"]))
+print(tree.encode(["sha", "boom"]))
+```
+
+```python
+[1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0]
+[1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+[1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0]
+[1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+[1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+```
+
+总共的二进制位数量是 84 \
+使用定长编码数量是 36 * 3 = 108
+
+## 2.71
+
+```
+        *
+       /\
+      *  16
+     /\
+    *  8
+   / \
+  *   4
+ /\
+1  2
+
+                  *
+                 /\
+                *  512
+               /\
+              *  256
+             /\
+            * 128
+           /\
+          *  64
+         /\
+        *  32
+       /\
+      *  16
+     /\
+    *  8
+   / \
+  *   4
+ /\
+1  2
+```
+最频繁 1 个, 最不频繁 $n - 1$ 个
+
+## 2.72
+
+对于特殊情况
+
+编码一个最频繁: $\Theta(1)$, 一个最不频繁: $\Theta(n)$
