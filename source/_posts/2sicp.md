@@ -1118,6 +1118,561 @@ print(sample_tree.encode(['A', 'D', 'A', 'B', 'B', 'C', 'A']))
 ```
 
 
+## 2.4 抽象数据的多重表示
+
+数据抽象是把使用该数据的程序设计和实现有理数的程序相分离, 构筑一道抽象屏障
+
+但是同一种数据对象也可能有多种表示方法, 比如复数的直角坐标形式和极坐标形式 \
+这就需要一个抽象屏障去隔离互不相同的设计选择
+
+本章学习构造通用过程, 可以在不止一种数据表示上操作的过程 \
+讨论数据导向的程序设计
+
+### 2.4.1 复数的表示
+
+```python
+import math
+
+def add(x, y):
+    return CartesianComplex(x.real_part() + y.real_part(),
+                            x.imag_part() + y.imag_part())
+
+def sub(x, y):
+    return CartesianComplex(x.real_part() - y.real_part(),
+                            x.imag_part() - y.imag_part())
+
+def mul(x, y):
+    return PolarComplex(x.magn_part() * y.magn_part(),
+                        x.angl_part() + y.angl_part())
+
+def div(x, y):
+    return PolarComplex(x.magn_part() / y.magn_part(),
+                        x.angl_part() - y.angl_part())
+
+class CartesianComplex:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+
+    def real_part(self):
+        return self.x
+
+    def imag_part(self):
+        return self.y
+
+    def magn_part(self):
+        a = self.real_part() * self.real_part()
+        b = self.imag_part() * self.imag_part()
+        return math.sqrt(a + b)
+
+    def angl_part(self):
+        return math.atan(self.imag_part() / self.real_part())
+
+    __add__ = add
+    __sub__ = sub
+    __mul__ = mul
+    __truediv__ = div
+
+class PolarComplex:
+
+    def __init__(self, r, a):
+        self.r, self.a = r, a
+
+    def real_part(self):
+        return self.r * math.cos(self.a)
+
+    def imag_part(self):
+        return self.r * math.sin(self.a)
+
+    def magn_part(self):
+        return self.r
+
+    def angl_part(self):
+        return self.a
+
+    __add__ = add
+    __sub__ = sub
+    __mul__ = mul
+    __truediv__ = div
+
+```
+
+### 2.4.2 带标志数据
+
+当两种表示方式放在一起的时候, 可以使用一个变量来表示当前变量的类型 \
+这是一种剥去和加上标志的规范方式, 是重要的组织策略
+
+```python
+import math
+
+
+class Complex:
+    def __init__(self, a, b, is_rectangle = True):
+        self.a, self.b, self.p = a, b, is_rectangle
+
+    def real_part(self):
+        if (self.p):
+            return self.a
+        return self.a * math.cos(self.b)
+
+    def imag_part(self):
+        if (self.p):
+            return self.b
+        return self.a * math.sin(self.b)
+
+    def magn_part(self):
+        if (self.p):
+            a = self.real_part() * self.real_part()
+            b = self.imag_part() * self.imag_part()
+            return math.sqrt(a + b)
+        return self.a
+
+    def angl_part(self):
+        if (self.p):
+            return math.atan(self.imag_part() / self.real_part())
+        return self.b
+
+    def __add__(self, y):
+        return Complex(self.real_part() + y.real_part(),
+                       self.imag_part() + y.imag_part(), True)
+
+    def __sub__(self, y):
+        return Complex(self.real_part() - y.real_part(),
+                       self.imag_part() - y.imag_part(), True)
+
+    def __mul__(self, y):
+        return Complex(self.magn_part() * y.magn_part(),
+                       self.angl_part() + y.angl_part(), False)
+
+    def __truediv__(self, y):
+        return Complex(self.magn_part() / y.magn_part(),
+                       self.angl_part() - y.angl_part(), False)
+```
+
+## 2.4.3 数据导向的程序设计和可加性
+
+2.4.2 节实现的复数类有两个弱点:
+1. 如果想增加一种表示方式, 那就需要更改一系列选择函数
+2. 保证在整个系统里不出现名字相同的过程
+
+综上, 这种形式不具有可加性
+
+一种称为 **数据导向** 的程序设计的编程技术提供了这种能力
+
+在处理一系列针对不同类型的通用操作的时候, 就像是在处理二维表格 \
+第一维 就是所有的可能类型, 第二维就是所有的可能操作
+
+通过这种表示: 只需要向表格里新加项目即可, 而不需要改变通用操作的代码
+
+```python
+import math
+
+dir = dict()
+
+def put(op, t, item):
+    if (dir.get(op) == None):
+        dir[op] = dict()
+    dir[op][t] = item
+
+def get(op, t):
+    return dir[op][t]
+
+
+def install_rectangular_package():
+    def real_part(x):
+        return x[0]
+    def imag_part(x):
+        return x[1]
+    def make_from_real_imag(x, y):
+        return [x, y]
+    def magnitude(z):
+        a = real_part(z) * real_part(z)
+        b = imag_part(z) * imag_part(z)
+        return math.sqrt(a + b)
+    def angle(z):
+        return math.atan(imag_part(z) / real_part(z))
+    def make_from_mag_ang(r, a):
+        return [r * math.cos(a), r * math.sin(a)]
+    def tag(x):
+        return ["rectangular"] + x
+
+    put("real_part", "rectangular", real_part)
+    put("imag_part", "rectangular", imag_part)
+    put("magnitude", "rectangular", magnitude)
+    put("angle", "rectangular", angle)
+    put("make_from_real_imag", "rectangular",
+        lambda x, y: tag(make_from_real_imag(x, y)))
+    put("make_from_mag_ang", "rectangular",
+        lambda x, y: tag(make_from_mag_ang(x, y)))
+
+def install_polar_package():
+    def magnitude(z):
+        return z[0]
+    def angle(z):
+        return z[1]
+    def make_from_mag_ang(r, a):
+        return [r, a]
+    def real_part(x):
+        return magnitude(x) * math.cos(angle(x))
+    def imag_part(x):
+        return magnitude(x) * math.sin(angle(x))
+    def make_from_real_imag(x, y):
+        return [math.sqrt(x * x + y * y), math.atan(y / x)]
+    
+    def tag(x):
+        return ["polar"] + x
+
+    put("real_part", "polar", real_part)
+    put("imag_part", "polar", imag_part)
+    put("magnitude", "polar", magnitude)
+    put("angle", "polar", angle)
+    put("make_from_real_imag", "polar",
+        lambda x, y: tag(make_from_real_imag(x, y)))
+    put("make_from_mag_ang", "polar",
+        lambda x, y: tag(make_from_mag_ang(x, y)))
+       
+install_rectangular_package()
+install_polar_package()
+
+def apply_generic(op, arg):
+    type_tags = arg[0]
+    proc = get(op, type_tags)
+    return proc(arg[1:])
+
+def real_part(z):
+    return apply_generic("real_part", z)
+
+def imag_part(z):
+    return apply_generic("imag_part", z)
+
+def magnitude(z):
+    return apply_generic("magnitude", z)
+
+def angle(z):
+    return apply_generic("angle", z)
+
+def make_from_real_imag(x, y):
+    return get("make_from_real_imag", "rectangular")(x, y)
+
+def make_from_mag_ang(x, y):
+    return get("make_from_mag_ang", "polar")(x, y)
+
+```
+
+在数据导向的程序设计里, 最关键的想法就是 \
+显式处理 **操作-类型表格** 从而管理程序的通用性操作
+
+在 2.4.2 里是一种基于类型进行分配的组织方式, 每个操作管理自己的类型 \
+相当于把表格按照行分割
+
+另一种实现策略是把表格按照列分割, 类似之前只使用函数来构建一个抽象数据的过程 \
+先传入数据, 返回一个函数, 在传入操作类型执行操作
+
+```python
+def make_from_real_imag(x, y):
+    def dispatch(op):
+        if (op == "real_part"):
+            return x
+        if (op == "imag_part"):
+            return y
+        if (op == "magnitude"):
+            return math.sqrt(x * x + y * y)
+        if (op == "angle"):
+            return math.atan(y / x)
+    return dispatch
+```
+
+## 2.5 带有通用型操作的系统
+
+使用数据导向技术构造一个算数包, 包含有理数算数和复数算数以及常规算数
+
+### 2.5.1 通用型算数运算
+
+```python
+import math
+
+dir = dict()
+def put(a, b, c):
+    if (dir.get(a) == None):
+        dir[a] = dict()
+    dir[a][b] = c
+get = lambda a, b: dir[a][b]
+
+
+def install_number_package():
+    tag = lambda x: ["number"] + x
+    put("add", ("number", "number"), 
+        lambda x, y: x + y)
+    put("sub", ("number", "number"), 
+        lambda x, y: x - y)
+    put("mul", ("number", "number"), 
+        lambda x, y: x * y)
+    put("div", ("number", "number"), 
+        lambda x, y: x / y)
+    put("make", "number", lambda x: x)
+
+    put("is_zero", ("number",), 
+        lambda x: x == 0)
+
+def install_rational_package():
+    tag = lambda x: ["rational"] + x
+    numer = lambda x: x[0]
+    denom = lambda x: x[1]
+    def make_rat(n, d):
+        g = math.gcd(n, d)
+        return [n // g, d // g]
+    def add_rat(x, y):
+        return make_rat(numer(x) * denom(y) + denom(x) * numer(y),
+                        denom(x) * denom(y))
+    def sub_rat(x, y):
+        return make_rat(numer(x) * denom(y) - denom(x) * numer(y),
+                        denom(x) * denom(y))
+    def mul_rat(x, y):
+        return make_rat(numer(x) * numer(y),
+                        denom(x) * denom(y))
+    def div_rat(x, y):
+        return make_rat(numer(x) * denom(y),
+                        denom(x) * numer(y))
+
+    put("add", ("rational", "rational"),
+        lambda x, y: tag(add_rat(x, y)))
+    put("sub", ("rational", "rational"),
+        lambda x, y: tag(sub_rat(x, y)))
+    put("mul", ("rational", "rational"),
+        lambda x, y: tag(mul_rat(x, y)))
+    put("div", ("rational", "rational"),
+        lambda x, y: tag(div_rat(x, y)))
+    put("make", "rational", 
+        lambda n, d: tag(make_rat(n, d)))
+
+    put("numer", ("rational", ), numer)
+    put("denom", ("rational", ), denom)
+
+    put("is_zero", ("rational",),
+        lambda x: denom(x) == 0)
+
+
+def install_complex_package():
+    def install_rectangular_package():
+        def real_part(x):
+            return x[0]
+        def imag_part(x):
+            return x[1]
+        def make_from_real_imag(x, y):
+            return [x, y]
+        def magnitude(z):
+            a = real_part(z) * real_part(z)
+            b = imag_part(z) * imag_part(z)
+            return math.sqrt(a + b)
+        def angle(z):
+            return math.atan(imag_part(z) / real_part(z))
+        def make_from_mag_ang(r, a):
+            return [r * math.cos(a), r * math.sin(a)]
+        def tag(x):
+            return ["rectangular"] + x
+
+        put("real_part", ("rectangular",), real_part)
+        put("imag_part", ("rectangular",), imag_part)
+        put("magnitude", ("rectangular",), magnitude)
+        put("angle", ("rectangular",), angle)
+        put("make_from_real_imag", "rectangular",
+            lambda x, y: tag(make_from_real_imag(x, y)))
+        put("make_from_mag_ang", "rectangular",
+            lambda x, y: tag(make_from_mag_ang(x, y)))
+
+        put("is_zero", ("rectangular",),
+            lambda x: real_part(x) == 0 and imag_part(x) == 0)
+
+    def install_polar_package():
+        def magnitude(z):
+            return z[0]
+        def angle(z):
+            return z[1]
+        def make_from_mag_ang(r, a):
+            return [r, a]
+        def real_part(x):
+            return magnitude(x) * math.cos(angle(x))
+        def imag_part(x):
+            return magnitude(x) * math.sin(angle(x))
+        def make_from_real_imag(x, y):
+            return [math.sqrt(x * x + y * y), math.atan(y / x)]
+        
+        def tag(x):
+            return ["polar"] + x
+
+        put("real_part", ("polar",), real_part)
+        put("imag_part", ("polar",), imag_part)
+        put("magnitude", ("polar",), magnitude)
+        put("angle", ("polar",), angle)
+        put("make_from_real_imag", "polar",
+            lambda x, y: tag(make_from_real_imag(x, y)))
+        put("make_from_mag_ang", "polar",
+            lambda x, y: tag(make_from_mag_ang(x, y)))
+
+        put("is_zero", ("polar",),
+            lambda x: magnitude(x) == 0)
+
+    install_rectangular_package()
+    install_polar_package()
+
+    make_from_real_imag = lambda x, y: get("make_from_real_imag", "rectangular")(x, y)
+    make_from_mag_ang = lambda r, a: get("make_from_mag_ang", "polar")(r, a)
+
+    def add_complex(x, y):
+        return make_from_real_imag(real_part(x) + real_part(y),
+                                   imag_part(x) + imag_part(y))
+
+    def sub_complex(x, y):
+        return make_from_real_imag(real_part(x) - real_part(y),
+                                   imag_part(x) - imag_part(y))
+
+    def mul_complex(x, y):
+        return make_from_mag_ang(magnitude(x) * magnitude(y),
+                                 angle(x) + angle(y))
+
+    def div_complex(x, y):
+        return make_from_mag_ang(magnitude(x) / magnitude(y),
+                                 angle(x) - angle(y))
+
+    tag = lambda x: ["complex"] + x
+    put("add", ("complex", "complex"),
+        lambda x, y: tag(add_complex(x, y)))
+    put("sub", ("complex", "complex"),
+        lambda x, y: tag(sub_complex(x, y)))
+    put("mul", ("complex", "complex"),
+        lambda x, y: tag(mul_complex(x, y)))
+    put("div", ("complex", "complex"),
+        lambda x, y: tag(div_complex(x, y)))
+
+    put("real_part", ("complex",), real_part)
+    put("imag_part", ("complex",), imag_part)
+    put("magnitude", ("complex",), magnitude)
+    put("angle", ("complex",), angle)
+        
+    put("make_from_real_imag", "complex", 
+        lambda x, y: tag(make_from_real_imag(x, y)))
+    put("make_from_mag_ang", "complex", 
+        lambda x, y: tag(make_from_mag_ang(x, y)))
+
+    put("is_zero", ("complex",),
+        lambda x: is_zero(x))
+
+is_number = lambda x: type(x) == int
+
+def apply_generic(op, *args):
+    get_type = lambda x: "number" if is_number(x) else x[0]
+    get_content = lambda x: x if is_number(x) else x[1:]
+
+    cur_type = tuple(map(get_type, args))
+    proc = get(op, cur_type)
+
+    return proc(*list(map(get_content, args)))
+
+add = lambda x, y: apply_generic("add", x, y)
+sub = lambda x, y: apply_generic("sub", x, y)
+mul = lambda x, y: apply_generic("mul", x, y)
+div = lambda x, y: apply_generic("div", x, y)
+
+make_number = lambda n: get("make", "number")(n)
+
+numer = lambda x: apply_generic("numer", x)
+denom = lambda x: apply_generic("denom", x)
+
+make_rational = lambda n, d: get("make", "rational")(n, d)
+
+real_part = lambda x: apply_generic("real_part", x)
+imag_part = lambda x: apply_generic("imag_part", x)
+magnitude = lambda x: apply_generic("magnitude", x)
+angle = lambda x: apply_generic("angle", x)
+
+make_complex_from_real_imag = lambda x, y: get("make_from_real_imag", "complex")(x, y)
+make_complex_from_mag_ang = lambda x, y: get("make_from_mag_ang", "complex")(x, y)
+
+equal = lambda x, y: x == y
+is_zero = lambda x: apply_generic("is_zero", x)
+
+install_number_package()
+install_rational_package()
+install_complex_package()
+```
+
+### 2.5.2 不同类型数据的组合
+
+目前定义的所有运算, 都把不同数据类型看成完全分离的东西 \
+因此没有办法完成诸如 `number` 加上 `complex` 的操作
+
+当然, 可以再定义复数加数字, 数字加复数两个函数, 从而达成目的 \
+但是对于这样的系统, 引进一个新类型的代价就是不仅仅构造出针对这个类型的所有函数 \
+还需要构造并安装好所有实现跨类型工作的函数, 这就是个非常复杂的任务
+
+一般来说, 需要操作的两个类型都存在一种方式, 使得可以把一种类型看作另一种类型
+
+比如数字加复数就是一个虚部为 0 的复数加复数
+
+```python
+def new_apply_generic(op, *args):
+    get_type = lambda x: "number" if is_number(x) else x[0]
+    get_content = lambda x: x if is_number(x) else x[1:]
+
+    type_tags = tuple(map(get_type, args))
+    if (dir[op].get(type_tags) != None):
+        return get(op, type_tags)(*list(map(get_content, args)))
+
+    if (len(args) == 2):
+        type1, type2 = type_tags[0], type_tags[1]
+        a1, a2 = args[0], args[1]
+        x, y = get_coercion(type1, type2), get_coercion(type2, type1)
+
+        if (x):
+            return apply_generic(op, x(a1), a2)
+        if (y):
+            return apply_generic(op, a1, y(a2))
+
+dir_coercion = dict()
+def put_coercion(a, b, c):
+    if (dir_coercion.get(a) == None):
+        dir_coercion[a] = dict()
+    dir_coercion[a][b] = c
+
+def get_coercion(a, b):
+    if (dir_coercion.get(a) != None and 
+        dir_coercion[a].get(b) != None):
+        return dir_coercion[a][b]
+    return False
+
+def number_to_complex(n):
+    return make_complex_from_real_imag(n, 0)
+
+put_coercion("number", "complex", number_to_complex)
+
+add = lambda x, y: new_apply_generic("add", x, y)
+
+x = make_number(3)
+y = make_complex_from_real_imag(4, 2)
+print(add(x, y))
+```
+
+对于 $n$ 个类型的系统, 转换函数可能需要写 $n^2$ 个
+
+当然可以这两种类型转化成第三种类型来计算
+
+类型的层次结构: 整数 -> 有理数 -> 实数 -> 复数 \
+整数是有理数的子类型, 有理数是整数的超类型
+
+类型塔: 一个类型只有至多一个超类型和至多一个子类型
+
+可以采用逐步提高层级或者逐步下放层级的方式来实现类型统一
+
+类型塔的另外一个优点, 每个类型能够 **继承** 其超类型中的所有操作 
+
+**层次结构的不足**:
+一个超类型可能有多种子类型, 一个子类型可能有多个超类型, \
+所以并不存在唯一方式在层次结构中去提高一个层级或者下放一个层级
+
+设计大型系统时, 处理一大批相互有关的类型而同时保持模块性是一个非常困难的问题, 目前仍在深入研究
+
+
+
+
 
 # 练习
 
@@ -2229,3 +2784,179 @@ print(tree.encode(["sha", "boom"]))
 对于特殊情况
 
 编码一个最频繁: $\Theta(1)$, 一个最不频繁: $\Theta(n)$
+
+## 2.73
+
+```python
+
+dir = dict()
+
+def is_number(x):
+    return type(x) == int
+def is_variable(exp):
+    return type(exp) != int and type(exp) != list
+def is_same_variable(exp, var):
+    return is_variable(exp) and is_variable(var) and exp == var
+
+def operator(exp):
+    return exp[0]
+def operands(exp):
+    if (len(exp) > 3):
+        return exp[1], [operator(exp), *exp[2:]]
+    return exp[1], exp[2]
+
+def get(a, b):
+    return dir[a][b]
+def put(a, b, func):
+    if (dir.get(a) == None):
+        dir[a] = dict()
+    dir[a][b] = func
+
+def deriv(exp, var):
+    if (is_number(exp)):
+        return 0
+    if (is_variable(exp)):
+        return int(is_same_variable(exp, var))
+
+    return get("deriv", operator(exp))(*operands(exp), var)
+
+def install_deriv_package():
+
+    def add_helper(a, b):
+        if (is_number(a) and is_number(b)):
+            return a + b
+        elif (a == 0):
+            return b
+        elif (b == 0):
+            return a
+        return ["+", a, b]
+
+    def mul_helper(a, b):
+        if (a == 1):
+            return b
+        if (b == 1):
+            return a
+        if (a == 0 or b == 0):
+            return 0
+        return ["*", a, b]
+
+    def pow_helper(a, b):
+        if (b == 0):
+            return 1
+        if (b == 1):
+            return a
+        return ["**", a, b]
+
+    def add(a, b, var):
+        return add_helper(deriv(a, var), deriv(b, var))
+    def mul(a, b, var):
+        return add_helper(mul_helper(a, deriv(b, var)),
+                          mul_helper(deriv(a, var), b))
+    def pow(a, b, var):
+        return mul_helper(b - 1, 
+                          mul_helper(pow_helper(a, b - 1),
+                                     deriv(a, var)))
+
+    put("deriv", "*", mul)
+    put("deriv", "+", add)
+    put("deriv", "**", pow)
+
+install_deriv_package()
+
+exp = ["*", 3, "x", "y", "x", ["+", "x", "1"]]
+exp = ["**", "x", 3]
+
+print(deriv(exp, "x"))
+        
+```
+
+1. 把之前的 `is_sum`, `is_product` 等函数用 `get` 的第二个参数代替, 从而实现选择的功能 \
+   因为 `number?` 和 `is_same_variable` 后面只有一个参数
+2. 见代码
+3. 加入乘幂
+4. 除了题中的改动, 只需要改动 `install_deriv_package` 下面的 `put` 语句
+
+## 2.74
+
+题目不明确, 跳过
+
+
+## 2.75
+
+```python
+def make_from_mag_ang(r, a):
+    def dispatch(op):
+        if (op == "real_part"):
+            return r * math.cos(a)
+        if (op == "imag_part"):
+            return r * math.sin(a)
+        if (op == "magnitude"):
+            return r
+        if (op == "angle"):
+            return a
+    return dispatch
+
+```
+
+
+## 2.76
+
+1. 显式分派:
+    1. 增加新操作需要使用者避免命名冲突
+    2. 增加新类型需要改动通用操作
+    3. 结论: 输
+2. 数据导向:
+    1. 很方便地通过包机制增加新类型和新的通用操作
+    2. 结论: 赢
+3. 消息传递:
+    1. 将数据对象和操作整合在一起, 可以很方便地增加新类型
+    2. 增加新操作时所有对象都要全部重新实例化
+    4. 结论: 寄
+
+## 2.77
+
+代码见正文
+
+因为不加那几行代码的话, 直接调用的是 `complex` 包里面的 `magnitude` 操作 \
+此时 `complex` 包里面并没有这个操作, 所以加上就好了
+
+`magnitude` 有三个, 第一个是最外层的, 第二个是 `complex` 包里面的, 第三个是 `rectangle` 里面的\
+
+`apply_generic` 函数在前两次 `magnitude` 中被调用了两次\
+第一次剥去 `complex`, 第二次剥去 `rectangle`
+
+## 2.78
+
+见正文
+
+## 2.79
+
+见正文
+
+## 2.80
+
+见正文
+
+## 2.81
+
+1. 没有相应的类型转换操作
+2. 如果没有相应的操作, 那么就进行自己到自己的类型转换 \
+   从而陷入死循环, 寄
+2. 加一个 `if` 即可, 不写了
+
+## 2.82
+
+举例: 只有 `complex` 才实现了这个功能, 而传入的参数最高才是 `rational`  \
+这样永远都找不到合适的过程
+
+## 2.83
+
+见正文中各个包的 `raise` 部分以及通用操作的 `raise`
+
+## 2.84
+
+见正文 `install_depth_package`  使用了一种比较简单的形式
+
+## 2.85
+
+
