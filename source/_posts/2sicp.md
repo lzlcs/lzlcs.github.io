@@ -1398,8 +1398,9 @@ def put(a, b, c):
 get = lambda a, b: dir[a][b]
 
 
+add_tag = lambda tag, x: [tag] + x
+
 def install_number_package():
-    tag = lambda x: ["number"] + x
     put("add", ("number", "number"), 
         lambda x, y: x + y)
     put("sub", ("number", "number"), 
@@ -1408,13 +1409,17 @@ def install_number_package():
         lambda x, y: x * y)
     put("div", ("number", "number"), 
         lambda x, y: x / y)
+
     put("make", "number", lambda x: x)
 
     put("is_zero", ("number",), 
         lambda x: x == 0)
 
+    put("raise", ("number",),
+        lambda x: make_rational(x, 1))
+
 def install_rational_package():
-    tag = lambda x: ["rational"] + x
+    tag = lambda x: add_tag("rational", x)
     numer = lambda x: x[0]
     denom = lambda x: x[1]
     def make_rat(n, d):
@@ -1450,6 +1455,27 @@ def install_rational_package():
     put("is_zero", ("rational",),
         lambda x: denom(x) == 0)
 
+    put("raise", ("rational",),
+        lambda x: make_real(numer(x) / denom(x)))
+
+def install_real_package():
+    tag = lambda x: add_tag("real", x)
+
+    put("add", ("real", "real"), 
+        lambda x, y: tag([x[0] + y[0]]))
+    put("sub", ("real", "real"), 
+        lambda x, y: tag([x[0] - y[0]]))
+    put("mul", ("real", "real"), 
+        lambda x, y: tag([x[0] * y[0]]))
+    put("div", ("real", "real"), 
+        lambda x, y: tag([x[0] / y[0]]))
+    put("make", "real", lambda x: tag([x]))
+
+    put("is_zero", ("real",), 
+        lambda x: x == 0)
+
+    put("raise", ("real",),
+        lambda x: make_complex_from_real_imag(x[0], 0))
 
 def install_complex_package():
     def install_rectangular_package():
@@ -1467,8 +1493,8 @@ def install_complex_package():
             return math.atan(imag_part(z) / real_part(z))
         def make_from_mag_ang(r, a):
             return [r * math.cos(a), r * math.sin(a)]
-        def tag(x):
-            return ["rectangular"] + x
+
+        tag = lambda x: add_tag("rectangular", x)
 
         put("real_part", ("rectangular",), real_part)
         put("imag_part", ("rectangular",), imag_part)
@@ -1496,8 +1522,7 @@ def install_complex_package():
         def make_from_real_imag(x, y):
             return [math.sqrt(x * x + y * y), math.atan(y / x)]
         
-        def tag(x):
-            return ["polar"] + x
+        tag = lambda x: add_tag("polar", x)
 
         put("real_part", ("polar",), real_part)
         put("imag_part", ("polar",), imag_part)
@@ -1533,7 +1558,8 @@ def install_complex_package():
         return make_from_mag_ang(magnitude(x) / magnitude(y),
                                  angle(x) - angle(y))
 
-    tag = lambda x: ["complex"] + x
+    tag = lambda x: add_tag("complex", x)
+
     put("add", ("complex", "complex"),
         lambda x, y: tag(add_complex(x, y)))
     put("sub", ("complex", "complex"),
@@ -1556,14 +1582,33 @@ def install_complex_package():
     put("is_zero", ("complex",),
         lambda x: is_zero(x))
 
+dir_depth = dict()
+def install_depth_package():
+    lst = ["number", "rational", "real", ["complex", "rectangular", "polar"]]
+    for i, c in enumerate(lst):
+        if (type(c) == list):
+            for x in c:
+                dir_depth[x] = i
+        else:
+            dir_depth[c] = i
+
 is_number = lambda x: type(x) == int
 
 def apply_generic(op, *args):
+    args = list(args)
+
     get_type = lambda x: "number" if is_number(x) else x[0]
     get_content = lambda x: x if is_number(x) else x[1:]
 
     cur_type = tuple(map(get_type, args))
-    proc = get(op, cur_type)
+    max_type = max([dir_depth[x] for x in cur_type])
+
+    for i in range(len(args)):
+        while (dir_depth[get_type(args[i])] != max_type):
+            args[i] = my_raise(args[i])
+
+    aft_type = tuple(map(get_type, args))
+    proc = get(op, aft_type)
 
     return proc(*list(map(get_content, args)))
 
@@ -1579,6 +1624,8 @@ denom = lambda x: apply_generic("denom", x)
 
 make_rational = lambda n, d: get("make", "rational")(n, d)
 
+make_real = lambda x: get("make", "real")(x)
+
 real_part = lambda x: apply_generic("real_part", x)
 imag_part = lambda x: apply_generic("imag_part", x)
 magnitude = lambda x: apply_generic("magnitude", x)
@@ -1589,10 +1636,13 @@ make_complex_from_mag_ang = lambda x, y: get("make_from_mag_ang", "complex")(x, 
 
 equal = lambda x, y: x == y
 is_zero = lambda x: apply_generic("is_zero", x)
+my_raise = lambda x: apply_generic("raise", x)
 
 install_number_package()
 install_rational_package()
+install_real_package()
 install_complex_package()
+install_depth_package()
 ```
 
 ### 2.5.2 不同类型数据的组合
