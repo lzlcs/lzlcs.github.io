@@ -1389,6 +1389,8 @@ def make_from_real_imag(x, y):
 
 ```python
 import math
+import sys
+sys.setrecursionlimit = 10000000
 
 dir = dict()
 def put(a, b, c):
@@ -1408,7 +1410,8 @@ def install_number_package():
     put("mul", ("number", "number"), 
         lambda x, y: x * y)
     put("div", ("number", "number"), 
-        lambda x, y: x / y)
+        lambda x, y: x // y)
+    put("gcd", ("number", "number"), math.gcd)
 
     put("make", "number", lambda x: x)
 
@@ -1417,26 +1420,28 @@ def install_number_package():
 
     put("raise", ("number",),
         lambda x: make_rational(x, 1))
+    put("can_drop", ("number",),
+        lambda _: False)
 
 def install_rational_package():
     tag = lambda x: add_tag("rational", x)
     numer = lambda x: x[0]
     denom = lambda x: x[1]
     def make_rat(n, d):
-        g = math.gcd(n, d)
-        return [n // g, d // g]
+        g = greatest_common_divisor(n, d)
+        return [div(n, g), div(d, g)]
     def add_rat(x, y):
-        return make_rat(numer(x) * denom(y) + denom(x) * numer(y),
-                        denom(x) * denom(y))
+        return make_rat(add(mul(numer(x), denom(y)), mul(denom(x), numer(y))),
+                            mul(denom(x), denom(y)))
     def sub_rat(x, y):
-        return make_rat(numer(x) * denom(y) - denom(x) * numer(y),
-                        denom(x) * denom(y))
+        return make_rat(sub(mul(numer(x), denom(y)), mul(denom(x), numer(y))),
+                            mul(denom(x), denom(y)))
     def mul_rat(x, y):
-        return make_rat(numer(x) * numer(y),
-                        denom(x) * denom(y))
+        return make_rat(mul(numer(x), numer(y)),
+                        mul(denom(x), denom(y)))
     def div_rat(x, y):
-        return make_rat(numer(x) * denom(y),
-                        denom(x) * numer(y))
+        return make_rat(mul(numer(x), denom(y)),
+                        mul(denom(x), numer(y)))
 
     put("add", ("rational", "rational"),
         lambda x, y: tag(add_rat(x, y)))
@@ -1458,24 +1463,35 @@ def install_rational_package():
     put("raise", ("rational",),
         lambda x: make_real(numer(x) / denom(x)))
 
-def install_real_package():
-    tag = lambda x: add_tag("real", x)
+    put("can_drop", ("rational",),
+        lambda x: denom(x) == 1)
+    put("project", ("rational",),
+        lambda x: make_number(numer(x)))
 
-    put("add", ("real", "real"), 
-        lambda x, y: tag([x[0] + y[0]]))
-    put("sub", ("real", "real"), 
-        lambda x, y: tag([x[0] - y[0]]))
-    put("mul", ("real", "real"), 
-        lambda x, y: tag([x[0] * y[0]]))
-    put("div", ("real", "real"), 
-        lambda x, y: tag([x[0] / y[0]]))
-    put("make", "real", lambda x: tag([x]))
+def install_real_package():
+
+    add_real = lambda x, y: x + y
+    sub_real = lambda x, y: x - y
+    mul_real = lambda x, y: x * y
+    div_real = lambda x, y: x / y
+
+    put("add", ("real", "real"), add_real)
+    put("sub", ("real", "real"), sub_real)
+    put("mul", ("real", "real"), mul_real)
+    put("div", ("real", "real"), div_real)
+
+    put("make", "real", lambda x: x)
 
     put("is_zero", ("real",), 
         lambda x: x == 0)
 
     put("raise", ("real",),
-        lambda x: make_complex_from_real_imag(x[0], 0))
+        lambda x: make_complex_from_real_imag(x, 0))
+
+    put("can_drop", ("real",),
+        lambda x: x % 1 == 0)
+    put("project", ("real",),
+        lambda x: make_rational(int(x), 1))
 
 def install_complex_package():
     def install_rectangular_package():
@@ -1508,6 +1524,11 @@ def install_complex_package():
         put("is_zero", ("rectangular",),
             lambda x: real_part(x) == 0 and imag_part(x) == 0)
 
+        put("can_drop", ("rectangular",),
+            lambda x: imag_part(x) == 0)
+        put("project", ("rectangular",),
+            lambda x: make_real(real_part(x)))
+
     def install_polar_package():
         def magnitude(z):
             return z[0]
@@ -1535,6 +1556,12 @@ def install_complex_package():
 
         put("is_zero", ("polar",),
             lambda x: magnitude(x) == 0)
+
+        put("can_drop", ("polar",),
+            lambda x: angle(x) == angle(x) // math.pi * math.pi)
+        put("project", ("polar",),
+            lambda x: make_real(-magnitude(x)) if (angle(x) // math.pi) % 2 == 1 \
+                      else make_real(magnitude(x)))
 
     install_rectangular_package()
     install_polar_package()
@@ -1582,6 +1609,12 @@ def install_complex_package():
     put("is_zero", ("complex",),
         lambda x: is_zero(x))
 
+    put("can_drop", ("complex",), 
+        lambda x: can_drop(x))
+
+    put("project", ("complex",), 
+        lambda x: project(x))
+
 dir_depth = dict()
 def install_depth_package():
     lst = ["number", "rational", "real", ["complex", "rectangular", "polar"]]
@@ -1597,27 +1630,48 @@ is_number = lambda x: type(x) == int
 def apply_generic(op, *args):
     args = list(args)
 
-    get_type = lambda x: "number" if is_number(x) else x[0]
-    get_content = lambda x: x if is_number(x) else x[1:]
+    def get_type(x):
+        if (type(x) == int):
+            return "number"
+        if (type(x) == float):
+            return "real"
+        return x[0]
+
+    def get_content(x):
+        if (type(x) == int or type(x) == float):
+            return x
+        return x[1:]
+
 
     cur_type = tuple(map(get_type, args))
-    max_type = max([dir_depth[x] for x in cur_type])
+    jump_op = ["polynomial", "sparse", "dense"]
+    if (cur_type[0] in jump_op):
+        proc = get(op, cur_type)
+        res = proc(*list(map(get_content, args)))
 
+        return res
+# 
+    max_type = max([dir_depth[x] for x in cur_type])
+# 
     for i in range(len(args)):
         while (dir_depth[get_type(args[i])] != max_type):
             args[i] = my_raise(args[i])
-
+# 
     aft_type = tuple(map(get_type, args))
     proc = get(op, aft_type)
-
-    return proc(*list(map(get_content, args)))
+    res = proc(*list(map(get_content, args)))
+# 
+    drop_op = ["add", "sub", "mul", "div"]
+    if (op in drop_op):
+        return drop(res)
+    return res
 
 add = lambda x, y: apply_generic("add", x, y)
 sub = lambda x, y: apply_generic("sub", x, y)
 mul = lambda x, y: apply_generic("mul", x, y)
 div = lambda x, y: apply_generic("div", x, y)
 
-make_number = lambda n: get("make", "number")(n)
+make_number = lambda n: get("make", "number")(int(n))
 
 numer = lambda x: apply_generic("numer", x)
 denom = lambda x: apply_generic("denom", x)
@@ -1637,6 +1691,16 @@ make_complex_from_mag_ang = lambda x, y: get("make_from_mag_ang", "complex")(x, 
 equal = lambda x, y: x == y
 is_zero = lambda x: apply_generic("is_zero", x)
 my_raise = lambda x: apply_generic("raise", x)
+
+can_drop = lambda x: apply_generic("can_drop", x)
+project = lambda x: apply_generic("project", x)
+
+greatest_common_divisor = lambda x, y: apply_generic("gcd", x, y)
+
+def drop(x):
+    while (can_drop(x)):
+        x = project(x)
+    return x
 
 install_number_package()
 install_rational_package()
@@ -1720,6 +1784,318 @@ print(add(x, y))
 
 设计大型系统时, 处理一大批相互有关的类型而同时保持模块性是一个非常困难的问题, 目前仍在深入研究
 
+### 2.5.3 实例: 符号代数
+
+本小节实现一个多项式算数的系统(单变量多项式)
+
+注意这里使用的是最初版本的 `apply_generic`
+```python
+from number import *
+
+attach_tag = lambda tag, lst: [tag] + lst
+
+def add_terms(l1, l2):
+    if (is_empty_termlist(l1)):
+        return l2
+    if (is_empty_termlist(l2)):
+        return l1
+    t1, t2 = first_term(l1), first_term(l2)
+    if (order(t1) > order(t2)):
+        return adjoin_term(t1, add_terms(rest_terms(l1), l2))
+    if (order(t1) < order(t2)):
+        return adjoin_term(t2, add_terms(l1, rest_terms(l2)))
+
+    return adjoin_term(make_term(order(t1), 
+                                 add(coeff(t1), coeff(t2))),
+                       add_terms(rest_terms(l1), rest_terms(l2)))
+
+def mul_terms(l1, l2):
+    if (is_empty_termlist(l1)):
+        return the_empty_termlist
+    return add_terms(mul_term_by_all_terms(first_term(l1), l2),
+                     mul_terms(rest_terms(l1), l2))
+
+def mul_term_by_all_terms(t1, l):
+    if (is_empty_termlist(l)):
+        return the_empty_termlist
+    t2 = first_term(l)
+    return adjoin_term(make_term(order(t1) + order(t2),
+                                 mul(coeff(t1), coeff(t2))),
+                       mul_term_by_all_terms(t1, rest_terms(l)))
+
+def adjoin_term(term, term_list):
+    if (is_zero(coeff(term))):
+        return term_list
+    return [term] + term_list
+
+the_empty_termlist = []
+first_term = lambda x: x[0]
+rest_terms = lambda x: x[1:]
+is_empty_termlist = lambda x: len(x) == 0
+make_term = lambda order, coeff: [order, coeff]
+order = lambda term: term[0]
+coeff = lambda term: term[1]
+
+
+def install_polynomial_package():
+    make_poly = lambda variable, term_list: [variable] + term_list
+    variable = lambda p: p[0]
+    is_variable = lambda x: type(x) == str
+    is_same_variable = lambda x, y: is_variable(x) and is_variable(y) \
+                                    and x == y
+
+    term_list = lambda x: x[1:]
+
+    def add_poly(p1, p2):
+        if (is_same_variable(variable(p1), variable(p2))):
+            return make_poly(variable(p1), add_terms(term_list(p1), term_list(p2)))
+    def mul_poly(p1, p2):
+        if (is_same_variable(variable(p1), variable(p2))):
+            return make_poly(variable(p1), mul_terms(term_list(p1), term_list(p2)))
+
+    def to_nagative(poly):
+        terms = term_list(poly)
+        for x in terms:
+            x[1] = -coeff(x)
+        return [variable(poly)] + terms
+
+    def sub_poly(p1, p2):
+        return add_poly(p1, to_nagative(p2))
+
+    tag = lambda p: attach_tag("polynomial", p)
+    put("add", ("polynomial", "polynomial"),
+        lambda p1, p2: tag(add_poly(p1, p2)))
+    put("mul", ("polynomial", "polynomial"),
+        lambda p1, p2: tag(mul_poly(p1, p2)))
+    put("sub", ("polynomial", "polynomial"),
+        lambda p1, p2: tag(sub_poly(p1, p2)))
+    put("make", "polynomial", 
+        lambda var, terms: tag(make_poly(var, terms)))
+
+    def is_zero(poly):
+        term = first_term(term_list(poly))
+        return order(term) == 0 and coeff(term) == 0
+
+    put("is_zero", ("polynomial",), is_zero)
+
+make_polynomial = lambda var, terms: get("make", "polynomial")(var, terms)
+
+install_polynomial_package()
+```
+
+加入了第二种表示:
+```python
+from number import *
+
+attach_tag = lambda tag, lst: [tag] + lst
+
+def add_terms(l1, l2):
+    if (is_empty_termlist(l1)):
+        return l2
+    if (is_empty_termlist(l2)):
+        return l1
+    t1, t2 = first_term(l1), first_term(l2)
+
+    if (order(t1) > order(t2)):
+        return adjoin_term(t1, add_terms(rest_terms(l1), l2))
+    if (order(t1) < order(t2)):
+        return adjoin_term(t2, add_terms(l1, rest_terms(l2)))
+
+    return adjoin_term(make_term(order(t1), 
+                                 add(coeff(t1), coeff(t2))),
+                       add_terms(rest_terms(l1), rest_terms(l2)))
+
+def mul_terms(l1, l2):
+    if (is_empty_termlist(l1)):
+        return l1
+    return add_terms(mul_term_by_all_terms(first_term(l1), l2),
+                     mul_terms(rest_terms(l1), l2))
+
+def sub_terms(l1, l2):
+    return add_terms(l1, to_negative_terms(l2))
+
+def mul_term_by_all_terms(t1, l):
+    if (is_empty_termlist(l)):
+        return l
+    t2 = first_term(l)
+    return adjoin_term(make_term(order(t1) + order(t2),
+                                 mul(coeff(t1), coeff(t2))),
+                       mul_term_by_all_terms(t1, rest_terms(l)))
+
+def div_terms(l1, l2):
+    if (is_empty_termlist(l1)):
+        return [l1, l1]
+    t1, t2 = first_term(l1), first_term(l2)
+    if (order(t1) < order(t2)):
+        return [[l1[0]], l1]
+    new_c = coeff(t1) / coeff(t2)
+    new_o = order(t1) - order(t2)
+
+    tmp = mul_term_by_all_terms(make_term(new_o, new_c), l2)
+    rest_of_result = div_terms(sub_terms(l1, tmp), l2)
+
+    return [adjoin_term(make_term(new_o, new_c), rest_of_result[0]),
+            rest_of_result[1]]
+
+
+is_empty_termlist = lambda x: len(x) == 1
+make_term = lambda order, coeff: [order, coeff]
+order = lambda term: term[0]
+coeff = lambda term: term[1]
+
+def install_polynomial_package():
+    make_poly = lambda variable, term_list: [variable] + term_list
+    variable = lambda p: p[0]
+    is_variable = lambda x: type(x) == str
+    is_same_variable = lambda x, y: is_variable(x) and is_variable(y) \
+                                    and x == y
+
+    term_list = lambda x: x[1:]
+
+    def add_poly(p1, p2):
+        if (is_same_variable(variable(p1), variable(p2))):
+            return make_poly(variable(p1), add_terms(term_list(p1), term_list(p2)))
+
+    def mul_poly(p1, p2):
+        if (is_same_variable(variable(p1), variable(p2))):
+            return make_poly(variable(p1), mul_terms(term_list(p1), term_list(p2)))
+
+    def sub_poly(p1, p2):
+        if (is_same_variable(variable(p1), variable(p2))):
+            return make_poly(variable(p1), sub_terms(term_list(p1), term_list(p2)))
+
+    def div_poly(p1, p2):
+        if (is_same_variable(variable(p1), variable(p2))):
+            return list(map(lambda x: tag(make_poly(variable(p1), x)),
+                            div_terms(term_list(p1), term_list(p2))))
+
+    tag = lambda p: attach_tag("polynomial", p)
+    put("add", ("polynomial", "polynomial"),
+        lambda p1, p2: tag(add_poly(p1, p2)))
+    put("mul", ("polynomial", "polynomial"),
+        lambda p1, p2: tag(mul_poly(p1, p2)))
+    put("sub", ("polynomial", "polynomial"),
+        lambda p1, p2: tag(sub_poly(p1, p2)))
+    put("div", ("polynomial", "polynomial"),
+        lambda p1, p2: div_poly(p1, p2))
+    put("make", "polynomial", 
+        lambda var, terms: tag(make_poly(var, terms)))
+
+    def is_zero(poly):
+        term = first_term(term_list(poly))
+        return order(term) == 0 and coeff(term) == 0
+
+    put("is_zero", ("polynomial",), is_zero)
+
+    reminder_terms = lambda x, y: div_terms(x, y)[1]
+    def gcd_terms(a, b):
+        if (is_empty_termlist(b)):
+            return a
+        return gcd_terms(b, reminder_terms(a, b))
+
+    def gcd_poly(p1, p2):
+        if (variable(p1) == variable(p2)):
+            return make_poly(variable(p1), gcd_terms(term_list(p1), term_list(p2)))
+
+    put("gcd", ("polynomial", "polynomial"), 
+        lambda x, y: tag(gcd_poly(x, y)))
+
+make_polynomial = lambda var, terms: get("make", "polynomial")(var, terms)
+
+
+
+def install_sparse_term():
+
+    def adjoin_term(term, term_list):
+        if (is_zero(coeff(term))):
+            return term_list
+        return [term] + term_list
+    first_term = lambda term_list: term_list[0]
+    rest_terms = lambda term_list: term_list[1:]
+
+    tag = lambda term_list: ["sparse"] + term_list
+
+    def to_negative_terms(term_list):
+        for term in term_list:
+            term[1] = -term[1]
+        return term_list
+
+    put("adjoin_term", "sparse", 
+        lambda term, term_list: tag(adjoin_term(term, term_list)))
+    put("first_term", ("sparse",), 
+        lambda term_list: first_term(term_list))
+    put("rest_terms", ("sparse",),
+        lambda term_list: tag(rest_terms(term_list)))
+
+    put("to_negative_terms", ("sparse",),
+        lambda term_list: tag(to_negative_terms(term_list)))
+
+def install_dense_term():
+
+    def adjoin_term(term, term_list):
+        if (is_zero(coeff(term))):
+            return term_list
+        if (order(term) == len(term_list)):
+            return [coeff(term)] + term_list
+        return adjoin_term(term, [0] + term_list)
+
+    first_term = lambda term_list: [len(term_list) - 1, term_list[0]]
+    rest_terms = lambda term_list: term_list[1:]
+
+    def to_negative_terms(term_list):
+        res = []
+        for x in term_list:
+            res.append(-x)
+        return res
+
+    tag = lambda term_list: ["dense"] + term_list
+
+    put("adjoin_term", "dense", 
+        lambda term, term_list: tag(adjoin_term(term, term_list)))
+    put("first_term", ("dense",),
+        lambda term_list: first_term(term_list))
+    put("rest_terms", ("dense",),
+        lambda term_list: tag(rest_terms(term_list)))
+    put("to_negative_terms", ("dense",),
+        lambda term_list: tag(to_negative_terms(term_list)))
+
+install_polynomial_package()
+install_sparse_term()
+install_dense_term()
+
+def adjoin_term(term, term_list):
+    return get("adjoin_term", term_list[0])(term, term_list[1:])
+
+first_term = lambda term_list: apply_generic("first_term", term_list)
+rest_terms = lambda term_list: apply_generic("rest_terms", term_list)
+to_negative_terms = lambda term_list: apply_generic("to_negative_terms", term_list)
+
+
+a = make_polynomial("x", ["sparse", [4, 1], [3, -1], [2, -2], [1, 2]])
+b = make_polynomial("x", ["sparse", [3, 1], [1, -1]])
+
+a = make_number(9)
+b = make_number(15)
+
+a = make_polynomial("x", ["sparse", [1, 1], [0, 1]])
+b = make_polynomial("x", ["sparse", [3, 1], [0, -1]])
+
+c = make_polynomial("x", ["sparse", [1, 1]])
+d = make_polynomial("x", ["sparse", [2, 1], [0, -1]])
+
+
+p1 = make_polynomial("x", ["sparse", [2, 1], [1, -2], [1, 1]])
+p2 = make_polynomial("x", ["sparse", [2, 11], [0, 7]])
+p3 = make_polynomial("x", ["sparse", [1, 13], [0, 5]])
+
+q1 = mul(p1, p2)
+q2 = mul(p2, p3)
+
+print(greatest_common_divisor(q1, q2))
+
+
+
+```
 
 
 
@@ -3009,4 +3385,49 @@ def make_from_mag_ang(r, a):
 
 ## 2.85
 
+见代码
+
+## 2.86
+
+过于复杂, 暂时搁置
+
+## 2.87
+
+见正文
+
+## 2.88
+
+见正文
+
+
+## 2.89
+
+见正文
+
+## 2.90
+见正文
+
+## 2.91
+
+见正文
+
+## 2.92
+
+见正文
+
+## 2.93
+
+见正文
+
+## 2.94
+
+见正文
+
+## 2.95
+
+因为长除法的时候, 无法除尽, 出现精度问题
+
+## 2.96 ~ 2.97
+
+暂时搁置
 
