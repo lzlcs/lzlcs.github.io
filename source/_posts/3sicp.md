@@ -276,21 +276,128 @@ print(b[0] is b[1])
 ```
 
 
+### 3.3.2 队列的表示
 
+```python
+class LinkNode:
+    def __init__(self, val = None, next = None):
+        self.val, self.next = val, next
 
+class Queue:
+    def __init__(self):
+        self.f, self.r = None, None
 
+    def front_queue(self):
+        if (self.is_empty()):
+            return "empty queue"
+        return self.front_ptr().val
 
+    def insert_queue(self, item):
+        tmp = LinkNode(item, None)
+        if (self.is_empty()):
+            self.f, self.r = tmp, tmp
+        else:
+            assert(isinstance(self.r, LinkNode))
+            self.r.next, self.r = tmp, tmp
 
+    def delete_queue(self):
+        if (self.is_empty()):
+            return "empty queue"
+        assert(isinstance(self.f, LinkNode))
+        self.f = self.f.next
 
+    is_empty = lambda self: self.f == None
+    front_ptr = lambda self: self.f
+    rear_ptr = lambda self: self.r
 
+    def set_front_ptr(self, ptr):
+        self.f = ptr
+    def set_rear_ptr(self, ptr):
+        self.r = ptr
 
+    def __str__(self):
+        first = self.f
+        res = list()
+        while (first != None):
+            res += [first.val]
+            first = first.next
+        return str(res)
+```
 
+### 3.3.3 表格的表示
 
+一维表格
 
+```python
+class Table:
+    def __init__(self):
+        self.records = []
 
+    def lookup(self, key):
+        record = self.assoc(key)
+        if (record):
+            return record[0]
 
+    def insert(self, key, value):
+        record = self.assoc(key)
+        if (record):
+            record[1] = value
+        else:
+            self.records.append([key, value])
 
+    def assoc(self, key):
+        for record in self.records:
+            if (record[0] == key):
+                return record
+        return None
+```
 
+二维表格
+
+```python
+class Table:
+    def __init__(self, same_key = lambda x, y : x == y):
+        self.records = []
+        self.same_key = same_key
+
+    def lookup(self, key):
+        record = self.assoc(key)
+        if (record):
+            return record[1]
+
+    def insert(self, key, value):
+        record = self.assoc(key)
+        if (record):
+            record[1] = value
+        else:
+            self.records.append([key, value])
+
+    def assoc(self, key):
+        for record in self.records:
+            if (self.same_key(record[0], key)):
+                return record
+        return None
+
+class Table2D(Table):
+
+    def lookup(self, key1, key2):
+        table = self.assoc(key1)
+        if (table):
+            return table[1].lookup(key2)
+
+    def insert(self, key1, key2, value):
+        table = self.assoc(key1)
+        if (table):
+            table[1].insert(key2, value)
+        else:
+            table = Table(self.same_key)
+            table.insert(key2, value)
+            super().insert(key1, table)
+```
+
+### 3.3.4 数字电路的模拟器
+
+数字逻辑模拟系统是事件驱动的模拟程序的一个代表, 事件引发在随后时间发生的事件
 
 
 
@@ -849,6 +956,9 @@ print(check(x))
 
 见 3.18
 
+## 3.20
+
+
 ```
           +-------------------------------------------------------+
 global -> |                                                       |
@@ -878,6 +988,241 @@ env       |  z                           x                        |
                                                   ((eq? m 'set-cdr!) 'set-cdr!)
                                                   (else
                                                     (error "..." m)))
+```
+
+## 3.21
+
+因为队列存储的是两个指针, 并不是实际的队列, 直接打印是由问题的
+
+代码见正文 `__str__` 函数
+
+## 3.22
+
+正文使用的类表示, 与之类似
+
+## 3.23
+
+```python
+class DoublyLink:
+    def __init__(self, val = None, l = None, r = None):
+        self.val, self.ptr = val, [l, r]
+
+class Deque:
+    def __init__(self):
+        self.pos = [None, None]
+
+    def is_empty(self):
+        return self.pos[0] == None or self.pos[1] == None
+
+    def get(self, which):
+        if (self.is_empty()):
+            return "Empty queue"
+        assert(isinstance(self.pos[which], DoublyLink))
+        return self.pos[which].val
+
+    front_deque = lambda self: self.get(0)
+    rear_deque = lambda self: self.get(1)
+
+
+    def insert(self, item, which):
+        tmp = DoublyLink(item, None, self.pos[0])
+        if (which == 1):
+            tmp = DoublyLink(item, self.pos[1], None)
+        if (self.is_empty()):
+            self.pos = [tmp, tmp]
+        else:
+            assert(isinstance(self.pos[which], DoublyLink))
+            self.pos[which].ptr[which], self.pos[which] = tmp, tmp # type: ignore
+
+    front_insert_deque = lambda self, item: self.insert(item, 0)
+    rear_insert_deque = lambda self, item: self.insert(item, 1)
+
+    def delete(self, which):
+        if (self.is_empty()):
+            return "Empty queue"
+        assert(isinstance(self.pos[which], DoublyLink))
+        tmp = self.pos[which].ptr[which ^ 1]
+        if (tmp != None):
+            tmp.ptr[which] = None
+        self.pos[which] = tmp
+
+    front_delete_queue = lambda self: self.delete(0)
+    rear_delete_queue = lambda self: self.delete(1)
+
+    def __str__(self):
+        ptr = self.pos[0]
+        res = list()
+        while (ptr != None):
+            res += [ptr.val]
+            ptr = ptr.ptr[1]
+        return str(res)
+```
+
+## 3.24
+
+见正文二维表格 `Table` 的 `__init__` 函数和 `assoc` 函数
+
+## 3.25
+
+```python
+class MultiTable:
+    def __init__(self, same_key = lambda x, y : x == y):
+        self.records = []
+        self.same_key = same_key
+
+    def assoc(self, key):
+        for record in self.records:
+            if (self.same_key(record[0], key)):
+                return record
+        return None
+
+    def lookup(self, key_table):
+        ptr = self
+        for key in key_table:
+            tmp = ptr.assoc(key)
+            if (not tmp):
+                return False
+            ptr = tmp[1]
+        return ptr
+
+    def insert(self, key_table, value):
+        ptr = self
+        for i, key in enumerate(key_table):
+            tmp = ptr.assoc(key)
+
+            if (not tmp):
+                tmp = [key, MultiTable(self.same_key)]
+                ptr.records.append(tmp)
+            if (i == len(key_table) - 1):
+                tmp[1] = value
+
+            ptr = tmp[1]
+```
+
+## 3.26
+
+```python
+class Node:
+    def __init__(self, key = "None", val = None, left = None, right = None):
+        self.val = [key, val]
+        self.left, self.right = left, right
+
+class BST:
+    def __init__(self):
+        self.root = Node()
+
+    def find(self, key):
+
+        def helper(cur_node):
+            if (cur_node == None):
+                return False
+            if (cur_node.val[0] == key):
+                return cur_node.val
+            if (cur_node.val[0] < key):
+                return helper(cur_node.right)
+            if (cur_node.val[0] > key):
+                return helper(cur_node.left)
+
+        return helper(self.root)
+
+    def insert(self, key, value):
+
+        def helper(cur_node):
+            if (cur_node == None):
+                return Node(key, value)
+            if (cur_node.val[0] == key):
+                cur_node.val[1] = value
+            elif (cur_node.val[0] < key):
+                cur_node.right = helper(cur_node.right)
+            elif (cur_node.val[0] > key):
+                cur_node.left = helper(cur_node.left)
+            return cur_node
+
+        helper(self.root)
+
+    def __str__(self):
+
+        def helper(cur_node, depth):
+            if (cur_node == None):
+                return ""
+            res = " " * depth * 5 + str(cur_node.val) + "\n"
+            res += helper(cur_node.left, depth + 1) + \
+                   helper(cur_node.right, depth + 1)
+            return res
+
+        return helper(self.root, 0)
+
+
+class Table:
+
+    def __init__(self):
+        self.tree = BST()
+
+    def get(self, key):
+        return self.tree.find(key)
+
+    def lookup(self, keys):
+        ptr = self
+        for key in keys:
+            tmp = ptr.get(key)
+            if (not tmp):
+                return False
+            ptr = tmp[1]
+        return ptr
+
+    def insert(self, keys, value):
+        ptr = self
+        for i, key in enumerate(keys):
+            tmp = ptr.get(key)
+            if (not tmp):
+                tmp = [key, Table()]
+                if (i == len(keys) - 1):
+                    tmp[1] = value
+                ptr.tree.insert(*tmp)
+
+            if (i == len(keys) - 1):
+                tmp[1] = value
+            ptr = tmp[1]
+```
+
+## 3.27
+
+记忆化, 因为对于每个 `n` 只计算一次
+
+不可以, 因为还没算
+
+## 3.28
+
+```python
+def or_gate(a1, a2, output):
+    new_value = logical_or(a1.get_signal(), a2.get_signal())
+    or_action_procedure = after_delay(or_gate_delay,
+                                      lambda: output.set_signal(new_value))
+    a1.add_action(or_action_procedure)
+    a2.add_action(or_action_procedure)
+```
+
+## 3.29
+
+```python
+or_gate_delay = 2 * inverter_delay + and_gate_delay
+# 输入的两个 反 同时进行
+
+def or_gate(a1, a2, output):
+    def or_action_procedure():
+        new_value = logical_or(a1.get_signal(), a2.get_signal())
+        after_delay(or_gate_delay, lambda: output.set_signal(new_value))
+
+    a1.add_action(or_action_procedure)
+    a2.add_action(or_action_procedure)
+```
+
+## 3.30
+
+```python
+half_adder_delay = max(or_gate_delay, and_gate_delay + inverter_delay) + and_gate_delay
+full_adder_delay = 2 * half_adder_delay + or_gate_delay
+adder = n * full_adder_delay
 ```
 
 
