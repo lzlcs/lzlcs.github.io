@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>CSAPP 学习笔记 (第一章)</title>
+      <link href="/2023/07/26/1csapp/"/>
+      <url>/2023/07/26/1csapp/</url>
+      
+        <content type="html"><![CDATA[<h1>计算机系统漫游</h1><h2 id="1-1-信息就是位-上下文">1.1 信息就是位+上下文</h2><p>只使用 $ASCII$ 字符构成的文件称为<strong>文本文件</strong> <br>所有其他的文件称为<strong>二进制文件</strong></p><p>系统中所有的信息都是由比特序列表示的, 通过上下文来区分这些数据表示什么</p><h2 id="1-2-程序被其他程序翻译成不同的格式">1.2 程序被其他程序翻译成不同的格式</h2><p>每条 C 语句都被<strong>编译器驱动程序</strong>翻译成低级<strong>机器语言</strong>指令, 这些指令被打包成<strong>可执行目标文件</strong> \</p><ol><li>预处理阶段: 预处理器把头文件内容直接插入到 <code>hello.c</code> 中, 得到 <code>hello.i</code></li><li>编译阶段: 编译器把 <code>hello.i</code> 翻译成 <code>hello.s</code>, 这是一个汇编程序</li><li>汇编阶段: 汇编器把 <code>hello.s</code> 翻译成机器语言, 打包成 <code>hello.o</code>, 可重定位目标程序</li><li>链接阶段: 链接器负责将预编译的目标文件并入当前文件, 如 <code>printf.o</code>, 得到 <code>hello</code>, 可执行目标程序</li></ol><h2 id="1-3-了解编译系统如何工作是大有益处的">1.3 了解编译系统如何工作是大有益处的</h2><ol><li>优化程序性能</li><li>理解链接时出现的错误</li><li>避免安全漏洞</li></ol><h2 id="1-4-处理器读并解释储存在存储器中的指令">1.4 处理器读并解释储存在存储器中的指令</h2><p>把文件名输入到 <code>shell</code>, 一种命令行解释器中</p><h3 id="1-4-1-系统的硬件组成">1.4.1 系统的硬件组成</h3><p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3lsioy5nita.webp" alt="图片"></p><p><strong>总线</strong>: 传递字, 字包含若干字节, 一个字包含的字节数称作字长 <br><strong>IO设备</strong>: 通过控制器或适配器和 IO总线连接 <br><strong>主存</strong>: 一个临时存储设备, 由一些 <code>DRAM</code> (动态随机存取储存器)芯片组成, 是一个线性的字节数组 <br><strong>处理器</strong>: 从 PC 指向的存储器中取出指令并执行 <br></p><ul><li>加载: 从主存拷贝一个字节或者一个字存到寄存器中</li><li>存储: 从寄存器拷贝到主存</li><li>更新: 用 ALU 计算并存到寄存器中</li><li>I/O 读: 从 IO 设备到寄存器</li><li>I/O 写: 从寄存器到 IO 设备</li><li>转移: 从指令本身抽取一个字放在 PC 中</li></ul><h3 id="1-4-2-执行-hello-程序">1.4.2 执行 <code>hello</code> 程序</h3><ol><li>从键盘逐一读取 <code>hello</code> 命令放到寄存器, 最后放到主存中</li><li>通过 DMA 技术从磁盘调用可执行文件到主存中</li><li>逐条运行机器语言指令, 把 <code>hello, world!</code> 从主存拷贝到寄存器再到输出设备</li></ol><h2 id="1-5-高速缓存">1.5 高速缓存</h2><p>较大的存储设备比较小的存储设备运行慢, 但快速设备的造价远高于低速同类设备</p><p>系统设计者采用 SRAM技术实现的高速缓存存储器来加快拷贝速度</p><h2 id="1-6-形成层次结构的存储设备">1.6 形成层次结构的存储设备</h2><p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.44pb2oin5va0.webp" alt=""></p><h2 id="1-7-操作系统管理硬件">1.7 操作系统管理硬件</h2><p>程序并没有直接访问硬件, 而是靠 <strong>操作系统</strong> 提供的服务</p><p>操作系统有两个基本功能:</p><ol><li>防止硬件被失控的程序滥用</li><li>为应用程序提供简单且一致的硬件操作方法</li></ol><p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.hxxuwi335ww.webp" alt=""></p><h3 id="1-7-1-进程">1.7.1 进程</h3><p>进程是操作系统对运行程序的一种抽象</p><p>每个进程好像在独自使用硬件, 这称之为并行, 实际上是不同进程的指令的交错执行 <br><br>这种机制称作 <strong>上下文切换</strong>, 上下文也就是进程运行所需的所有状态信息</p><h3 id="1-7-2-线程">1.7.2 线程</h3><p>一个进程可以由多个线程组成, 多线程比多进程更容易共享数据</p><h3 id="1-7-3-虚拟存储器">1.7.3 虚拟存储器</h3><p>虚拟存储器是一个抽象概念, 它为每个进程提供一个假象 <br>每个进程看到的存储器都是一致的, 称为虚拟地址空间</p><p>虚拟存储空间由大量准确定义的区组成, 包括程序代码和数据, 堆, 共享库, 栈, 内核虚拟储存器</p><h3 id="1-7-4-文件">1.7.4 文件</h3><p>所有的设备甚至网络, 都可以被看成文件</p><h2 id="1-8-利用网络系统和其他系统通信">1.8 利用网络系统和其他系统通信</h2><p>一个网络也可以看作一个IO设备</p><h2 id="1-9-下一步">1.9 下一步</h2><p>系统是互相交织的硬件和软件的集合体, 他们必须共同协作</p><h2 id="1-10-小结">1.10 小结</h2><p>信息是一串01序列, 根据上下文有不同的解释方式 <br>程序被其他程序翻译成其他格式, 最终变为可执行文件</p><p>存储设备按层次排列</p><p>操作系统内核提供三个基本的抽象概念</p><ol><li>文件是对 IO 设备的抽象概念</li><li>虚拟存储器是对主存和磁盘的抽象概念</li><li>进程是处理器, 主存和 IO 设备的抽象概念</li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> Book </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> C </tag>
+            
+            <tag> CSAPP </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>SICP 学习笔记 (第一章)</title>
       <link href="/2023/07/02/1sicp/"/>
       <url>/2023/07/02/1sicp/</url>
@@ -218,7 +245,7 @@
       <link href="/2023/01/01/UseFullWebsites/"/>
       <url>/2023/01/01/UseFullWebsites/</url>
       
-        <content type="html"><![CDATA[<h1>Cheat Sheet</h1><p><a href="https://atts.w3cschool.cn/attachments/image/20191225/1577243564858376.png">Git Cheat Sheet</a><br><a href="https://vim.rtorr.com/lang/zh_cn">Vim Cheat Sheet</a></p>]]></content>
+        <content type="html"><![CDATA[<h1>Cheat Sheet</h1><p><a href="https://atts.w3cschool.cn/attachments/image/20191225/1577243564858376.png">Git Cheat Sheet</a> <br><a href="https://vim.rtorr.com/lang/zh_cn">Vim Cheat Sheet</a></p>]]></content>
       
       
       <categories>
