@@ -10,5 +10,5 @@ tags:
 
 # Cheat Sheet
 
-[Git Cheat Sheet](https://atts.w3cschool.cn/attachments/image/20191225/1577243564858376.png)
+[Git Cheat Sheet](https://atts.w3cschool.cn/attachments/image/20191225/1577243564858376.png) \
 [Vim Cheat Sheet](https://vim.rtorr.com/lang/zh_cn)
