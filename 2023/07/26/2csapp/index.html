@@ -243,6 +243,91 @@
 <li><code>||</code> 前若为 <code>true</code>, 直接返回 <code>true</code>,  <code>||</code> 后的表达式不计算</li>
 <li><code>&amp;&amp;</code> 前若为 <code>false</code>, 直接返回 <code>false</code>,  <code>&amp;&amp;</code> 后的表达式不计算</li>
 </ol>
+<h3 id="2-1-10-C-中的移位运算">2.1.10 C 中的移位运算</h3>
+<ol>
+<li><code>x &lt;&lt; k</code> 丢弃 k 个最高位, 在最低位添加 k 个 0</li>
+<li><code>x &gt;&gt; k</code> 丢弃 k 个最低位
+<ol>
+<li>逻辑右移: 在最高位添加 k 个 0</li>
+<li>算数右移: 符号位不变, 其后添加 k - 1 个零</li>
+</ol>
+</li>
+</ol>
+<p>几乎所有的编译器都采用算数右移</p>
+<h2 id="2-2-整数表示">2.2 整数表示</h2>
+<h3 id="2-2-1-整数数据类型">2.2.1 整数数据类型</h3>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.77vyucib1bc0.webp" alt=""></p>
+<h3 id="2-2-2-无符号和二进制补码编码">2.2.2 无符号和二进制补码编码</h3>
+<p>$B2U_w$ 表示无符号的二进制, $B2U_w = \Sigma_{i = 0}^{w - 1} x_i 2^i$ <br>
+$B2T_w$ 表示二进制补码, $B2T_w = -x_{w-1}2^{w-1} +\Sigma_{i = 0}^{w - 2} x_i 2^i$ <br>
+$B2O_w$ 表示二进制反码, $B2O_w = -(x_{w-1}2^{w-1}-1) +\Sigma_{i = 0}^{w - 2} x_i 2^i$ <br>
+$B2S_w$ 表示符号数值, $B2S_w = (-1)^{x_{w-1}} \times \Sigma_{i = 0}^{w - 2} x_i 2^i$</p>
+<p>二进制补码所能表示的值是不对称的</p>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3sv21t52zx60.webp" alt=""></p>
+<h3 id="2-2-3-有符号和无符号数的转换">2.2.3 有符号和无符号数的转换</h3>
+<p>注意强制类型转换:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">-1</span>;</span><br><span class="line">cout &lt;&lt; (<span class="type">unsigned</span>)x &lt;&lt; endl;</span><br><span class="line"><span class="comment">// 4294967295 = 2 ^ 32 - 1</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3ig3ten820c0.webp" alt=""></p>
+<h3 id="2-2-4-C-中的有符号和无符号数">2.2.4 C 中的有符号和无符号数</h3>
+<p>类型转换发生:</p>
+<ol>
+<li>显式类型转换 <code>int(12345u)</code></li>
+<li>赋值时, 等号右边会被强制转换为等号左边</li>
+<li><code>printf</code> 时, <code>%d</code>, <code>%u</code>, <code>%x</code>, 为有符号十进制, 无符号十进制, 十六进制</li>
+<li>运算时若出现无符号数据, 则把运算中的所有数据转换为无符号再计算</li>
+</ol>
+<h3 id="2-2-5-扩展一个数字的位表示">2.2.5 扩展一个数字的位表示</h3>
+<p>字长小的整数转换到字长大的整数:</p>
+<ol>
+<li>零扩展: 在最高位补 0</li>
+<li>符号扩展(补码使用): 在最高位补最高有效位</li>
+</ol>
+<h3 id="2-2-6-截断数字">2.2.6 截断数字</h3>
+<ol>
+<li>对于无符号截断 k 位: $x ; mod ; 2^k$</li>
+<li>对于有符号截断 k 位: 转成无符号之后同上操作, 之后把剩下的数字转成有符号</li>
+</ol>
+<h3 id="2-2-7-关于有符号和无符号数的建议">2.2.7 关于有符号和无符号数的建议</h3>
+<p>在非必要的情况下不要使用无符号数</p>
+<h2 id="2-3-整数运算">2.3 整数运算</h2>
+<h3 id="2-3-1-无符号加法">2.3.1 无符号加法</h3>
+<p>若当前整数由 w 位二进制位表示, 两个数加法就是 $(x+y); mod;2^w$</p>
+<p>模数加法形成一种数学结构, 称作阿贝尔群, 可交换可结合, 每个元素有一个加法逆元 <br>
+对于元素 $x$, 它的加法逆元就是 $2^w-x$</p>
+<h3 id="2-3-2-二进制补码加法">2.3.2 二进制补码加法</h3>
+<p>设 $x + y = z$</p>
+<ol>
+<li>正溢出: $z&gt;=2^{w-1}$, $sum = x + y - 2^w$</li>
+<li>正常: $2^{w-1}&gt;z&gt;=-2^{w-1}$, $sum = x + y$</li>
+<li>负溢出: $z&lt;-2^{w-1}$, $sum = x + y + 2^w$</li>
+</ol>
+<h3 id="2-3-3-二进制补码的非">2.3.3 二进制补码的非</h3>
+<ol>
+<li>$x != -2^{w-1}$, $x$ 的加法逆元是 $-x$</li>
+<li>否则 $x$ 的加法逆元是它自己</li>
+</ol>
+<p>一种执行取非的技术时 <code>~x + 1</code></p>
+<h3 id="2-3-4-无符号乘法">2.3.4 无符号乘法</h3>
+<p>$x \times y = x \times y ; mod ; 2^w$</p>
+<h3 id="2-3-5-二进制补码乘法">2.3.5 二进制补码乘法</h3>
+<p>x, y 转成无符号进行乘法, 取后 w 位转成有符号整数</p>
+<h3 id="2-3-6-乘以常数">2.3.6 乘以常数</h3>
+<p>$2^w = 1u &lt;&lt; w$ (无符号整数) <br>
+$2^w = 1 &lt;&lt; w$ (二进制补码) <br>
+在不溢出的情况下成立</p>
+<p>可以把乘的这个常数进行二进制拆分<br>
+对于拆分出的某段 111.111, 设最低位为 m, 最高位为 n</p>
+<ol>
+<li>FormA: <code>(x &lt;&lt; m) + (x &lt;&lt; m + 1) + ... + (x &lt;&lt; n)</code></li>
+<li>FormB: <code>(x &lt;&lt; n + 1) - (x &lt;&lt; m)</code></li>
+</ol>
+<h3 id="2-3-7-除以-2-的幂">2.3.7 除以 2 的幂</h3>
+<p>整数除法向 0 舍, 右移运算永远向下舍 <code>-5 / 2 = -2</code>, <code>-5 &gt;&gt; 1 = -3</code></p>
+<p>以下代码等价于 $x / 2^k$</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(x &lt; <span class="number">0</span> ? (x + (<span class="number">1</span> &lt;&lt; k) - <span class="number">1</span>) : x) &gt;&gt; k</span><br></pre></td></tr></table></figure>
+<h3 id="2-3-8-关于整数运算的最后思考">2.3.8 关于整数运算的最后思考</h3>
+<p>补码是一种很聪明的表示方法, 绝大多数运算都和无符号整数的位级操作类似 <br>
+数据溢出可能是造成难以调试的 bug 的一个原因</p>
 <h1>练习选做</h1>
 <h2 id="2-1-2-6">2.1 ~ 2.6</h2>
 <p>简单的进制转换和运算</p>
@@ -265,6 +350,75 @@ C. <code>&lt;=</code> 改成 <code>&lt;</code></p>
 <p>注意分辨逻辑运算和位级运算</p>
 <h2 id="2-15">2.15</h2>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">!(x ^ y)</span><br><span class="line"><span class="comment">// 此处不能写 ~</span></span><br></pre></td></tr></table></figure>
+<h2 id="2-16">2.16</h2>
+<p>注意算术右移和逻辑右移的区别</p>
+<h2 id="2-17-2-22">2.17 ~ 2.22</h2>
+<p>简单算数</p>
+<h2 id="2-23">2.23</h2>
+<p>A. 模拟<br>
+B. <code>fun1</code> 提取最后八位(无符号), <code>fun2</code> 提取最后八位(有符号)</p>
+<h2 id="2-24">2.24</h2>
+<p>算数</p>
+<h2 id="2-25">2.25</h2>
+<p><code>length - 1</code> 是 <code>11....11111</code> 运算两边出现无符号数时, 都转换为无符号数 <br>
+所以 <code>for (i = 0; i &lt; UMAX; i++)</code>, <code>i</code> 会超出数组范围</p>
+<p>修改: <code>i &lt; length</code></p>
+<h2 id="2-26">2.26</h2>
+<p>A. 两者的减法可能为负数, 此时出现错误<br>
+B. 无符号中, 负数会被认为是很大的数, 大于零而产生错误<br>
+C. <code>strlen(s) &gt; strlen(t)</code></p>
+<h2 id="2-27">2.27</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">uadd_ok</span><span class="params">(<span class="type">unsigned</span> x, <span class="type">unsigned</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x &lt;= (x + y);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-28-2-29">2.28 ~ 2.29</h2>
+<p>简单算数</p>
+<h2 id="2-30">2.30</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">tadd_ok</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> !((x &gt;= <span class="number">0</span> &amp;&amp; y &gt;= <span class="number">0</span> &amp;&amp; x + y &lt; <span class="number">0</span>) ||</span><br><span class="line">             (x &lt; <span class="number">0</span> &amp;&amp; y &lt; <span class="number">0</span> &amp;&amp; x + y &gt; <span class="number">0</span>));</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-31">2.31</h2>
+<p>哈哈哈哈哈哈<br>
+就算溢出了该等式仍旧成立</p>
+<h2 id="2-32">2.32</h2>
+<p>$TMIN$ 的加法逆元是他自己, 要特判</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">tsub_ok</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> TMIN = <span class="number">-2147483648</span>;</span><br><span class="line">    <span class="keyword">if</span> (y == TMIN) <span class="keyword">return</span> x &lt; <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">tadd_ok</span>(x, -y);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-33-2-34">2.33 ~ 2.34</h2>
+<p>简单计算</p>
+<h2 id="2-35">2.35</h2>
+<ol>
+<li>当 $t=0$ 时, $p &lt; 2^w$, $x \times y = p$ 不会溢出</li>
+<li>$p$ 除以 $x$ 等于 $q$, 余 $r$</li>
+<li>$x \times y = x \times q + r + t 2^w$
+<ul>
+<li>$q=y$, $0 = r + t2^w$, 又 $\lvert r \rvert &lt; 2^w$, 所以 $r = t = 0$</li>
+<li>$r = t = 0$, $x \times y = x \times q$, 显然 $q=y$</li>
+</ul>
+</li>
+</ol>
+<h2 id="2-36">2.36</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">tmult_ok</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="type">int64_t</span> tmp = (<span class="type">int64_t</span>)x * y;</span><br><span class="line">    <span class="keyword">return</span> tmp == (<span class="type">int</span>)tmp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-37">2.37</h2>
+<p>A. 一点没用 <br>
+B. 不能改 <code>malloc</code> 的代码, 所以只能在溢出的时候返回空</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">uint64_t</span> required_size = ele_cnt * (<span class="type">uint64_t</span>) ele_size;</span><br><span class="line"><span class="type">size_t</span> request_size = (<span class="type">size_t</span>) required_size;</span><br><span class="line"><span class="keyword">if</span> (required_size != request_size)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="2-38">2.38</h2>
+<p>对于任何值都可以</p>
+<h2 id="2-39">2.39</h2>
+<p>$n$ 是最高位时, <code>1 &lt;&lt; n + 1</code> 为 $0$, FormB 可以写成 <code>-x &lt;&lt; m</code></p>
+<h2 id="2-40">2.40</h2>
+<p>简单算数</p>
+<h2 id="2-41">2.41</h2>
+<p>当 $n = m$ 或者 $n = m + 1$ 时, 使用 FormA, 此时只需要做一次或者两次移位运算 <br>
+其他情况下, FormB 需要做两次移位运算, FormA 需要更多次移位运算</p>
+<h2 id="2-42">2.42</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">div16</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 加的是 0 还是 15</span></span><br><span class="line">    <span class="type">int</span> bias = (x &gt;&gt; <span class="number">31</span>) &amp; <span class="number">0xF</span>;</span><br><span class="line">    <span class="keyword">return</span> (x + bias) &gt;&gt; <span class="number">4</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-43">2.43</h2>
+<p>$M = 31, N = 8$</p>
+<h2 id="2-44">2.44</h2>
+<p>A. False, $x = TMIN_{32}$, <code>-2147483648 &gt; 0 || 2147483647 &lt; 0</code> 为 <code>false</code> <br>
+B. True, 如果 <code>(x &amp; 7) == 7</code>, 那么最低三位一定为 <code>111</code>, 右移 29 位之后成为符号位, 一定为负 <br>
+C. False, $x = 46341$ <br>
+D. True <br>
+E: False, $x = TMIN_{32}$ <br>
+F: True, 都会被转换成无符号再计算 <br>
+G: True, $x \times (-y - 1) + uy \times ux$, 也就是 $-x$</p>
 
       </div>
       
@@ -331,7 +485,7 @@ C. <code>&lt;=</code> 改成 <code>&lt;</code></p>
     <div class="title">Contents</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Chapter 2: 信息的表示和处理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-%E4%BF%A1%E6%81%AF%E5%AD%98%E5%82%A8"><span class="toc-text">2.1 信息存储</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-1-%E5%8D%81%E5%85%AD%E8%BF%9B%E5%88%B6%E8%A1%A8%E7%A4%BA%E6%B3%95"><span class="toc-text">2.1.1 十六进制表示法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-2-%E5%AD%97"><span class="toc-text">2.1.2 字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-3-%E6%95%B0%E6%8D%AE%E5%A4%A7%E5%B0%8F"><span class="toc-text">2.1.3 数据大小</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-4-%E5%AF%BB%E5%9D%80%E5%92%8C%E5%AD%97%E8%8A%82%E9%A1%BA%E5%BA%8F"><span class="toc-text">2.1.4 寻址和字节顺序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-5-%E8%A1%A8%E7%A4%BA%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">2.1.5 表示字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-6-%E8%A1%A8%E7%A4%BA%E4%BB%A3%E7%A0%81"><span class="toc-text">2.1.6 表示代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-7-%E5%B8%83%E5%B0%94%E4%BB%A3%E6%95%B0%E5%92%8C%E7%8E%AF"><span class="toc-text">2.1.7 布尔代数和环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-8-C-%E4%B8%AD%E7%9A%84%E4%BD%8D%E7%BA%A7%E8%BF%90%E7%AE%97"><span class="toc-text">2.1.8 C 中的位级运算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-9-C-%E4%B8%AD%E7%9A%84%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97"><span class="toc-text">2.1.9 C 中的逻辑运算</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">练习选做</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-2-6"><span class="toc-text">2.1 ~ 2.6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-7"><span class="toc-text">2.7</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-8-2-9"><span class="toc-text">2.8 ~ 2.9</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-10"><span class="toc-text">2.10</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-11"><span class="toc-text">2.11</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-12"><span class="toc-text">2.12</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-13"><span class="toc-text">2.13</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-14"><span class="toc-text">2.14</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-15"><span class="toc-text">2.15</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Chapter 2: 信息的表示和处理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-%E4%BF%A1%E6%81%AF%E5%AD%98%E5%82%A8"><span class="toc-text">2.1 信息存储</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-1-%E5%8D%81%E5%85%AD%E8%BF%9B%E5%88%B6%E8%A1%A8%E7%A4%BA%E6%B3%95"><span class="toc-text">2.1.1 十六进制表示法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-2-%E5%AD%97"><span class="toc-text">2.1.2 字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-3-%E6%95%B0%E6%8D%AE%E5%A4%A7%E5%B0%8F"><span class="toc-text">2.1.3 数据大小</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-4-%E5%AF%BB%E5%9D%80%E5%92%8C%E5%AD%97%E8%8A%82%E9%A1%BA%E5%BA%8F"><span class="toc-text">2.1.4 寻址和字节顺序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-5-%E8%A1%A8%E7%A4%BA%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">2.1.5 表示字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-6-%E8%A1%A8%E7%A4%BA%E4%BB%A3%E7%A0%81"><span class="toc-text">2.1.6 表示代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-7-%E5%B8%83%E5%B0%94%E4%BB%A3%E6%95%B0%E5%92%8C%E7%8E%AF"><span class="toc-text">2.1.7 布尔代数和环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-8-C-%E4%B8%AD%E7%9A%84%E4%BD%8D%E7%BA%A7%E8%BF%90%E7%AE%97"><span class="toc-text">2.1.8 C 中的位级运算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-9-C-%E4%B8%AD%E7%9A%84%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97"><span class="toc-text">2.1.9 C 中的逻辑运算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-10-C-%E4%B8%AD%E7%9A%84%E7%A7%BB%E4%BD%8D%E8%BF%90%E7%AE%97"><span class="toc-text">2.1.10 C 中的移位运算</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E6%95%B4%E6%95%B0%E8%A1%A8%E7%A4%BA"><span class="toc-text">2.2 整数表示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-1-%E6%95%B4%E6%95%B0%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-text">2.2.1 整数数据类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-2-%E6%97%A0%E7%AC%A6%E5%8F%B7%E5%92%8C%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%A1%A5%E7%A0%81%E7%BC%96%E7%A0%81"><span class="toc-text">2.2.2 无符号和二进制补码编码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-3-%E6%9C%89%E7%AC%A6%E5%8F%B7%E5%92%8C%E6%97%A0%E7%AC%A6%E5%8F%B7%E6%95%B0%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="toc-text">2.2.3 有符号和无符号数的转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-4-C-%E4%B8%AD%E7%9A%84%E6%9C%89%E7%AC%A6%E5%8F%B7%E5%92%8C%E6%97%A0%E7%AC%A6%E5%8F%B7%E6%95%B0"><span class="toc-text">2.2.4 C 中的有符号和无符号数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-5-%E6%89%A9%E5%B1%95%E4%B8%80%E4%B8%AA%E6%95%B0%E5%AD%97%E7%9A%84%E4%BD%8D%E8%A1%A8%E7%A4%BA"><span class="toc-text">2.2.5 扩展一个数字的位表示</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-6-%E6%88%AA%E6%96%AD%E6%95%B0%E5%AD%97"><span class="toc-text">2.2.6 截断数字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-7-%E5%85%B3%E4%BA%8E%E6%9C%89%E7%AC%A6%E5%8F%B7%E5%92%8C%E6%97%A0%E7%AC%A6%E5%8F%B7%E6%95%B0%E7%9A%84%E5%BB%BA%E8%AE%AE"><span class="toc-text">2.2.7 关于有符号和无符号数的建议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-%E6%95%B4%E6%95%B0%E8%BF%90%E7%AE%97"><span class="toc-text">2.3 整数运算</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-1-%E6%97%A0%E7%AC%A6%E5%8F%B7%E5%8A%A0%E6%B3%95"><span class="toc-text">2.3.1 无符号加法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-2-%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%A1%A5%E7%A0%81%E5%8A%A0%E6%B3%95"><span class="toc-text">2.3.2 二进制补码加法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-3-%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%A1%A5%E7%A0%81%E7%9A%84%E9%9D%9E"><span class="toc-text">2.3.3 二进制补码的非</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-4-%E6%97%A0%E7%AC%A6%E5%8F%B7%E4%B9%98%E6%B3%95"><span class="toc-text">2.3.4 无符号乘法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-5-%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%A1%A5%E7%A0%81%E4%B9%98%E6%B3%95"><span class="toc-text">2.3.5 二进制补码乘法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-6-%E4%B9%98%E4%BB%A5%E5%B8%B8%E6%95%B0"><span class="toc-text">2.3.6 乘以常数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-7-%E9%99%A4%E4%BB%A5-2-%E7%9A%84%E5%B9%82"><span class="toc-text">2.3.7 除以 2 的幂</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-8-%E5%85%B3%E4%BA%8E%E6%95%B4%E6%95%B0%E8%BF%90%E7%AE%97%E7%9A%84%E6%9C%80%E5%90%8E%E6%80%9D%E8%80%83"><span class="toc-text">2.3.8 关于整数运算的最后思考</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">练习选做</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-2-6"><span class="toc-text">2.1 ~ 2.6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-7"><span class="toc-text">2.7</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-8-2-9"><span class="toc-text">2.8 ~ 2.9</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-10"><span class="toc-text">2.10</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-11"><span class="toc-text">2.11</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-12"><span class="toc-text">2.12</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-13"><span class="toc-text">2.13</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-14"><span class="toc-text">2.14</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-15"><span class="toc-text">2.15</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-16"><span class="toc-text">2.16</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-17-2-22"><span class="toc-text">2.17 ~ 2.22</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-23"><span class="toc-text">2.23</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-24"><span class="toc-text">2.24</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-25"><span class="toc-text">2.25</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-26"><span class="toc-text">2.26</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-27"><span class="toc-text">2.27</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-28-2-29"><span class="toc-text">2.28 ~ 2.29</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-30"><span class="toc-text">2.30</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-31"><span class="toc-text">2.31</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-32"><span class="toc-text">2.32</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-33-2-34"><span class="toc-text">2.33 ~ 2.34</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-35"><span class="toc-text">2.35</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-36"><span class="toc-text">2.36</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-37"><span class="toc-text">2.37</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-38"><span class="toc-text">2.38</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-39"><span class="toc-text">2.39</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-40"><span class="toc-text">2.40</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-41"><span class="toc-text">2.41</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-42"><span class="toc-text">2.42</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-43"><span class="toc-text">2.43</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-44"><span class="toc-text">2.44</span></a></li></ol></li></ol>
       
     </div>
   </div>
