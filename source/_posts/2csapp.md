@@ -654,3 +654,639 @@ C. D. 简单算数
     cout << d << endl << (f + d) - f << endl;
     ```
 
+## 2.55 ~ 2.57
+
+在正文中已经编译运行, 本机器使用小端法
+
+```cpp
+typedef unsigned char* byte_pointer;
+
+void show_bytes(byte_pointer start, size_t len) {
+    for (int i = 0; i < len; i++)
+        printf("%.2x ", start[i]);
+    printf("\n");
+}
+
+void show_int(int x) {
+    show_bytes((byte_pointer)(&x), sizeof(int));
+}
+
+void show_float(float x) {
+    show_bytes((byte_pointer)(&x), sizeof(float));
+}
+
+void show_short(short x) {
+    show_bytes((byte_pointer)(&x), sizeof(short));
+}
+
+void show_long(long x) {
+    show_bytes((byte_pointer)(&x), sizeof(long));
+}
+
+void show_double(double x) {
+    show_bytes((byte_pointer)(&x), sizeof(double));
+}
+
+void show_pointer(void *x) {
+    show_bytes((byte_pointer)(&x), sizeof(void *));
+}
+
+void test_show_bytes(int val) {
+    int ival = val;
+    float fval = (float)val;
+    int* pval = &val;
+    short sval = val;
+    long lval = val;
+    double dval = (double)val;
+    show_int(ival);
+    show_float(fval);
+    show_pointer(pval);
+    show_short(sval);
+    show_long(lval);
+    show_double(dval);
+}
+```
+
+## 2.58
+
+```cpp
+int is_little_endian() {
+    unsigned int x = 1;
+    byte_pointer y = (byte_pointer)&x;
+
+    return (int)(y[0] == 0x01);
+}
+```
+
+## 2.59
+
+```cpp
+int _2_59(int x, int y) {
+    int mask = 0xFF;
+    return (x & mask) | (y & (~mask));
+}
+```
+
+## 2.60
+
+```cpp
+int replace_byte(unsigned x, int i, unsigned char b) {
+    int mask = ~(0xFF << (i << 3));
+    int replace_value = (int)b << (i << 3);
+
+    return x & mask | replace_value;
+}
+```
+
+## 2.61
+
+```cpp
+int A(int x) {
+    return !(~x);
+}
+
+int B(int x) {
+    return !x;
+}
+
+int C(int x) {
+    int mask = 0xFF;
+    return A(x | ~mask);
+}
+
+int D(int x) {
+
+    int mask = 0xFF;
+
+    int shift_val = (sizeof(int) - 1) << 3;
+    int xright = x >> shift_val;
+
+    return B(xright & mask);
+}
+```
+
+## 2.62
+
+```cpp
+int int_shifts_are_arithmetic() {
+    return !(~(-1 >> 1));
+}
+```
+
+## 2.63
+
+一个数不变: `x | 0`, `x & -1` \
+-1 左移可以构造高位全为 1 的数字
+
+```cpp
+unsigned srl(unsigned x, int k) {
+    unsigned xsra = (int)x >> k;
+
+    int w = (sizeof(int) << 3);
+
+    int mask = -1 << (w - k);
+    return xsra & (~mask);
+}
+
+int sra(int x, int k) {
+    unsigned xsrl = (unsigned)x >> k;
+
+    int w = (sizeof(int) << 3);
+    int mask = -1 << (w - k);
+
+    int sign = (x & (1 << (w - 1)));
+
+    mask &= (!sign) - 1;
+
+    return xsrl | mask;
+}
+```
+
+## 2.64
+
+```cpp
+int any_odd_one(unsigned x) {
+    return !!(0xAAAAAAAA & x);
+}
+```
+
+## 2.65
+
+统计 1 个数的奇偶性, 根据异或不进位加法的特性 \
+把前 16 位和后 16 位异或起来, 这样后 16 位 1 的个数的奇偶性与先前相同 \
+依次到 8 位, 4 位, 2 位, 1 位, 这样只需要判断最后一位的奇偶性即可
+
+```cpp
+int odd_ones(unsigned x) {
+    x ^= (x >> 16);
+    x ^= (x >> 8);
+    x ^= (x >> 4);
+    x ^= (x >> 2);
+    x ^= (x >> 1);
+    return x & 0x1;
+}
+```
+
+## 2.66
+
+1. 首先生成一个数字, 使得最高有效的 1 到最低位全是 1 \
+    `x |= x >> 1` 这样最高的两位都是 1 \
+    `x |= x >> 2` 这样最高的四位都是 1 \
+    依此类推 \
+    `x |= x >> 16` 达成目标
+2. 右移一次再加一 (如果 `x = 0` 则加 0) \
+    不加一再右移是为了防止溢出
+
+```cpp
+int leftmost_one(unsigned x) {
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+    // x = 0 时加的数为 0
+    int add_number = (x && true);
+    return (x >> 1) + add_number;
+}
+```
+
+## 2.67
+
+A. 左移 32 位的行为未定义
+B, C 如下
+```cpp
+int int_size_is_32() {
+    int set_msb = 1 << 31;
+    int beyond_msb = set_msb << 1;
+    return set_msb && !beyond_msb;
+}
+
+int int_size_is_32_for_16_bit() {
+    int set_msb = 1 << 15 << 15 << 1;
+    int beyond_msb = set_msb << 1;
+    return set_msb && !beyond_msb;
+}
+```
+
+## 2.68
+
+```cpp
+int lower_one_mask(int n) {
+    int w = sizeof(int) << 3;
+    return (unsigned)-1 >> (w - n);
+}
+```
+
+## 2.69
+
+```cpp
+unsigned rotate_left(unsigned x, int n) {
+    int w = sizeof(int) << 3;
+    int offset = w - n;
+
+    int lower = x >> offset;
+    int upper = x << n;
+    return lower | upper;
+}
+```
+## 2.70
+
+如果 x 为正, 那么第 n-1 位直到第 w-1 位都必须为 0 \
+如果 x 为负, 那么第 n-1 位直到第 w-1 位都必须为 1
+
+右移去掉 大于 n-1 位的数, 算数左移回来, 如果运算之后结果不变就是可以表示
+
+```cpp
+int fits_bits(int x, int n) {
+    int w = sizeof(int) << 3;
+    int offset = w - n;
+    return (x << offset >> offset) == x;
+}
+```
+
+## 2.71
+
+原代码只提取了位, 并没有转换成 `signed` 形式
+
+```cpp
+int xbyte(packed_t word, int bytenum) {
+
+    int w = sizeof(int) << 3;
+    int bitnum = bytenum << 3;
+    int delta = w - 8;
+
+    return int((word >> bitnum) & 0xFF) << delta >> delta;
+}
+```
+
+## 2.72 
+
+A. `sizeof` 运算符返回 `unsigned` 值, `maxbytes - sizeof(val)` 结果为负数就会出错
+B. `maxbytes >= (int)sizeof(val)` 即可
+
+## 2.73
+
+```cpp
+int saturating_add(int x, int y) {
+    int sum = x + y;
+    int sig_mask = INT_MIN;
+
+    int pos_over = !(x & sig_mask) && !(y & sig_mask) && (sum & sig_mask);
+    int neg_over = (x & sig_mask) && (y & sig_mask) && !(sum & sig_mask);
+
+    (pos_over && (sum = INT_MAX)) || (neg_over && (sum = INT_MIN));
+
+    return sum;
+}
+```
+
+## 2.74
+
+```cpp
+int tadd_ok(int x, int y) {
+    int sum = x + y;
+    int pos_over = (x > 0 && y > 0 && sum < 0);
+    int neg_over = (x < 0 && y < 0 && sum > 0);
+    return !(pos_over || neg_over);
+    
+}
+int tsub_ok(int x, int y) {
+    int res = 1;
+    (y == INT_MIN && x > 0 && (res = 0));
+    return res && tadd_ok(x, -y);
+}
+```
+
+## 2.75
+
+`signed`: 
+$$
+\begin{align*}
+  &(x - 2^{32}s_x)(y - 2^{32}s_y) \; mod \; 2^{32} \\
+= &(xy -2^{32}s_xy - 2^{32}s_yx - s_xs_y2^{64}) \; mod \; 2^{32} \\
+= &(xy - s_xy - s_yx) \; mod \; 2^{32}
+
+\end{align*}
+$$
+
+所以转换回去只需要 $+ s_xy + s_yx$
+
+```cpp
+int signed_high_prod(int x, int y) {
+    long long tmp = 1ll * x * y;
+    return (int)(tmp >> 32);
+}
+
+unsigned unsigned_high_prod(unsigned x, unsigned y) {
+    int sig_x = x >> 31;
+    int sig_y = y >> 31;
+    return signed_high_prod(x, y) + sig_x * y + sig_y * x;
+}
+```
+
+## 2.76
+
+```cpp
+void* another_calloc(size_t nmemb, size_t size) {
+    if (nmemb == 0 || size == 0) return NULL;
+    if (nmemb * size / size != nmemb) return NULL;
+    
+    void* begin = malloc(nmemb);
+    memset(begin, 0, size * nmemb);
+    return begin;
+}
+```
+
+## 2.77
+
+```cpp
+int x = 1;
+cout << (x << 4) + x << endl;
+cout << x - (x << 3) << endl;
+cout << (x << 6) - (x << 2) << endl;
+cout << (x << 4) - (x << 7) << endl;
+```
+
+## 2.78
+
+```cpp
+int divide_power2(int x, int k) {
+    int w = sizeof(int) << 3;
+    int sign = x >> (w - 1) & 1;
+    return (x + sign) >> k;
+}
+```
+
+## 2.79
+
+```cpp
+int mul3div4(int x) {
+    x = (x << 1) + x;
+    return divide_power2(x, 2);
+}
+```
+
+## 2.80
+
+把最低两位分开计算
+1. 此时 `upper` 部分可以被 4 整除, 之后再乘 3 不会有溢出风险
+2. `lower <= 3` 可以直接乘 3 除以 4, 注意向 0 舍入的问题
+
+```cpp
+int _2_80(int x) {
+    int upper = x & ~0x3;
+    int first = upper >> 2;
+    first += (first << 1);
+
+    int lower = x & 0x3;
+    int is_neg = x & INT_MIN;
+    lower += lower << 1;
+    is_neg && (lower += 3);
+    lower >>= 2;
+
+    return first + lower;
+}
+```
+
+## 2.81
+
+```cpp
+int _2_81_A(int k) {
+    return -1 << k;
+}
+
+int _2_81_B(int k, int j) {
+    return ~(-1 << k) << j;
+}
+```
+
+## 2.82
+
+A. False, `x = -2147483648`
+B. True
+C. True
+D. True
+E. True
+
+## 2.83
+A.
+$$
+2^{len(y)}Y - y = Y \\
+Y = \frac{y}{2^{len(y)}-1}
+$$
+B. $\frac57$, $\frac35$, $\frac{19}{63}$
+
+## 2.84
+
+```cpp
+
+unsigned f2u(float x) {
+    return *(unsigned*)&x;
+}
+
+int float_le(float x, float y) {
+    unsigned ux = f2u(x);
+    unsigned uy = f2u(y);
+
+    unsigned sx = ux >> 31;
+    unsigned sy = uy >> 31;
+
+    // 防止 x = +0.0, y = -0.0 的情况
+    return (ux << 1 == 0 && uy << 1 == 0) ||
+           (sx && !sy) ||
+           (!sx && !sy && ux <= uy) ||
+           (sx && sy && ux >= uy);
+}
+```
+
+## 2.85
+
+1. A. `1 2+1023 11000000` -> `1 10..01 1100...`
+2. B. `0 bias+n 11..11` n 为第三段的位数
+3. C. 最小规格化数: $2^{1-bias}$, 倒数为 $2^{bias-1}$ \
+    $E = bias-1$, $e = E + bias = 253$, \
+    `0 11..1101 000000..`
+
+## 2.86 ~ 2.88
+
+计算题
+
+## 2.89
+
+- A. True
+- B. False (`x - y` 可能溢出)
+- C. True `double` 精度很高, 在 `int` 范围内可以有结合律
+- D. False 乘法结果为 64 位, 有可能舍入, 没有结合律
+- E. False 除零错误
+
+## 2.90
+
+```cpp
+float u2f(unsigned x) {
+    return *(float*) &x;
+}
+
+float fpwr2(int x) {
+    unsigned exp, frac;
+    unsigned u;
+
+    int bias = (1 << (8 - 1)) - 1;
+
+    if (x < -126 - 23) {
+        exp = 0;
+        frac = 0;
+    } else if (x < -126) {
+        exp = 0;
+        frac = 1 << (x + 23 + 126);
+    } else if (x < 128) {
+        exp = x + bias;
+        frac = 0;
+    } else {
+        exp = 0xFF;
+        frac = 0;
+    }
+    u = exp << 23 | frac;
+    return u2f(u);
+}
+```
+
+## 2.91 
+
+算数
+
+## 2.92
+
+```cpp
+typedef unsigned float_bits;
+
+float_bits float_negate(float_bits f) {
+    unsigned sign = f >> 31;
+    unsigned exp = f >> 23 & 0xFF;
+    unsigned frac = f & 0x7FFFFF;
+
+    if (exp == 0xFF && frac != 0) return f;
+    return (~sign << 31) | (exp << 23) | frac;
+}
+```
+
+## 2.93
+
+```cpp
+float_bits float_absval(float_bits f) {
+    unsigned sign = f >> 31;
+    unsigned exp = f >> 23 & 0xFF;
+    unsigned frac = f & 0x7FFFFF;
+
+    if (exp == 0xFF && frac != 0) return f;
+    return (0 << 31) | (exp << 23) | frac;
+}
+```
+
+## 2.94
+
+```cpp
+float_bits float_twice(float_bits f) {
+    unsigned sign = f >> 31;
+    unsigned exp = f >> 23 & 0xFF;
+    unsigned frac = f & 0x7FFFFF;
+
+    if (exp == 0) frac <<= 1;
+    else if (exp == 0xFF - 1) exp = 0xff, frac = 0;
+    else exp += 1;
+
+    return (sign << 31) | (exp << 23) | frac;
+}
+```
+
+## 2.95
+
+```cpp
+float_bits float_half(float_bits f) {
+    unsigned sign = f >> 31;
+    unsigned exp = f >> 23 & 0xFF;
+    unsigned frac = f & 0x7FFFFF;
+
+
+    int addition = ((frac & 0x3) == 0x3);
+
+    if (exp == 0xFF) return f;
+    else if (exp == 0) 
+        frac = (frac >> 1) + addition;
+    else if (exp == 1) {
+        unsigned rest = f & 0x7FFFFFFF;
+        rest = (rest >> 1) + addition;
+
+        exp = rest >> 23 & 0xFF;
+        frac = rest & 0x7FFFFF;
+    } else exp -= 1;
+
+    return (sign << 31) | (exp << 23) | frac;
+}
+```
+
+## 2.96
+
+```cpp
+int float_f2i(float_bits f) {
+    unsigned sign = f >> 31;
+    unsigned exp = f >> 23 & 0xFF;
+    unsigned frac = f & 0x7FFFFF;
+
+    int bias = 127, num = 0;
+    if (exp >= 0 && exp < bias) num = 0;
+    else if (exp >= 31 + bias) num = 0x80000000;
+    else {
+        int E = exp - bias;
+        int M = frac | 0x800000;
+        if (E > 23) num = M << (E - 23);
+        else num = M >> (23 - E);
+    }
+    
+    return sign ? -num : num;
+}
+```
+
+## 2.97
+
+```cpp
+float_bits float_i2f(int x) {
+    int bias = 127;
+    // 特判 0 和 INT_MIN
+    if (x == 0) return 0;
+    if (x == INT_MIN) 
+        return (1 << 31) | ((bias + 31) << 23) | 0;
+    
+    // 判断符号位
+    int sign = 0;
+    if (x < 0) x = -x, sign = 1;
+
+    // 计算有效位
+    int tmp = x, bits = 0;
+    while (tmp) tmp >>= 1, bits++;
+    int fbits = bits - 1;
+
+    int exp = bias + fbits, frac, exp_sig;
+
+    // 去掉最高位 1 之后的位
+    int rest = x & bit_mask(fbits);
+
+    if (fbits <= 23) { // 可以被直接表示, 不需要舍入
+        frac = rest << (23 - fbits);
+        exp_sig = exp << 23 | frac;
+    } else {
+
+        int offset = fbits - 23; // 应该舍弃的位
+        int round_mid = 1 << (offset - 1);
+
+        int round_part = rest & bit_mask(offset);
+        frac = rest >> offset;
+
+        exp_sig = exp << 23 | frac;
+
+        exp_sig += ((round_part > round_mid) || 
+                    (round_part == round_mid && ((frac & 0x01) == 1)));
+    }
+
+    return (sign << 31) | exp_sig;
+}
+```
