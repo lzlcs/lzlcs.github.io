@@ -201,7 +201,7 @@ cout << (unsigned)x << endl;
 
 ### 2.2.6 截断数字
 
-1. 对于无符号截断 k 位: $x \; mod \; 2^k$
+1. 对于无符号截断 k 位: $x \enspace mod \enspace 2^k$
 2. 对于有符号截断 k 位: 转成无符号之后同上操作, 之后把剩下的数字转成有符号
 
 ### 2.2.7 关于有符号和无符号数的建议
@@ -212,7 +212,7 @@ cout << (unsigned)x << endl;
 
 ### 2.3.1 无符号加法
 
-若当前整数由 w 位二进制位表示, 两个数加法就是 $(x+y)\; mod\;2^w$
+若当前整数由 w 位二进制位表示, 两个数加法就是 $(x+y)\enspace mod\enspace2^w$
 
 模数加法形成一种数学结构, 称作阿贝尔群, 可交换可结合, 每个元素有一个加法逆元 \
 对于元素 $x$, 它的加法逆元就是 $2^w-x$ 
@@ -233,7 +233,7 @@ cout << (unsigned)x << endl;
 
 ### 2.3.4 无符号乘法
 
-$x \times y = x \times y \; mod \; 2^w$
+$x \times y = x \times y \enspace mod \enspace 2^w$
 
 ### 2.3.5 二进制补码乘法
 
@@ -335,9 +335,9 @@ $b_mb_{m-1}\cdots b_0.b_{-1}b_{-2} \cdots b_n$ 表示 $d = \Sigma_{i = n}^{m} 2^
 浮点运算有单调性 \
 1. $a \geq b$, 则 $a + c \geq b + c$ \
 2. $a \geq b$, 则 
-    - $ac \geq bc \; (c > 0)$
-    - $ac \leq bc \; (c < 0)$
-3. $a^2 \geq 0 \; (a \not= NaN)$
+    - $ac \geq bc \enspace (c > 0)$
+    - $ac \leq bc \enspace (c < 0)$
+3. $a^2 \geq 0 \enspace (a \not= NaN)$
 
 之前的整数运算因为溢出的缘故没有单调性
 
@@ -962,9 +962,9 @@ int tsub_ok(int x, int y) {
 `signed`: 
 $$
 \begin{align*}
-  &(x - 2^{32}s_x)(y - 2^{32}s_y) \; mod \; 2^{32} \\
-= &(xy -2^{32}s_xy - 2^{32}s_yx - s_xs_y2^{64}) \; mod \; 2^{32} \\
-= &(xy - s_xy - s_yx) \; mod \; 2^{32}
+  &(x - 2^{32}s_x)(y - 2^{32}s_y) \enspace mod \enspace 2^{32} \\
+= &(xy -2^{32}s_xy - 2^{32}s_yx - s_xs_y2^{64}) \enspace mod \enspace 2^{32} \\
+= &(xy - s_xy - s_yx) \enspace mod \enspace 2^{32}
 
 \end{align*}
 $$
