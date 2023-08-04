@@ -284,14 +284,14 @@ $B2S_w$ 表示符号数值, $B2S_w = (-1)^{x_{w-1}} \times \Sigma_{i = 0}^{w - 2
 </ol>
 <h3 id="2-2-6-截断数字">2.2.6 截断数字</h3>
 <ol>
-<li>对于无符号截断 k 位: $x ; mod ; 2^k$</li>
+<li>对于无符号截断 k 位: $x \enspace mod \enspace 2^k$</li>
 <li>对于有符号截断 k 位: 转成无符号之后同上操作, 之后把剩下的数字转成有符号</li>
 </ol>
 <h3 id="2-2-7-关于有符号和无符号数的建议">2.2.7 关于有符号和无符号数的建议</h3>
 <p>在非必要的情况下不要使用无符号数</p>
 <h2 id="2-3-整数运算">2.3 整数运算</h2>
 <h3 id="2-3-1-无符号加法">2.3.1 无符号加法</h3>
-<p>若当前整数由 w 位二进制位表示, 两个数加法就是 $(x+y); mod;2^w$</p>
+<p>若当前整数由 w 位二进制位表示, 两个数加法就是 $(x+y)\enspace mod\enspace2^w$</p>
 <p>模数加法形成一种数学结构, 称作阿贝尔群, 可交换可结合, 每个元素有一个加法逆元 <br>
 对于元素 $x$, 它的加法逆元就是 $2^w-x$</p>
 <h3 id="2-3-2-二进制补码加法">2.3.2 二进制补码加法</h3>
@@ -308,7 +308,7 @@ $B2S_w$ 表示符号数值, $B2S_w = (-1)^{x_{w-1}} \times \Sigma_{i = 0}^{w - 2
 </ol>
 <p>一种执行取非的技术时 <code>~x + 1</code></p>
 <h3 id="2-3-4-无符号乘法">2.3.4 无符号乘法</h3>
-<p>$x \times y = x \times y ; mod ; 2^w$</p>
+<p>$x \times y = x \times y \enspace mod \enspace 2^w$</p>
 <h3 id="2-3-5-二进制补码乘法">2.3.5 二进制补码乘法</h3>
 <p>x, y 转成无符号进行乘法, 取后 w 位转成有符号整数</p>
 <h3 id="2-3-6-乘以常数">2.3.6 乘以常数</h3>
@@ -395,11 +395,11 @@ $2^w = 1 &lt;&lt; w$ (二进制补码) <br>
 <li>$a \geq b$, 则 $a + c \geq b + c$ \</li>
 <li>$a \geq b$, 则
 <ul>
-<li>$ac \geq bc ; (c &gt; 0)$</li>
-<li>$ac \leq bc ; (c &lt; 0)$</li>
+<li>$ac \geq bc \enspace (c &gt; 0)$</li>
+<li>$ac \leq bc \enspace (c &lt; 0)$</li>
 </ul>
 </li>
-<li>$a^2 \geq 0 ; (a \not= NaN)$</li>
+<li>$a^2 \geq 0 \enspace (a \not= NaN)$</li>
 </ol>
 <p>之前的整数运算因为溢出的缘故没有单调性</p>
 <h3 id="2-4-6-C-中的浮点">2.4.6 C 中的浮点</h3>
@@ -600,9 +600,9 @@ B. <code>maxbytes &gt;= (int)sizeof(val)</code> 即可</p>
 <p><code>signed</code>:<br>
 $$<br>
 \begin{align*}<br>
-&amp;(x - 2^{32}s_x)(y - 2^{32}s_y) ; mod ; 2^{32} \<br>
-= &amp;(xy -2^{32}s_xy - 2^{32}s_yx - s_xs_y2^{64}) ; mod ; 2^{32} \<br>
-= &amp;(xy - s_xy - s_yx) ; mod ; 2^{32}</p>
+&amp;(x - 2^{32}s_x)(y - 2^{32}s_y) \enspace mod \enspace 2^{32} \<br>
+= &amp;(xy -2^{32}s_xy - 2^{32}s_yx - s_xs_y2^{64}) \enspace mod \enspace 2^{32} \<br>
+= &amp;(xy - s_xy - s_yx) \enspace mod \enspace 2^{32}</p>
 <p>\end{align*}<br>
 $$</p>
 <p>所以转换回去只需要 $+ s_xy + s_yx$</p>
