@@ -469,18 +469,18 @@
 <h2 id="3-16">3.16</h2>
 <ol>
 <li>
-<pre><code class="language-cpp"> void cond(long a, long *p) &#123;
-     if (p == 0)
-         goto L1;
-     if (*p &gt;= a)
-         goto L1;
+<pre><code class="language-cpp">void cond(long a, long *p) &#123;
+    if (p == 0)
+        goto L1;
+    if (*p &gt;= a)
+        goto L1;
 
-     *p = a;
+    *p = a;
 
- L1:
-     return;
- &#125;
- <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">2. 源代码中有 `&amp;&amp;`, 如果 第一个条件为假, 直接跳过</span><br><span class="line"></span><br><span class="line">## 3.17</span><br><span class="line"></span><br><span class="line">```cpp</span><br><span class="line">long gotodiff_se_alt(long x, long y) &#123;</span><br><span class="line">    long result;</span><br><span class="line">    if (x &lt; y)</span><br><span class="line">        goto L1;</span><br><span class="line">    result = x - y;</span><br><span class="line">    return result;</span><br><span class="line">L1:</span><br><span class="line">    result = y - x;</span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+L1:
+    return;
+&#125;
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">2. 源代码中有 `&amp;&amp;`, 如果 第一个条件为假, 直接跳过</span><br><span class="line"></span><br><span class="line">## 3.17</span><br><span class="line"></span><br><span class="line">```cpp</span><br><span class="line">long gotodiff_se_alt(long x, long y) &#123;</span><br><span class="line">    long result;</span><br><span class="line">    if (x &lt; y)</span><br><span class="line">        goto L1;</span><br><span class="line">    result = x - y;</span><br><span class="line">    return result;</span><br><span class="line">L1:</span><br><span class="line">    result = y - x;</span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </code></pre>
 </li>
 </ol>
