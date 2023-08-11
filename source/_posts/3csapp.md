@@ -345,6 +345,100 @@ while (test_expr) {
 
 ## 3.7 过程
 
+假设过程 $P$ 调用过程 $Q$, 执行之后回到 $P$, 包括如下机制
+1. 传递控制: 进入 $Q$ 时, PC 要设置成 $Q$ 的起始地址, 返回时要设置成调用 $Q$ 下面指令的地址
+2. 传递数据: $P$ 向 $Q$ 传递若干参数, $Q$ 向 $P$ 返回一个值
+3. 分配和释放内存: $Q$ 为变量分配空间, 返回前释放
+
+### 3.7.1 运行时栈
+
+栈指针 `%rsp` 指向栈顶元素, 用 `pushq` 和 `popq` 入栈出栈 \
+减小栈指针可以为一组没有初始值的变量分配空间, 增大栈指针可以释放空间
+
+过程所需空间超出寄存器能存放的大小时, 就会在栈上分配空间, 这个部分称为 **栈帧**
+
+$P$ 调用 $Q$ 时, 会把返回地址压入栈中, $Q$ 返回时从这个地址开始继续执行
+
+### 3.7.2 转移控制
+
+![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.78ygtm5gl3c0.webp)
+
+### 3.7.3 数据传送
+
+![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.53r8048unb80.webp)
+
+大于六个的参数会放在栈中, 第七个参数位置是 `(%rsp)`, 第八个参数位置是 `8(%rsp)` \
+无论多出的参数是什么类型, 都会在栈中使用 8 位存储
+
+### 3.7.4 栈上的局部存储
+
+局部数据必须放在内存中的常见情况
+1. 寄存器不够用
+2. 使用取址运算符
+3. 局部变量是数组或结构体
+
+### 3.7.5 寄存器中的局部存储空间
+
+`%rbx`, `%rbp`, `%r12 ~ %r15` 是 **被调用者保存寄存器**, 调用 $Q$ 时这些寄存器的值不变 \
+`%rsp` 是栈指针 \
+其他寄存器是 **调用者保存寄存器**
+
+## 3.8 数组分配与访问
+
+### 3.8.1 基本原则
+
+![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5tsehwm671s0.png)
+
+### 3.8.2 指针运算
+
+介绍 $C$ 中的指针运算
+
+### 3.8.3 嵌套的数组
+
+对于 $T D[R][C];$, 数据类型 $T$ 的大小为 $L$, $D[i][j]$ 的内存地址为 
+$$
+\&D[i][j] = x_D + L(C \times i + j)
+$$
+
+### 3.8.4 定长数组
+
+程序使用常数作为数组的维度或者缓冲区的大小时, 最好设置一个常量 \
+使得修改时不用处处修改反而只需修改一步
+
+定长数组在编译器优化的时候可以使用相对地址而不是绝对地址, 这样效率更高
+
+### 3.8.5 变长数组
+
+以变量作为数组维度大小
+
+这样的数组不能使用移位和加法来计算乘法, 只能直接使用乘法运算, 效率低
+
+## 3.9 异质的数据结构
+
+### 3.9.1 结构体
+
+结构体中的变量在内存中紧密排列在一起
+
+### 3.9.2 联合
+
+联合的总大小等于它的最大字段的大小
+
+1. 事先知道一个数据结构中两个不同字段的使用时互斥的 \
+2. 访问不同数据类型的位模式
+
+### 3.9.3 数据对齐
+
+结构体的大小一定是对齐值的整数倍 \
+对齐值是结构体里占用字节数最大的类型的字节数, 结构体则继续递归定义 \
+结构体每个数据起始的字节位置一定是本数据的类型所占字节数的整数倍, 结构体除外
+
+
+
+
+
+
+
+
 # 练习
 
 ## 3.1
@@ -487,19 +581,21 @@ uremdiv:
 
 ## 3.16
 
-1. ```cpp
-    void cond(long a, long *p) {
-        if (p == 0)
-            goto L1;
-        if (*p >= a)
-            goto L1;
+1.  
+```cpp
+void cond(long a, long *p) {
+    if (p == 0)
+        goto L1;
+    if (*p >= a)
+        goto L1;
 
-        *p = a;
+    *p = a;
 
-    L1:
-        return;
-    }
-    ```
+L1:
+    return;
+}
+```
+
 2. 源代码中有 `&&`, 如果 第一个条件为假, 直接跳过
 
 ## 3.17
@@ -543,13 +639,14 @@ long test(long x, long y, long z) {
 ## 3.20
 
 1. `/` 
-2.  ```cpp
-    long arith(long x) {
-        int tmp = 7 + x;
-        if (x >= 0) tmp = x;
-        return tmp >> 3;
-    }
-    ```
+2.  
+```cpp
+long arith(long x) {
+    int tmp = 7 + x;
+    if (x >= 0) tmp = x;
+    return tmp >> 3;
+}
+```
 
 ## 3.21
 
@@ -603,17 +700,18 @@ long loop_while2(long a, long b) {
 ## 3.26
 
 1. `while` 的第二种方法
-2. ```cpp
+2. 
+```cpp
 
-    long fun_a(unsigned long x) {
-        long val = 0;
-        while (x != 0) {
-            val ^= x;
-            x >>= 1;
-        }
-        return val & 1;
+long fun_a(unsigned long x) {
+    long val = 0;
+    while (x != 0) {
+        val ^= x;
+        x >>= 1;
     }
-    ```
+    return val & 1;
+}
+```
 3. 返回 $x$ 中 1 的个数的奇偶性
 
 ## 3.27
@@ -635,35 +733,36 @@ done:
 ## 3.28
 
 1. 
-    ```cpp
-    long fun_b(unsigned long x) {
-        long val = 0;
-        long i;
-        
-        for (i = 64; i != 0; i--) {
-            val = (val + val) | (x & 1);
-            x >>= 1;
-        }
-        return val;
+```cpp
+long fun_b(unsigned long x) {
+    long val = 0;
+    long i;
+    
+    for (i = 64; i != 0; i--) {
+        val = (val + val) | (x & 1);
+        x >>= 1;
     }
-    ```
+    return val;
+}
+```
 2. 初始测试不可能失败
 3. 反转 $x$ 中的位
 
 ## 3.29
 
 1. `i++` 未执行
-2.  ```cpp
-    long sum = 0;
-    long i = 0;
-    while (i < 10) {
-        if (i & 1)
-            goto update;
-        sum += i;
-    update:
-        i++;
-    }
-    ```
+2.  
+```cpp
+long sum = 0;
+long i = 0;
+while (i < 10) {
+    if (i & 1)
+        goto update;
+    sum += i;
+update:
+    i++;
+}
+```
 
 ## 3.30
 
@@ -696,3 +795,147 @@ void switcher(long a, long b, long c, long *dest) {
     return;    
 }
 ```
+
+## 3.32
+
+模拟
+
+## 3.33
+
+1. 把 $a$ 强制转换成 `long`, 所以 $a$ 是 `int`, $u$ 是 `long *`
+2. 把 $b$ 的低位字节 放到 $v$ 上, 所以 $v$ 是 `char *`
+3. 返回值是 6, `sizeof(a)` 是 4, 所以 `sizeof(b)` 是 2, $b$ 是 `short`
+
+```cpp
+int procprob(int a, short b, long *u, char *v) {
+    *u += a;
+    *v += b;
+    return sizeof(a) + sizeof(b);
+}
+```
+
+## 3.34
+
+1. `a0 ~ a5`
+2. `a6`, `a7`
+3. 被调用者保存寄存器不够用
+
+## 3.35
+
+1. `%rbx` 保存 $x$ 的值
+2. 
+```cpp
+long rfun(unsigned long x) {
+    if (x == 0)
+        return x;
+    unsigned long nx = x >> 2; 
+    long rv = rfun(nx);
+    return x + rv;
+}
+```
+
+## 3.36
+
+算数
+
+## 3.37
+
+1. `leaq 2(%rdx), %rax`
+2. `movw 6(%rdx), %ax`
+3. `leaq (%rdx, %rcx, 2), %rax`
+4. `movw 2(%rdx, %rcx, 8), %ax`
+5. `leaq -10(%rdx, %rcx, 2), %rax`
+
+## 3.38
+
+$M=5$, $N=7$
+
+## 3.39
+$M=4, N=16$ 
+- $\&A[i][0] = x_a + 64i$
+- $\&B[0][k] = x_b + 4k$
+- $\&B[N][k] = x_b + 64N + 4k = x_b + 1024 + 4k$
+
+## 3.40
+
+```cpp
+void fix_set_diag(fix_matrix A, int val) {
+    int i = 0;
+    int N = 16;
+    int iend = N * (N + 1);
+
+    do {
+        *(A + i) = val;
+        i += (N + 1);
+    } while (i != iend);
+
+}
+```
+
+1. `A[k][k] = *(A + k * N + k)`, `A[k + 1][k + 1] = *(A + (k + 1) * N + k + 1` \
+   $i_{old} = k * N + k$, $i_{new} = (k + 1) * N + k + 1$, $delta = N + 1$
+2. $i_{end} = N * (N - 1) + (N - 1) + delta = N^2 - 1 + delta = N * (N + 1)$
+
+## 3.41
+
+- 8, 12, 16
+- 24
+- 
+```cpp
+sp->s.x = sp->s.y;
+sp->p = &(sp->s.x);
+sp->next = sp;
+```
+
+## 3.42
+
+```cpp
+struct ELE {
+    long v;
+    struct ELE *p;
+};
+long fun(struct ELE *ptr) {
+    long tmp = 0;
+    while (ptr) {
+        tmp += ptr->v;
+        ptr = ptr->p;
+    }
+    return tmp;
+}
+```
+计算单链表中所有元素的值
+
+## 3.43
+
+1. `short char* int* int char`
+2.
+```
+movw 8(%rdi), %ax
+movw %ax, (%rsi)
+
+addq $10, %rdi
+movq %rdi, (%rsi)
+
+movq %rdi (%rsi)
+
+movq (%rdi), %rax
+movl (%rdi, %rax, 4), %eax
+movl %eax, (%rsi)
+
+movq 8(%rdi), %rax
+movb (%rax), %al
+movb %al, (%rsi)
+
+```
+
+## 3.44
+
+算数
+
+## 3.45
+
+![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.12ivr9wu089c.webp)
+56 个字节大小 \
+一个策略是降序排列
+![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5tahd0a6qho0.webp)
+40 个字节大小
