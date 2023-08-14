@@ -433,9 +433,120 @@ $$
 结构体每个数据起始的字节位置一定是本数据的类型所占字节数的整数倍, 结构体除外
 
 
+## 3.10 在机器级程序中将控制和数据结合起来
 
+### 3.10.1 理解指针
 
+1. 每个指针都对应一种类型 (`void *` 代表通用指针)
+2. 每个指针都有一个值 (`NULL(0)` 表示空指针)
+3. 指针使用 `&` 运算符创建
+4. `*` 操作符用于间接引用指针
+5. 数组和指针紧密联系
+6. 指针强制转换不改变它的值只改变它的类型
+7. 指针可以指向函数
 
+### 3.10.2 应用: 使用 GDB 调试器
+
+![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.fyuaz0a60o.webp)
+
+### 3.10.3 内存越界引用和缓冲区溢出
+
+C 对数组引用不进行任何边界检查, 局部变量和状态信息都存放在栈中 \
+所以对越界的数组进行写入操作会破坏掉状态信息, 程序使用状态信息的时候就会出现严重错误
+
+缓冲区溢出可以让程序执行它原本不愿意执行的函数 \
+输入给程序一个字符串, 包含一些可执行代码的字节码 (攻击代码) \
+还有一些字节会用一个指向攻击代码的指针覆盖返回地址, 执行 `ret` 之后直接跳转到 攻击代码
+
+### 3.10.4 对抗缓冲区溢出攻击
+
+**栈随机化**:  \
+过去栈的位置十分容易预测, 许多系统容易受到同一种病毒的攻击, 这种现象称为安全单一化
+栈随机化的方式是在程序开始的时候, 在栈上分配一些内存
+```c
+int main() {
+    int local;
+    printf("local at %p\n", &local);
+    return 0;
+}
+```
+这段内存不能太大也不能太小, 否则会造成空间浪费或者没有足够多的地址变化
+
+栈随机化是 **地址空间布局随机化** 的一种, 每次运行程序的不同部分 \
+如程序代码, 库代码, 栈, 全局变量和堆, 这些都会被加载到内存的不同区域
+
+暴力破解栈随机化: 插入一段 `no op` 序列, 对 `PC` 加一, 最终到达攻击代码 \
+这段 `no op` 序列如果有 256 个字节长, 那么程序返回到 \
+`no op` 的地址时, 就会顺着 `no op` 序列继续操作, 最终到达攻击代码 \
+32 位系统栈随机化范围一般是 $2^{23}$, 只需要枚举 $\frac{2^{23}}{256}$ 次即可 \
+64 位系统栈随机化范围一般是 $2^{32}$, 只需要枚举 $\frac{2^{32}}{256}$ 次即可(很多)
+
+**栈破坏检测**: \
+![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5wuhh5wgw740.webp)
+通过设置金丝雀值(随即生成), 返回时检测金丝雀值是否被改变从而确认栈是否异常
+
+**限制可执行代码区域**: \
+限制哪部分内存可以存储可执行代码
+
+### 3.10.5 支持变长栈帧
+
+在函数中使用变长数组的时候, 外部函数无法确定应该分配多少栈空间 \
+`%rbp` 为基指针, 在函数内部修改栈指针分配空间之后, 再把栈指针设置成基指针
+
+## 3.11 浮点代码
+
+![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3w4ivs5wv880.webp)
+
+### 3.11.1 浮点传送和转换操作
+
+保存在内存中的数据 $M_{32}$ 和 $M_{64}$, 保存在 $XMM$ 寄存器中的数据 $X$
+
+![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.592c9ve19r80.png)
+
+![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.459e70calhu0.png)
+
+### 3.11.2 过程中的浮点代码
+
+`%xmm0 ~ %xmm7` 存储 7 个参数, 多余的参数可以使用栈空间 \
+`%xmm0` 为返回值 \
+所有的 `xmm` 寄存器都是调用者保存的, 被调用者可以直接覆盖
+
+当参数中整数和浮点数混合时, 分别使用两套寄存器保存 \
+第一个整数参数, 第二个..... 保存在 `%rdi`, `%rsi`..... \
+第一个浮点数参数, 第二个.... 保存在 `%xmm0`, `%xmm1` .....
+
+### 3.11.3 浮点运算操作
+
+![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3v0ud7q19qm0.png)
+
+### 3.11.4 定义和使用浮点常数
+
+浮点数不能以立即数形式出现, 需要保存在内存中, 代码再读入
+
+### 3.11.5 在浮点代码中使用位级操作
+
+![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.61garb5k7ug0.webp)
+
+### 3.11.6 浮点比较操作
+
+![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.72g4fdc2qa40.webp)
+
+浮点比较指令有三个条件码
+1. 零标志位 `ZF`
+2. 进位标志位 `CF`
+3. 奇偶标志位 `PF`, 两个操作数任意一个是 `nan` 该位为 1
+
+![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6x72lf3o49s0.webp)
+
+### 3.11.7 对浮点代码的观察讨论
+
+类似整数的寄存器和汇编代码风格
+
+## 3.12 小结
+
+1. 了解机器, 数据类型, 指令集
+2. 程序如何将数据存储在不同的区域中
+3. 机器级程序和汇编代码表示
 
 
 
@@ -939,3 +1050,273 @@ movb %al, (%rsi)
 一个策略是降序排列
 ![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5tahd0a6qho0.webp)
 40 个字节大小
+
+## 3.46
+
+1. ![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5v51kxh3oa80.webp)
+2. ![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2gowpyq4xsw0.webp)
+3. 试图返回到 `0x00 00 00 00 00 40 00 34`
+4. `%rbx` 的值被破坏了
+5. - `malloc(strlen(buf) + 1)`
+   - 检测返回值是否为 `NULL`
+
+## 3.47
+
+1. $2^{13}$
+2. $\frac{2^{13}}{128} = 64$
+
+## 3.48
+
+1. `buf -> %rsp`, `v -> 24(%rsp)`
+2. `buf -> 16(%rsp)`, `v -> 8(%rsp)`, `金丝雀 -> 40(%rsp)`
+
+在有保护的代码中, 数组放在上面可以更好防护
+
+## 3.49
+
+1. `leaq` 计算 $8n+22$, 与上 16 之后 \
+   如果 $n$ 为奇数, 那么结果为 $8n+8$, $n$ 为偶数则为 $8n+16$
+2. 整除 8 (向上取整)
+3. ![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6ok0vhfnueg0.webp)
+4. $s_2$ 是 $s_1 - e_1 - e_2 - 8n$, 是个相对于 $s_1$ 8 对齐的位置 \
+   $p$ 是 $s_1 - e_1 - 8n$, 本身就是 8 对齐的位置
+
+## 3.50
+
+$d$, $i$, $l$, $f$
+
+## 3.51
+
+![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6argxj9soeg0.png)
+
+## 3.52
+
+1. `%xmm0`, `%rdi`, `%xmm1`, `%esi`
+2. `%edi`, `%rsi`, `%rdx`, `%rcx`
+3. `%rdi`, `%xmm0`, `%esi`, `%xmm1`
+4. `%xmm0`, `%rdi`, `%xmm1`, `%xmm2`
+
+## 3.53
+
+根据加法的交换性, 中间两项可以交换
+```cpp
+double funct1(int p, float q, long r, double s);
+double funct1(int p, long q, float r, double s);
+```
+
+## 3.54
+
+`x * y - w / z`
+
+## 3.55
+
+指数字段是 1028, 减去偏移量 1023, 指数为 5 \
+$1.0 \times 2^5 = 32.0$
+
+## 3.56
+
+1. 常数 `LC1` 是除了符号位低位全为 1 的掩码, 与操作去掉符号位, 相当于 `fabs(x)`
+2. `x = 0.0`
+3. 符号位异或 1, 相当于 取反 `-x`
+
+## 3.57
+
+```cpp
+double funct3(int *ap, double b, long c, float *dp) {
+    int a = *ap;
+    float d = *dp;
+    if (a < b) return c * d;
+    else return c + 2 * d;
+}
+```
+
+## 3.58
+
+```cpp
+long decode(long x, long y, long z) {
+    int res = y - z;
+    return (res << 63 >> 63) ^ (x * res);
+}
+```
+
+## 3.59
+
+设 $x_{63}$, $y_{63}$ 为 $x$, $y$ 的符号位 \
+$ux = x + x_{63}2^{64}$, 同理 $uy = y + y_{63}2^{64}$ \
+$ux \times uy = xy + (x_{63}y + y_{63}x) 2^{64} + x_{63}y_{64}2^{128}$ 最后一项溢出舍去
+
+$xy = ux\times uy - (x_{63}y + y_{63}x)2^{64}$ \
+设 $s_x = -1$ 当 $x_{63}$ 为 1 时, $s_x = 0$ 当 $x_{63}$ 为 0 时, $s_y$ 同理 \
+$xy = ux\times uy + (s_xy + s_yx)2^{64}$
+```
+# void store_prod(int128_t* dest, int64_t x, int64_t y)
+# dest in %rdi, x in %rsi, y in %rdx
+store_prod:
+  # 这两行把 y 转换成 int_128
+  movq %rdx, %rax     
+  cqto # 此时 %rax 存着 y 的高位算数补全结果, 即 sy
+  # 这两行先把 x 算数右移, 得到 sx
+  movq %rsi, %rcx     
+  sarq $63, %rcx
+
+  # 这三行计算 (sx * y + sy * x)
+  imulq %rax, %rcx    
+  imulq %rsi, %rdx   
+  addq %rdx, %rcx   
+  # 这行计算 ux * uy, 低 64 位存储在 %rax, 高 64 位存储在 %rdx
+  mulq %rsi        
+
+  在高 64 位直接加上 (sx * y + sy * x)
+  addq %rcx, %rdx
+
+  # 存储
+  movq %rax, (%rdi)   # set lower 64bits
+  movq %rdx, 8(%rdi)  # set higher 64bits
+  ret
+```
+
+## 3.60
+
+```cpp
+long loop(long x, int n) {
+    long result = 0;
+    long mask;
+    for (mask = 1; mask != 0; mask <<= n) 
+        result |= x & mask;
+    return result;
+}
+```
+
+## 3.61
+
+```
+# long cread(long *xp)
+# xp in %rdi
+cread:
+  movq (%rdi), %rax
+  testq %rdi, %rdi
+  movl $0, %edx
+  cmove %rdx, %rax
+  ret
+```
+第一行直接取数据, 可能会出现空指针错误
+
+```
+cread_alt:
+  movl $0, %eax
+  testq %rdi, %rdi
+  cmovne (%rdi), %rax
+```
+```cpp
+long cread_alt(long *xp) {
+    return (!xp ? 0 : *xp);
+}
+```
+第一个分支可以合法计算, 第二个分支当指针不等于零的时候才会取数据 \
+这样不符合之前标准的条件传送的标准写法, 是一种取巧的做法
+
+```cpp
+v = then-expr;
+ve = else-expr;
+t = test-expr;
+if (!t) v = ve;
+```
+
+## 3.62
+
+```cpp
+typedef enum { MODE_A, MODE_B, MODE_C, MODE_D, MODE_E } mode_t;
+long swith(long *p1, long *p2, mode_t action) {
+    long res = 0;
+    switch (action) {
+    case MODE_A:
+        res = *p2;
+        *p2 = *p1;
+        break;
+    case MODE_B:
+        res = *p1 + *p2;
+        *p1 = res;
+        break;
+    case MODE_C:
+        *p1 = 59;
+        res = *p2;
+        break;
+    case MODE_D:
+        *p1 = *p2;
+        res = 27;
+    case MODE_E:
+        res = 27;
+        break;
+    default:
+        res = 12;
+        break;
+    }
+    return res;
+}
+```
+
+## 3.63
+
+```cpp
+long switch_(long x, long n) {
+    long result = x;
+    switch(n) {
+    case 60:
+    case 62:
+        result = 8 * x;
+        break;
+    case 63:
+        result = x >> 3;
+        break;
+    case 64:
+        x = x * 15;
+    case 65:
+        x = x * x;
+        break;
+    default:
+        result = x + 73;
+        break;
+    }
+    return result;
+}
+```
+
+## 3.64
+
+1. $D[i][j][k] = x_D + iST + jT + k$
+2.
+```
+store_ele:
+  # t1 = 13j
+  leaq (%rsi, %rsi, 2), %rax
+  leaq (%rsi, %rax, 4), %rax
+  # t2 = 65i
+  movq %rdi, %rsi           
+  salq $6, %rsi           
+  # t3 = 65i + 13j + k
+  addq %rsi, %rdi        
+  addq %rax, %rdi       
+  addq %rdi, %rdx      
+  # t1 = *(A + 8 * t3)
+  movq A(,%rdx,8), %rax
+  movq %rax, (%rcx)   
+  movl $3640, %eax   
+  ret
+```
+```
+RST * 8 = 3640;
+ST = 65;
+T = 13;
+```
+得到结果
+```
+R = 7;
+S = 5;
+T = 13;
+```
+
+## 3.65
+
+1. `%rdx`
+2. `%rax`
+3. `15`
