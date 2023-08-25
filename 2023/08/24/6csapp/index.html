@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="" />
+  <meta name="author" content="lzl" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      CSAPP 学习笔记 (第六章) 
+      
+      
+      |
+    
+     lzl&#39;s blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">lzl</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          <a href="/categories/">Categories</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">CSAPP 学习笔记 (第六章)</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-08-24 17:10:00
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="Categories"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/Book/" title="Book">
+                    <b>#</b> Book
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/C/" title="C">
+                    #C
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/CSAPP/" title="CSAPP">
+                    #CSAPP
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1>Chapter 6: 存储器层次结构</h1>
+<h2 id="6-1-存储技术">6.1 存储技术</h2>
+<h3 id="6-1-1-随机访问存储器">6.1.1 随机访问存储器</h3>
+<p><code>Random-Access Memory (RAM)</code> 分两类<br>
+<strong>静态RAM(SRAM): 快, 贵</strong></p>
+<p>SRAM 把每个位存储在 一个双稳态的存储器单元里, 使用一个六晶体管电路实现 <br>
+它可以无限期地保持在两个不同的电压状态之一, 其他任何状态都是不稳定的</p>
+<p>由于这种双稳态特性, 只要有电他就会永远保持他的值 <br>
+即使有干扰扰动电压, 干扰消除时电路也会恢复到稳定值</p>
+<p><strong>动态RAM(DRAM):</strong></p>
+<p>DRAM 把每个位存储为 对一个电容的充电, 电容大概是 $30\times 10^{-15}F$ <br>
+电容的电压被扰乱之后, 它就永远不会恢复了</p>
+<p>很多原因导致的漏电会让 DRAM 在 $10ms$ 到 $100ms$ 失去电荷 <br>
+所以内存系统必须周期性地通过读出, 重写来刷新每一位 <br>
+也可以使用纠错码, 其中计算机的字会被多编码几个位, 这样电路可以发现并纠正一个字中任何单个的错误位</p>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4ky32n0snko0.webp" alt=""></p>
+<p><strong>传统的 DRAM</strong></p>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5ish8q9gmic0.png" alt=""></p>
+<p>工作方式:</p>
+<ol>
+<li>内存控制器 通过 <code>addr</code> 引脚向 DRAM 芯片传入两位的行地址 $Row Access Strobe (RAS)$</li>
+<li>内部行缓冲区存储行号所在的行</li>
+<li>内存控制器 通过 <code>addr</code> 引脚向 DRAM 芯片传入两位的列地址 $Column Access Strobe (CAS)$</li>
+<li>DRAM 芯片从内部行缓冲区取出一个字节的数据通过 <code>data</code> 返回到内存控制器</li>
+</ol>
+<p>内部组成:</p>
+<p>DRAM 中有 $d$ 个超单元, $r$ 行 $w$ 列, $r \times w = d$  <br>
+每个超单元由 $w$ 个 DRAM 单元组成, 总共存储 $rcw = dw$ 位的信息</p>
+<p>二维阵列的优点: 传入的地址引脚可以是 2 位, 否则 16 个线性排列的单元需要 4 位寻址 <br>
+二维阵列的缺点: 两次传入地址, 增加访问时间</p>
+<p><strong>内存模块</strong></p>
+<p>八个 DRAM 芯片组合在一起, 通过地址引脚获取行地址和列地址 <br>
+把八个 DRAM 芯片的八位结果组合在一起得到存储的 64 位值</p>
+<p><strong>增强的 DRAM</strong></p>
+<p>一些厂商为了跟上 CPU 处理速度而做出的一些优化</p>
+<p><strong>非易失型存储器</strong></p>
+<p>断电之后, RAM 会失去它的存储信息, 是 易失的 <br>
+现在的很多种 非易失性存储器 因为历史原因被称为 $Read-Only \ Memory (ROM)$</p>
+<ol>
+<li>$PROM$ 可编程 ROM, 只能被编程一次, 它的每个存储器单元有一种 熔丝, 只能用高电流熔断一次</li>
+<li>$EPROM$ 可擦写可编程 ROM, 大概能编程 1000 次</li>
+<li>$EEPROM$, 电子可擦除 ROM, 大概能编程 10000 次</li>
+<li>$flash \ memory$ 闪存, 基于 $EEPROM$ 的存储技术</li>
+</ol>
+<p>存储在 ROM 中的程序通常被称为固件, 计算机系统通电之后就运行这些固件</p>
+<p><strong>访问主存</strong></p>
+<p>数据流通过 总线 的共享电子电路在处理器和 DRAM 主存之间来回 <br>
+CPU 和主存之间的数据传送通过一系列步骤来完成的, 称为总线事务, 分为读事务和写事务<br>
+<img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.qaqxhwuiqao.webp" alt=""></p>
+<h3 id="6-1-2-磁盘存储">6.1.2 磁盘存储</h3>
+<p>比 DRAM 慢了十万倍, 比 SRAM 慢了百万倍</p>
+<p><strong>磁盘构造</strong></p>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2ansnd0kwj6s.png" alt=""></p>
+<p><strong>磁盘容量</strong></p>
+<ol>
+<li>记录密度: 一英寸磁道可以放入的位数</li>
+<li>磁道密度: 盘片中心半径一英寸有多少磁道</li>
+<li>面密度: 上两者相乘</li>
+</ol>
+<p>$$<br>
+磁盘容量 = 每扇区字节 \times 每磁道扇区 \times 每面磁道数(柱面数) \times 每盘面数 \times 盘片数<br>
+$$</p>
+<p><strong>磁盘操作</strong></p>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.71wfhieyq2c0.png" alt=""></p>
+<ol>
+<li>寻道时间: 传动臂到特定磁道的时间 $T_{seek}$</li>
+<li>旋转时间: 找扇区 $T_{max \ rotation} = \frac{60}{RPM}$, 也是转一圈需要的时间 <br>
+$T_{avg \ rotation} = T_{max \ rotation} / 2$</li>
+<li>传送时间: $T_{avg \ transfer} = T_{max \ rotation} / 每磁道扇区数$</li>
+</ol>
+<p>访问一个扇区的平均时间是上三者之和</p>
+<p><strong>逻辑磁盘块</strong></p>
+<p>磁盘中有个磁盘控制器, 维护编号和实际扇区的关系 <br>
+编号会被翻译成 (盘面, 磁道, 扇区) 的三元组</p>
+<p><strong>连接IO设备</strong></p>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4vml55dce7w0.png" alt=""></p>
+<p><strong>访问磁盘</strong></p>
+<p>CPU 使用 内存映射 技术来向 IO 设备发射命令 <br>
+磁盘控制器将内容直接传送到主存, 不需要CPU 干涉, 这叫直接内存访问(DMA)</p>
+<h3 id="6-1-3-固态硬盘">6.1.3 固态硬盘</h3>
+<p>$Solid \ State \ Disk (SSD)$</p>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5vqb8k86e300.webp" alt=""></p>
+<p>数据是以页为单位读写的, 只有擦除一个块才能对块里的页进行写</p>
+<h3 id="6-1-4-存储技术趋势">6.1.4 存储技术趋势</h3>
+<p>增加密度比减少访问时间容易得多</p>
+<h2 id="6-2-局部性">6.2 局部性</h2>
+<p>局部性原理: 程序倾向于引用临近其他使用过的数据的数据, 或者使用过的数据本身 \</p>
+<h3 id="6-2-1-对程序数据引用的局部性">6.2.1 对程序数据引用的局部性</h3>
+<p>空间局部性常见和主要的来源是步长为 $k$ 的引用模式 ($k=1$) <br>
+$k$ 增大时, 空间局部性变差</p>
+<h3 id="6-2-2-取指令的局部性">6.2.2 取指令的局部性</h3>
+<p>程序指令存放在内存中, 可以评价程序取指令的局部性</p>
+<h3 id="6-2-3-局部性小结">6.2.3 局部性小结</h3>
+<ol>
+<li>重复引用相同变量的程序有良好的时间局部性</li>
+<li>步长为 $k$ 的引用程序, 步长越小空间局部性越好</li>
+<li>取指令: 循环有好的时间和空间局部性, 循环体越小, 迭代次数越多, 局部性越好</li>
+</ol>
+<h2 id="6-3-存储器层次结构">6.3 存储器层次结构</h2>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4fsrxudu8080.png" alt=""></p>
+<h3 id="6-3-1-存储器结构层次中的缓存">6.3.1 存储器结构层次中的缓存</h3>
+<p>高速缓存 <code>cache</code></p>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.319gfw72dnm0.png" alt=""></p>
+<p><strong>缓存命中</strong><br>
+当程序需要 $k+1$ 层的数据 $d$ 时, 会在 $k$ 层查找 $d$, 找到了就是缓存命中 <br>
+良好时间局部性的程序缓存命中的机会较多</p>
+<p><strong>缓存不命中</strong></p>
+<p>从 $k+1$ 层 取出 $d$ 放到 $k$ 层, 可能替代 $k$ 层中的一个块, 被驱逐的块有时称为牺牲块 <br>
+替换策略有 随机替换, 最近最少被使用替换</p>
+<p><strong>缓存不命中的种类</strong></p>
+<p>强制性不命中/冷不命中: $k$ 层缓存为空</p>
+<p>只要发生不命中, $k$ 层的缓存就要执行某个放置策略</p>
+<ol>
+<li>允许 $k+1$ 层的块放到 $k$ 层的任何位置: 速度快, 代价高</li>
+<li>允许 $k+1$ 层的块放到 $k$ 层的一个子集: $k+1$ 层第 $x$ 块被放到 $k$ 层第 $x \ mod \ 4$ 块中</li>
+</ol>
+<p>冲突不命中: 访问 0, 4, 8, 12… 总是不命中</p>
+<p>容量不命中, 要访问的对象太多 $k$ 层装不下</p>
+<p><strong>缓存管理</strong></p>
+<p>在大多时候, 缓存都是自动运行的, 不要程序采用显式行动</p>
+<h3 id="6-3-2-存储器层次结构概念小结">6.3.2 存储器层次结构概念小结</h3>
+<p>为实现更多的缓存命中, 需要程序具有良好的时间和空间局部性</p>
+<h2 id="6-4-高速缓存存储器">6.4 高速缓存存储器</h2>
+<h3 id="6-4-1-通用的高速缓存存储器组织结构">6.4.1 通用的高速缓存存储器组织结构</h3>
+<p>有 $m$ 位表示存储器地址, 形成 $M = 2^m$ 个不同地址</p>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3xr0fqxfdn20.png" alt=""></p>
+<p>元组 $(S, E, B, m)$ 可以描述高速缓存的结构 <br>
+高速缓存的大小 $C = S \times B \times E$, 其中去除了标记位和有效位</p>
+<h3 id="6-4-2-直接映射高速缓存">6.4.2 直接映射高速缓存</h3>
+<p>$E=1$ 的高速缓存被称为直接映射高速缓存</p>
+<ol>
+<li>抽出组索引, 选择组</li>
+<li>抽出地址中的标记, 与组中行的标记位相匹配, 并且行中有效位为 1</li>
+<li>抽出块偏移, 表示所需要的字从行中块的第几个字节开始</li>
+</ol>
+<p><strong>不命中时的行替换</strong></p>
+<p>对于直接映射告诉缓存, 直接组索引下的一行即可</p>
+<p><strong>直接映射高速缓存中的冲突不命中</strong></p>
+<p>填充可以消除冲突不命中</p>
+<h3 id="6-4-3-组相联高速缓存">6.4.3 组相联高速缓存</h3>
+<p>$1 &lt; E &lt; \frac CB$ 的高速缓存被称为 $E$ 路高速缓存</p>
+<ol>
+<li>组选择相同</li>
+<li>行匹配使用相连存储器, 输入 $key$ 来找到 $value$ <br>
+搜索组中的每一行, 与地址中的标记匹配</li>
+</ol>
+<p><strong>不命中时的行替换</strong></p>
+<p>优先替换空行, 其次有 最不常使用策略, 最近最少使用策略</p>
+<h3 id="6-4-4-全相联高速缓存">6.4.4 全相联高速缓存</h3>
+<p>$E = C / B$ 只有一个组</p>
+<ol>
+<li>组选择: 直接砍掉组索引位</li>
+<li>行匹配和字选择与 组相联高速缓存相同</li>
+</ol>
+<h3 id="6-4-5-有关写的问题">6.4.5 有关写的问题</h3>
+<p><strong>写命中</strong></p>
+<ol>
+<li>直写: 写到下一层中, 但每次写都会引起总线流量</li>
+<li>写回: 当这个块要被驱逐时, 把它写到下一层中, 但要维护一个修改位</li>
+</ol>
+<p><strong>写不命中</strong></p>
+<ol>
+<li>写分配: 加载低一层的块到高速缓存中, 之后更新</li>
+<li>非写分配: 直接写到低一层中</li>
+</ol>
+<p>直写通常是非写分配, 写回通常是写分配</p>
+<h3 id="6-4-6-一个真实的高速缓存层次结构的解剖">6.4.6 一个真实的高速缓存层次结构的解剖</h3>
+<p>只保存指令的高速缓存: $i-cache$, 只保存数据的高速缓存: $d-cache$</p>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.31znbzd2lx40.png" alt=""></p>
+<h3 id="6-4-7-高速缓存参数的性能影响">6.4.7 高速缓存参数的性能影响</h3>
+<ol>
+<li>不命中率: 不命中数量 / 引用数量</li>
+<li>命中率: 1 - 不命中率</li>
+<li>命中时间: 高速缓存传到 CPU 的时间</li>
+<li>不命中处罚: 由于不命中所需要的额外时间</li>
+</ol>
+<p><strong>cache大小</strong>: 较大的高速缓存可能会提高命中率, 但也会增加命中时间 <br>
+<strong>块大小</strong>: 过大提高命中率, 但增加不命中处罚, 过小反之 <br>
+<strong>相联度</strong>: 相联度高则增加命中时间和不命中处罚, 所以不命中处罚越低, 使用越低的相联度 <br>
+<strong>写策略</strong>: 层次越低越容易使用写回策略</p>
+<h2 id="6-5-编写高速缓存友好的代码">6.5 编写高速缓存友好的代码</h2>
+<ol>
+<li>
+<p>注意力集中在核心函数核心循环上</p>
+</li>
+<li>
+<p>减小每个循环内部的缓存不命中数量</p>
+</li>
+<li>
+<p>对局部变量反复引用是好的</p>
+</li>
+<li>
+<p>步长为 1 的引用模式是好的</p>
+</li>
+</ol>
+<h2 id="6-6-综合-高速缓存对程序性能的影响">6.6 综合: 高速缓存对程序性能的影响</h2>
+<h3 id="6-6-1-存储器山">6.6.1 存储器山</h3>
+<p>读的速度: 读吞吐量 / 读带宽</p>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3bqykm96gjc.webp" alt=""></p>
+<h3 id="6-6-2-重新排列循环以提高时间局部性">6.6.2 重新排列循环以提高时间局部性</h3>
+<p>通过分析数组步长从而确认效率</p>
+<h3 id="6-6-3-在程序中利用局部性">6.6.3 在程序中利用局部性</h3>
+<ol>
+<li>注意力集中在内循环上</li>
+<li>按照数据对象存储在内存中的顺序, 步长为 1 读取内存, 增大空间局部性</li>
+<li>存储器中读入数据对象, 就尽可能多地使用, 增大空间局部性</li>
+</ol>
+<h2 id="6-6-小结">6.6 小结</h2>
+<p>RAM, ROM, 磁盘, 硬盘 <br>
+注意程序编写的局部性</p>
+<h1>练习</h1>
+<h2 id="6-1">6.1</h2>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2wz2cfmsutm0.webp" alt=""></p>
+<h2 id="6-2">6.2</h2>
+<p>$2 * 2 * 10000 * 400 * 512 = 8192000000$</p>
+<h2 id="6-3">6.3</h2>
+<p>$8 + 2 + 0.008 = 10.008ms$</p>
+<h2 id="6-4">6.4</h2>
+<p>估计有两千个扇区</p>
+<ol>
+<li>$5 + 3 + 0.006 * 2000 = 20ms$</li>
+<li>$2000 \times (5 + 3 + 0.006) \approx 16000ms$</li>
+</ol>
+<h2 id="6-5">6.5</h2>
+<ol>
+<li>8 年</li>
+<li>13 年</li>
+<li>17535 年</li>
+</ol>
+<h2 id="6-6">6.6</h2>
+<p>大概每 一年半 价格减半, 大概到 2025 年</p>
+<h2 id="6-7">6.7</h2>
+<p>循环次序 $k$, $i$, $j$</p>
+<h2 id="6-8">6.8</h2>
+<p><code>clear1 &gt; clear2 &gt; clear3</code></p>
+<h2 id="6-9">6.9</h2>
+<p>略</p>
+<h2 id="6-10">6.10</h2>
+<p>$75%$</p>
+<h2 id="6-11">6.11</h2>
+<ol>
+<li>$2^s$ 个块是一组</li>
+<li>前 $2^18$ 是一组, 这样 <code>array</code> 所有的元素只能放在一个组里</li>
+</ol>
+<h2 id="6-12">6.12</h2>
+<ol>
+<li>12 ~ 5: CT</li>
+<li>4 ~ 2: CI</li>
+<li>1 ~ 0: CO</li>
+</ol>
+<h2 id="6-13-6-16">6.13 ~ 6.16</h2>
+<p>略</p>
+<h2 id="6-17">6.17</h2>
+<p>一步一步往 cache 里面塞即可</p>
+<ol>
+<li>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.d7slzagpcp4.webp" alt=""><br>
+<img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3q791xywxvc0.webp" alt=""></p>
+</li>
+<li>
+<p>32 个字节足够容纳两个数组, 所以当每个块开始的时候会有不命中<br>
+<img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3tffsz4tjk40.webp" alt=""></p>
+</li>
+</ol>
+<h2 id="6-18-6-20">6.18 ~ 6.20</h2>
+<p>原本的 cache 只能容得下一半的 <code>grid</code> 数组</p>
+<ol>
+<li>每次都是不命中, 命中, 不命中, 命中循环, 答案: 512, 256, 0.5</li>
+<li>同上次, 扩容后只有在第一次的时候会不命中, 答案: 512, 256, 0.5, 0.25</li>
+<li>连续读 x, y, 一次不命中后接三个命中, 扩容也没有影响, 答案: 512, 128, 0.25, 0.25</li>
+</ol>
+<h2 id="6-21">6.21</h2>
+<p>$2100 / 12000 * 8 \approx 1.5 周期$</p>
+<h2 id="6-22">6.22</h2>
+<p>基本不等式可得 $x = 0.5$</p>
+<h2 id="6-23">6.23</h2>
+<p>$4 + (60000/15000) / 2 + (60000/15000) / 800 = 6.005ms$</p>
+<h2 id="6-24">6.24</h2>
+<ol>
+<li>$4 + 2 + 0.004 * 4000 = 22ms$</li>
+<li>$4000 \times (4 + 2 + 0.004) \approx 24000ms$</li>
+</ol>
+<h2 id="6-25-6-33">6.25 ~ 6.33</h2>
+<p>略</p>
+<h2 id="6-34">6.34</h2>
+<p><code>src[0], src[2], dst[0], dst[2]</code> 在块 1, 其余在块 2, 剩下模拟即可</p>
+<h2 id="6-35">6.35</h2>
+<p>128 字节所有的数组都能放下, 每行第一个是 m, 其他是 h</p>
+<h2 id="6-36">6.36</h2>
+<ol>
+<li>100%</li>
+<li>25%</li>
+<li>由于 LRU 策略, 被替换的块以后都不会用了, 25%</li>
+<li>不能, 扩大总容量跟情况2一样, 25%</li>
+<li>可以, 同样是被替换的块不会再用, $\frac 18$ 12.5%</li>
+</ol>
+<h2 id="6-37">6.37</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> S = <span class="number">256</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> pre[S];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">get</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y, <span class="type">int</span> N)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> id = x * N + y;</span><br><span class="line">    <span class="type">int</span> which_s = (id / <span class="number">4</span>) % S;</span><br><span class="line">    </span><br><span class="line">    <span class="type">int</span> tmp = id / <span class="number">4</span> * <span class="number">4</span>;</span><br><span class="line">    <span class="type">int</span> res = <span class="built_in">int</span>(pre[which_s] != tmp);</span><br><span class="line"></span><br><span class="line">    pre[which_s] = tmp;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">double</span> <span class="title">sumA</span><span class="params">(<span class="type">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> vacant = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">memset</span>(pre, <span class="number">-1</span>, <span class="keyword">sizeof</span> pre);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; i++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; N; j++)</span><br><span class="line">            vacant += <span class="built_in">get</span>(i, j, N);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1.0</span> * vacant / (N * N);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">double</span> <span class="title">sumB</span><span class="params">(<span class="type">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> vacant = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">memset</span>(pre, <span class="number">-1</span>, <span class="keyword">sizeof</span> pre);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; N; j++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; i++)</span><br><span class="line">            vacant += <span class="built_in">get</span>(i, j, N);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1.0</span> * vacant / (N * N);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">double</span> <span class="title">sumC</span><span class="params">(<span class="type">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> vacant = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">memset</span>(pre, <span class="number">-1</span>, <span class="keyword">sizeof</span> pre);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; N; j += <span class="number">2</span>) </span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; i += <span class="number">2</span>) </span><br><span class="line">            vacant += <span class="built_in">get</span>(i, j, N) + <span class="built_in">get</span>(i + <span class="number">1</span>, j, N) +</span><br><span class="line">                      <span class="built_in">get</span>(i, j + <span class="number">1</span>, N) + <span class="built_in">get</span>(i + <span class="number">1</span>, j + <span class="number">1</span>, N);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1.0</span> * vacant / (N * N);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">test</span><span class="params">(<span class="type">int</span> N)</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;N: &quot;</span> &lt;&lt; N &lt;&lt; endl;</span><br><span class="line">    cout &lt;&lt; <span class="built_in">sumA</span>(N) &lt;&lt; endl;</span><br><span class="line">    cout &lt;&lt; <span class="built_in">sumB</span>(N) &lt;&lt; endl;</span><br><span class="line">    cout &lt;&lt; <span class="built_in">sumC</span>(N) &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">test</span>(<span class="number">64</span>);</span><br><span class="line">    cout &lt;&lt; endl;</span><br><span class="line">    <span class="built_in">test</span>(<span class="number">60</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用程序模拟即可</p>
+<h2 id="6-38">6.38</h2>
+<ol>
+<li>1024</li>
+<li>128</li>
+<li>12.5%</li>
+</ol>
+<h2 id="6-39">6.39</h2>
+<ol>
+<li>1024</li>
+<li>256, 有256次循环</li>
+<li>25%</li>
+</ol>
+<h2 id="6-40">6.40</h2>
+<ol>
+<li>1024</li>
+<li>128 + 128, 第一个循环 16 * 16 / 2, 第二个循环一样</li>
+<li>25%</li>
+</ol>
+<h2 id="6-41">6.41</h2>
+<p>类似 6.39, 25%</p>
+<h2 id="6-42">6.42</h2>
+<p>类似 6.41, 25%</p>
+<h2 id="6-43">6.43</h2>
+<p>每次都不命中, 100%</p>
+<h2 id="6-44">6.44</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Clock frequency is approx. 2495.3 MHz</span><br><span class="line">Memory mountain (MB/sec)</span><br><span class="line">        s1      s2      s3      s4      s5      s6      s7      s8      s9      s10     s11     s12     s13     s14    s15</span><br><span class="line">128m    48812   26028   17525   13319   10529   7781    5952    4623    3946    3485    3909    3591    3341    3140   3011</span><br><span class="line">64m     57490   31492   20983   16559   13554   11475   9621    7352    6988    6282    5846    5287    5044    4868   4319</span><br><span class="line">32m     60452   41773   28792   25183   19910   16338   13622   11359   10196   9620    9651    9963    9768    11949  12536</span><br><span class="line">16m     67178   58971   45000   35361   27445   22549   19164   16285   15586   14616   14368   14219   14118   14115  14517</span><br><span class="line">8m      68021   60963   46108   36517   27876   22910   19264   16563   15795   14827   14410   14153   14108   14068  14476</span><br><span class="line">4m      68550   63219   49625   36302   27798   22959   19255   16502   15848   14751   14383   14073   14124   13954  14334</span><br><span class="line">2m      68026   62334   48622   35940   27816   23165   19544   16740   15897   15026   14728   14560   14978   15366  16417</span><br><span class="line">1024k   65208   54567   43391   34113   27290   23413   20342   18045   18170   18622   19378   20049   20330   20882  20890</span><br><span class="line">512k    68494   65086   56633   42613   33437   28502   24430   21307   21298   21272   21333   21376   21411   21359  21272</span><br><span class="line">256k    68315   65412   57003   42753   33544   28501   24591   21101   21376   21272   21237   21376   21410   21237  21534</span><br><span class="line">128k    68137   65412   56633   42475   33544   27953   24590   21238   21376   21446   21623   21375   21410   20765  21804</span><br><span class="line">64k     68137   64129   55907   41931   33544   27952   24590   21517   22022   21802   21235   20964   21876   23361  43607</span><br><span class="line">32k     68137   62896   64125   58403   59460   60563   58401   51103   51901   65396   59447   54496   62880   46711  54496</span><br><span class="line">16k     65412   68137   68133   58403   54496   54496   77852   51103   60552   54496   49539   45414   62880   38926  54496</span><br></pre></td></tr></table></figure>
+<h2 id="6-45-6-46">6.45 ~ 6.46</h2>
+<p>主要使用分块的一些想法</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2023/08/15/gdb/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-08-24 17:10:00
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="Categories"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/Book/" title="Book">
+                        <b>#</b> Book
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/C/" title="C">
+                        #C
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/CSAPP/" title="CSAPP">
+                        #CSAPP
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Chapter 6: 存储器层次结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#6-1-%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF"><span class="toc-text">6.1 存储技术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-1-%E9%9A%8F%E6%9C%BA%E8%AE%BF%E9%97%AE%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-text">6.1.1 随机访问存储器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-2-%E7%A3%81%E7%9B%98%E5%AD%98%E5%82%A8"><span class="toc-text">6.1.2 磁盘存储</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-3-%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98"><span class="toc-text">6.1.3 固态硬盘</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-4-%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E8%B6%8B%E5%8A%BF"><span class="toc-text">6.1.4 存储技术趋势</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-2-%E5%B1%80%E9%83%A8%E6%80%A7"><span class="toc-text">6.2 局部性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-1-%E5%AF%B9%E7%A8%8B%E5%BA%8F%E6%95%B0%E6%8D%AE%E5%BC%95%E7%94%A8%E7%9A%84%E5%B1%80%E9%83%A8%E6%80%A7"><span class="toc-text">6.2.1 对程序数据引用的局部性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-2-%E5%8F%96%E6%8C%87%E4%BB%A4%E7%9A%84%E5%B1%80%E9%83%A8%E6%80%A7"><span class="toc-text">6.2.2 取指令的局部性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-3-%E5%B1%80%E9%83%A8%E6%80%A7%E5%B0%8F%E7%BB%93"><span class="toc-text">6.2.3 局部性小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-3-%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="toc-text">6.3 存储器层次结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-1-%E5%AD%98%E5%82%A8%E5%99%A8%E7%BB%93%E6%9E%84%E5%B1%82%E6%AC%A1%E4%B8%AD%E7%9A%84%E7%BC%93%E5%AD%98"><span class="toc-text">6.3.1 存储器结构层次中的缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-2-%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84%E6%A6%82%E5%BF%B5%E5%B0%8F%E7%BB%93"><span class="toc-text">6.3.2 存储器层次结构概念小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-4-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-text">6.4 高速缓存存储器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-1-%E9%80%9A%E7%94%A8%E7%9A%84%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%AD%98%E5%82%A8%E5%99%A8%E7%BB%84%E7%BB%87%E7%BB%93%E6%9E%84"><span class="toc-text">6.4.1 通用的高速缓存存储器组织结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-2-%E7%9B%B4%E6%8E%A5%E6%98%A0%E5%B0%84%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98"><span class="toc-text">6.4.2 直接映射高速缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-3-%E7%BB%84%E7%9B%B8%E8%81%94%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98"><span class="toc-text">6.4.3 组相联高速缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-4-%E5%85%A8%E7%9B%B8%E8%81%94%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98"><span class="toc-text">6.4.4 全相联高速缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-5-%E6%9C%89%E5%85%B3%E5%86%99%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text">6.4.5 有关写的问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-6-%E4%B8%80%E4%B8%AA%E7%9C%9F%E5%AE%9E%E7%9A%84%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84%E7%9A%84%E8%A7%A3%E5%89%96"><span class="toc-text">6.4.6 一个真实的高速缓存层次结构的解剖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-7-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%8F%82%E6%95%B0%E7%9A%84%E6%80%A7%E8%83%BD%E5%BD%B1%E5%93%8D"><span class="toc-text">6.4.7 高速缓存参数的性能影响</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-5-%E7%BC%96%E5%86%99%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%8F%8B%E5%A5%BD%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="toc-text">6.5 编写高速缓存友好的代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-6-%E7%BB%BC%E5%90%88-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98%E5%AF%B9%E7%A8%8B%E5%BA%8F%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="toc-text">6.6 综合: 高速缓存对程序性能的影响</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-6-1-%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%B1"><span class="toc-text">6.6.1 存储器山</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-6-2-%E9%87%8D%E6%96%B0%E6%8E%92%E5%88%97%E5%BE%AA%E7%8E%AF%E4%BB%A5%E6%8F%90%E9%AB%98%E6%97%B6%E9%97%B4%E5%B1%80%E9%83%A8%E6%80%A7"><span class="toc-text">6.6.2 重新排列循环以提高时间局部性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-6-3-%E5%9C%A8%E7%A8%8B%E5%BA%8F%E4%B8%AD%E5%88%A9%E7%94%A8%E5%B1%80%E9%83%A8%E6%80%A7"><span class="toc-text">6.6.3 在程序中利用局部性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-6-%E5%B0%8F%E7%BB%93"><span class="toc-text">6.6 小结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">练习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#6-1"><span class="toc-text">6.1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-2"><span class="toc-text">6.2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-3"><span class="toc-text">6.3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-4"><span class="toc-text">6.4</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-5"><span class="toc-text">6.5</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-6"><span class="toc-text">6.6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-7"><span class="toc-text">6.7</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-8"><span class="toc-text">6.8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-9"><span class="toc-text">6.9</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-10"><span class="toc-text">6.10</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-11"><span class="toc-text">6.11</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-12"><span class="toc-text">6.12</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-13-6-16"><span class="toc-text">6.13 ~ 6.16</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-17"><span class="toc-text">6.17</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-18-6-20"><span class="toc-text">6.18 ~ 6.20</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-21"><span class="toc-text">6.21</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-22"><span class="toc-text">6.22</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-23"><span class="toc-text">6.23</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-24"><span class="toc-text">6.24</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-25-6-33"><span class="toc-text">6.25 ~ 6.33</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-34"><span class="toc-text">6.34</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-35"><span class="toc-text">6.35</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-36"><span class="toc-text">6.36</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-37"><span class="toc-text">6.37</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-38"><span class="toc-text">6.38</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-39"><span class="toc-text">6.39</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-40"><span class="toc-text">6.40</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-41"><span class="toc-text">6.41</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-42"><span class="toc-text">6.42</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-43"><span class="toc-text">6.43</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-44"><span class="toc-text">6.44</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-45-6-46"><span class="toc-text">6.45 ~ 6.46</span></a></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2023 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + CSAPP%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20(%E7%AC%AC%E5%85%AD%E7%AB%A0) + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F08%2F24%2F6csapp%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/08/24/6csapp/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
