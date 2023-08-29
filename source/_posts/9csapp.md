@@ -1,6 +1,6 @@
 ---
-title: CSAPP 学习笔记 (第四章) (暂跳过流水线实现)
-date: 2023-08-21 14:33:23
+title: CSAPP 学习笔记 (第九章)
+date: 2023-08-26 14:33:23
 mathjax: true
 tags:
 - C
