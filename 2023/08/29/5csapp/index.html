@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="" />
+  <meta name="author" content="lzl" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      CSAPP 学习笔记 (第五章) 
+      
+      
+      |
+    
+     lzl&#39;s blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">lzl</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          <a href="/categories/">Categories</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">CSAPP 学习笔记 (第五章)</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-08-29 12:00:23
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="Categories"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/Book/" title="Book">
+                    <b>#</b> Book
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/C/" title="C">
+                    #C
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/CSAPP/" title="CSAPP">
+                    #CSAPP
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1>Chapter 5: 优化程序性能</h1>
+<h2 id="5-1-优化编译器的能力和局限性">5.1 优化编译器的能力和局限性</h2>
+<p>现代编译器向用户提供一些对它们所使用的优化的控制, 最简单的是指定优化级别 <br>
+<code>-Og</code>, <code>-O1</code>, <code>-O2</code>, <code>-O3</code> 从低到高是不同的优化等级</p>
+<p>编译器对程序使用安全的优化 <br>
+一个函数以两个指针为参数, 编译器就要考虑两个指针相同的情况 <br>
+多次调用函数的时候, 就要考虑函数的副作用—对全局变量产生的影响</p>
+<h2 id="5-2-表示程序性能">5.2 表示程序性能</h2>
+<p><code>CPE(Cycles Per Elements)</code> 表示每个元素所需的周期数, 在度量执行重复计算的程序时很适当</p>
+<p>时钟运行频率: 每秒处理器执行多少个周期</p>
+<h2 id="5-3-程序示例">5.3 程序示例</h2>
+<p>使用如下程序来测试优化等级</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdlib&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">int</span> <span class="type">data_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="type">long</span> len;</span><br><span class="line">    <span class="type">data_t</span> *data;</span><br><span class="line">&#125; vec_rec, *vec_ptr;</span><br><span class="line"></span><br><span class="line"><span class="function">vec_ptr <span class="title">new_vec</span><span class="params">(<span class="type">long</span> len)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    vec_ptr res = (vec_ptr)<span class="built_in">malloc</span>(<span class="built_in">sizeof</span>(vec_rec));</span><br><span class="line">    <span class="type">data_t</span> *data = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!res) <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    res-&gt;len = len;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (len &gt; <span class="number">0</span>) &#123;</span><br><span class="line"></span><br><span class="line">        data = (<span class="type">data_t</span> *)<span class="built_in">calloc</span>(len, <span class="built_in">sizeof</span>(<span class="type">data_t</span>));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!data) &#123;</span><br><span class="line">            <span class="built_in">free</span>((<span class="type">void</span> *)res);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    res-&gt;data = data;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">get_vec_element</span><span class="params">(vec_ptr v, <span class="type">long</span> index, <span class="type">data_t</span> *dest)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt;= v-&gt;len) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    *dest = v-&gt;data[index];</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">long</span> <span class="title">vec_length</span><span class="params">(vec_ptr v)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> v-&gt;len;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> IDENT 0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> OP +</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine1</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    *dest = IDENT;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">long</span> i = <span class="number">0</span>; i &lt; <span class="built_in">vec_length</span>(v); i++) &#123;</span><br><span class="line">        <span class="type">data_t</span> val;</span><br><span class="line">        <span class="built_in">get_vec_element</span>(v, i, &amp;val);</span><br><span class="line">        *dest = *dest OP val;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    vec_ptr v = <span class="built_in">new_vec</span>(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> times = <span class="number">1e7</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; times; i++) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; <span class="built_in">vec_length</span>(v); j++)</span><br><span class="line">            v-&gt;data[j] = <span class="built_in">rand</span>();</span><br><span class="line">        </span><br><span class="line">        <span class="type">data_t</span> sum;</span><br><span class="line">        <span class="built_in">combine1</span>(v, &amp;sum);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">g++ -o tmp tmp.cpp &amp;&amp; time ./tmp</span><br><span class="line">g++ -Og -o tmp tmp.cpp &amp;&amp; time ./tmp</span><br><span class="line">g++ -O1 -o tmp tmp.cpp &amp;&amp; time ./tmp</span><br><span class="line">g++ -O2 -o tmp tmp.cpp &amp;&amp; time ./tmp</span><br><span class="line">g++ -O3 -o tmp tmp.cpp &amp;&amp; time ./tmp</span><br></pre></td></tr></table></figure>
+<p>可以轻松观察优化等级带来的影响</p>
+<h2 id="5-4-消除循环的低效率">5.4 消除循环的低效率</h2>
+<p>把 <code>combine1</code> 中循环的结束条件中 <code>vec_length</code> 函数放到函数之外</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine2</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    *dest = IDENT;</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> length = <span class="built_in">vec_length</span>(v);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">long</span> i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">        <span class="type">data_t</span> val;</span><br><span class="line">        <span class="built_in">get_vec_element</span>(v, i, &amp;val);</span><br><span class="line">        *dest = *dest OP val;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以发现在低等级的优化级别中, 运行速度明显加快</p>
+<p>但是如果 <code>vec_length</code> 是一个线性复杂度的函数, 整段函数的复杂度变为 $O(n^2)$ <br>
+这时使用代码移动可以让整段函数重新变成 $O(n)$</p>
+<p><strong>代码移动</strong> 多次执行相同运算结果相同, 可以把这段代码放到外部</p>
+<h2 id="5-5-减少过程调用">5.5 减少过程调用</h2>
+<p>可以直接操作数组来获取元素而不是通过调用函数</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">data_t</span> *<span class="title">get_vec_start</span><span class="params">(vec_ptr v)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> v-&gt;data;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine3</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    *dest = IDENT;</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> length = <span class="built_in">vec_length</span>(v);</span><br><span class="line">    <span class="type">data_t</span> *data = <span class="built_in">get_vec_start</span>(v);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">long</span> i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">        *dest = *dest OP data[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种变换损害了程序的模块性, 但是提高了运行速度</p>
+<h2 id="5-6-消除不必要的内存引用">5.6 消除不必要的内存引用</h2>
+<p><code>combine3</code> 循环中每次都要调用 <code>dest</code> 指针所指向的内存 <br>
+可以通过引入中间变量而消除这种不必要的内存引用</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine4</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> length = <span class="built_in">vec_length</span>(v);</span><br><span class="line">    <span class="type">data_t</span> *data = <span class="built_in">get_vec_start</span>(v);</span><br><span class="line"></span><br><span class="line">    <span class="type">data_t</span> res = IDENT;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">long</span> i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">        res = res OP data[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    *dest = res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="5-7-理解现代处理器">5.7 理解现代处理器</h2>
+<p>现在的处理器都是超标量乱序发射的, 可以达到更好的指令级并行度 <br>
+包括指令控制单元 <code>Instruction Control Unit (ICU)</code> 和 执行单元 <code>Execution Unit(EU)</code></p>
+<p>找到程序的关键路径, 最小化 CPE</p>
+<h2 id="5-8-循环展开">5.8 循环展开</h2>
+<p>下面代码被称作 <code>2 * 1</code> 的循环展开</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine5</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> length = <span class="built_in">vec_length</span>(v);</span><br><span class="line">    <span class="type">data_t</span> *data = <span class="built_in">get_vec_start</span>(v);</span><br><span class="line"></span><br><span class="line">    <span class="type">data_t</span> res = IDENT;</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; length; i += <span class="number">2</span>) &#123;</span><br><span class="line">        res = (res OP data[i]) OP data[i + <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (; i &lt; length; i++) res = (res OP data[i]);</span><br><span class="line"></span><br><span class="line">    *dest = res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="5-9-提高并行性">5.9 提高并行性</h2>
+<h3 id="5-9-1-多个累计变量">5.9.1 多个累计变量</h3>
+<p>使用 2 个临时变量来存储, 从而提高并行性, 这被称作 <code>2 * 2</code> 的循环展开</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine6</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> length = <span class="built_in">vec_length</span>(v);</span><br><span class="line">    <span class="type">data_t</span> *data = <span class="built_in">get_vec_start</span>(v);</span><br><span class="line"></span><br><span class="line">    <span class="type">data_t</span> acc0 = IDENT;</span><br><span class="line">    <span class="type">data_t</span> acc1 = IDENT;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; length; i += <span class="number">2</span>) &#123;</span><br><span class="line">        acc0 = acc0 OP data[i];</span><br><span class="line">        acc1 = acc1 OP data[i + <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (; i &lt; length; i++) acc0 = (acc0 OP data[i]);</span><br><span class="line"></span><br><span class="line">    *dest = acc0 OP acc1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时要注意 OP 运算的可交换和可结合性</p>
+<h2 id="5-9-2-重新结合变换">5.9.2 重新结合变换</h2>
+<p>根据结合律, 尽量减少关键路径的长度, 这称之为 <code>2 * 1a</code> 变换</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine7</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> length = <span class="built_in">vec_length</span>(v);</span><br><span class="line">    <span class="type">data_t</span> *data = <span class="built_in">get_vec_start</span>(v);</span><br><span class="line"></span><br><span class="line">    <span class="type">data_t</span> res = IDENT;</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; length; i += <span class="number">2</span>) &#123;</span><br><span class="line">        res = res <span class="built_in">OP</span> (data[i] OP data[i + <span class="number">1</span>]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (; i &lt; length; i++) res = (res OP data[i]);</span><br><span class="line"></span><br><span class="line">    *dest = res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="5-10-优化合并代码的结果小结">5.10 优化合并代码的结果小结</h2>
+<p>多项优化技术确实减少了 没有优化 的 C 程序运行时间</p>
+<h2 id="5-11-一些限制因素">5.11 一些限制因素</h2>
+<h3 id="5-11-1-寄存器溢出">5.11.1 寄存器溢出</h3>
+<p>并行度 $p$ 超过寄存器数量, 这个时候就要用内存, 反而不如之前</p>
+<h3 id="5-11-2-分支预测和预测错误处罚">5.11.2 分支预测和预测错误处罚</h3>
+<p>尽量使用条件传送风格的代码</p>
+<h2 id="5-12-理解内存性能">5.12 理解内存性能</h2>
+<p>读写操作也会影响程序性能</p>
+<h2 id="5-13-应用-性能提高技术">5.13 应用: 性能提高技术</h2>
+<ol>
+<li>高级设计: 选用适当的算法和数据结构</li>
+<li>基本编码原则:
+<ol>
+<li>消除连续的函数调用</li>
+<li>消除不必要的内存引用</li>
+<li>低级优化:
+<ol>
+<li><code>k * k</code> 的循环展开</li>
+<li>使用条件传送风格写代码</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="5-14-确认和消除性能瓶颈">5.14 确认和消除性能瓶颈</h2>
+<p>在大型程序中, 知道哪里需要优化也是一个难题</p>
+<p>本节使用 代码剖析程序, 收集程序性能数据并分析</p>
+<h2 id="5-14-1-程序剖析">5.14.1 程序剖析</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gcc -Og -pg -o prog prog.c</span><br><span class="line">./prog file.txt</span><br><span class="line">gprof prog</span><br></pre></td></tr></table></figure>
+<h2 id="5-14-2-使用剖析程序来指导优化">5.14.2 使用剖析程序来指导优化</h2>
+<p>观察程序运行的瓶颈在哪个位置, 从而优化那个函数</p>
+<h2 id="5-15-小结">5.15 小结</h2>
+<p>如何优化代码 <br>
+如何找到应该优化的代码</p>
+<h1>练习</h1>
+<h2 id="5-1">5.1</h2>
+<p><code>*xp = 0</code></p>
+<h2 id="5-2">5.2</h2>
+<p>数学题, 略</p>
+<h2 id="5-3">5.3</h2>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5olf3rvjv8w0.webp" alt=""></p>
+<h2 id="5-4">5.4</h2>
+<ol>
+<li>没什么不同, 只是省略了倒腾</li>
+<li>实现了, 内存别名都一样</li>
+<li>少了几步无意义的 <code>mov</code> 指令</li>
+</ol>
+<h2 id="5-5">5.5</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">这两条语句无关, 可以并行执行, CPE 为 5</span><br><span class="line">并且与 result 无关, 可以不管他们直接执行</span><br><span class="line">int tmp1 = a[i] * xpwr;</span><br><span class="line">int tmp2 = x * xpwr;</span><br><span class="line"></span><br><span class="line">上一次迭代的 tmp1, tmp2 计算到 result 中</span><br><span class="line">result += tmp1;</span><br><span class="line">xpwr = tmp2;</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2xb6ce0y7m40.webp" alt=""></p>
+<ol>
+<li>2n 次乘法, n 次加法</li>
+<li>如图</li>
+</ol>
+<h2 id="5-6">5.6</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">这三条语句必须顺序执行, CPE 为 8</span><br><span class="line">int tmp1 = x * result;</span><br><span class="line"></span><br><span class="line">int tmp2 = a[i] + tmp1;</span><br><span class="line"></span><br><span class="line">result = tmp2;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>n 次乘法, n 次加法</li>
+<li>如上</li>
+</ol>
+<h2 id="5-7">5.7</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">combine5_5</span><span class="params">(vec_ptr v, <span class="type">data_t</span> *dest)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> length = <span class="built_in">vec_length</span>(v);</span><br><span class="line">    <span class="type">data_t</span> *data = <span class="built_in">get_vec_start</span>(v);</span><br><span class="line"></span><br><span class="line">    <span class="type">data_t</span> res = IDENT;</span><br><span class="line"></span><br><span class="line">    <span class="type">long</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; length; i += <span class="number">5</span>) &#123;</span><br><span class="line">        res = res OP data[i];</span><br><span class="line">        res = res OP data[i + <span class="number">1</span>];</span><br><span class="line">        res = res OP data[i + <span class="number">2</span>];</span><br><span class="line">        res = res OP data[i + <span class="number">3</span>];</span><br><span class="line">        res = res OP data[i + <span class="number">4</span>];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (; i &lt; length; i++) res = (res OP data[i]);</span><br><span class="line"></span><br><span class="line">    *dest = res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="5-8">5.8</h2>
+<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.223emvu88q1s.png" alt=""></p>
+<p>x, y, z 跟 r 无关, 所以可以并行计算</p>
+<h2 id="5-9">5.9</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (i1 &lt; n &amp;&amp; i2 &lt; n) &#123;</span><br><span class="line">    <span class="type">long</span> v1 = src1[i1], v2 = src2[v2];</span><br><span class="line">    <span class="type">long</span> take1 = v1 &lt; v2;</span><br><span class="line">    dest[id++] = take1 ? v1 : v2;</span><br><span class="line">    i1 += take1, i2 += (<span class="number">1</span> - take1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="5-10">5.10</h2>
+<ol>
+<li>$0 \le i \le 998$ <code>a[i] = i + 1</code></li>
+<li>$1 \le i \le 999$ <code>a[i] = 0</code></li>
+<li><code>A</code> 每次读取的目标在这个函数中还没有被写, 可以并行执行</li>
+<li>类似 <code>A</code>, 理由同上</li>
+</ol>
+<h2 id="5-11">5.11</h2>
+<p>加法操作要依赖读操作, 写操作要依赖加法操作, 关键路径就是这个三个操作之和, 9</p>
+<h2 id="5-12">5.12</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">psum1</span><span class="params">(<span class="type">float</span> a[], <span class="type">float</span> p[], <span class="type">long</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="type">long</span> i;</span><br><span class="line">    p[<span class="number">0</span>] = a[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> sum = a[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">1</span>; i &lt; n; i++) &#123;</span><br><span class="line">        sum += a[i];</span><br><span class="line">        p[i] = sum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="5-13-5-19">5.13 ~ 5.19</h2>
+<p>暂时跳过</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2023/08/26/9csapp/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-08-29 12:00:23
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="Categories"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/Book/" title="Book">
+                        <b>#</b> Book
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/C/" title="C">
+                        #C
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/CSAPP/" title="CSAPP">
+                        #CSAPP
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Chapter 5: 优化程序性能</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-1-%E4%BC%98%E5%8C%96%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E8%83%BD%E5%8A%9B%E5%92%8C%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-text">5.1 优化编译器的能力和局限性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-2-%E8%A1%A8%E7%A4%BA%E7%A8%8B%E5%BA%8F%E6%80%A7%E8%83%BD"><span class="toc-text">5.2 表示程序性能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-3-%E7%A8%8B%E5%BA%8F%E7%A4%BA%E4%BE%8B"><span class="toc-text">5.3 程序示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-4-%E6%B6%88%E9%99%A4%E5%BE%AA%E7%8E%AF%E7%9A%84%E4%BD%8E%E6%95%88%E7%8E%87"><span class="toc-text">5.4 消除循环的低效率</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-5-%E5%87%8F%E5%B0%91%E8%BF%87%E7%A8%8B%E8%B0%83%E7%94%A8"><span class="toc-text">5.5 减少过程调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-6-%E6%B6%88%E9%99%A4%E4%B8%8D%E5%BF%85%E8%A6%81%E7%9A%84%E5%86%85%E5%AD%98%E5%BC%95%E7%94%A8"><span class="toc-text">5.6 消除不必要的内存引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-7-%E7%90%86%E8%A7%A3%E7%8E%B0%E4%BB%A3%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text">5.7 理解现代处理器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-8-%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80"><span class="toc-text">5.8 循环展开</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-9-%E6%8F%90%E9%AB%98%E5%B9%B6%E8%A1%8C%E6%80%A7"><span class="toc-text">5.9 提高并行性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-9-1-%E5%A4%9A%E4%B8%AA%E7%B4%AF%E8%AE%A1%E5%8F%98%E9%87%8F"><span class="toc-text">5.9.1 多个累计变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-9-2-%E9%87%8D%E6%96%B0%E7%BB%93%E5%90%88%E5%8F%98%E6%8D%A2"><span class="toc-text">5.9.2 重新结合变换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-10-%E4%BC%98%E5%8C%96%E5%90%88%E5%B9%B6%E4%BB%A3%E7%A0%81%E7%9A%84%E7%BB%93%E6%9E%9C%E5%B0%8F%E7%BB%93"><span class="toc-text">5.10 优化合并代码的结果小结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-11-%E4%B8%80%E4%BA%9B%E9%99%90%E5%88%B6%E5%9B%A0%E7%B4%A0"><span class="toc-text">5.11 一些限制因素</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-11-1-%E5%AF%84%E5%AD%98%E5%99%A8%E6%BA%A2%E5%87%BA"><span class="toc-text">5.11.1 寄存器溢出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-11-2-%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B%E5%92%8C%E9%A2%84%E6%B5%8B%E9%94%99%E8%AF%AF%E5%A4%84%E7%BD%9A"><span class="toc-text">5.11.2 分支预测和预测错误处罚</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-12-%E7%90%86%E8%A7%A3%E5%86%85%E5%AD%98%E6%80%A7%E8%83%BD"><span class="toc-text">5.12 理解内存性能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-13-%E5%BA%94%E7%94%A8-%E6%80%A7%E8%83%BD%E6%8F%90%E9%AB%98%E6%8A%80%E6%9C%AF"><span class="toc-text">5.13 应用: 性能提高技术</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-14-%E7%A1%AE%E8%AE%A4%E5%92%8C%E6%B6%88%E9%99%A4%E6%80%A7%E8%83%BD%E7%93%B6%E9%A2%88"><span class="toc-text">5.14 确认和消除性能瓶颈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-14-1-%E7%A8%8B%E5%BA%8F%E5%89%96%E6%9E%90"><span class="toc-text">5.14.1 程序剖析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-14-2-%E4%BD%BF%E7%94%A8%E5%89%96%E6%9E%90%E7%A8%8B%E5%BA%8F%E6%9D%A5%E6%8C%87%E5%AF%BC%E4%BC%98%E5%8C%96"><span class="toc-text">5.14.2 使用剖析程序来指导优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-15-%E5%B0%8F%E7%BB%93"><span class="toc-text">5.15 小结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">练习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-1"><span class="toc-text">5.1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-2"><span class="toc-text">5.2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-3"><span class="toc-text">5.3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-4"><span class="toc-text">5.4</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-5"><span class="toc-text">5.5</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-6"><span class="toc-text">5.6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-7"><span class="toc-text">5.7</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-8"><span class="toc-text">5.8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-9"><span class="toc-text">5.9</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-10"><span class="toc-text">5.10</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-11"><span class="toc-text">5.11</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-12"><span class="toc-text">5.12</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-13-5-19"><span class="toc-text">5.13 ~ 5.19</span></a></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2023 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + CSAPP%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20(%E7%AC%AC%E4%BA%94%E7%AB%A0) + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F08%2F29%2F5csapp%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/08/29/5csapp/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
