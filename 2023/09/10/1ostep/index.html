@@ -11,7 +11,7 @@
   
   <title>
     
-      OSTEP 章节 1~8 
+      OSTEP 章节 1~11 
       
       
       |
@@ -147,7 +147,7 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">OSTEP 章节 1~8</div>
+      <div class="post-title">OSTEP 章节 1~11</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
@@ -436,10 +436,49 @@ $$</li>
 <li>一旦工作用完了其在某一层的时间配额, 那就降低优先级</li>
 </ol>
 <p><strong><code>MLFQ</code> 调优</strong></p>
+<p>比如不同优先级队列可变的时间片长度</p>
+<h2 id="作业-略">作业(略)</h2>
+<h1>调度: 比例分额</h1>
+<p>每隔一段时间抽奖决定下一个应该运行的进程 <br>
+根据进程需要更改概率</p>
+<p><strong>基本概念: 彩票数表示份额</strong></p>
+<p>彩票数占总彩票数的百分比代表进程占用资源的份额</p>
+<p>随机性的好处:</p>
 <ol>
-<li>不同优先级队列可变的时间片长度</li>
-<li></li>
+<li>几乎遇不到最差的情况</li>
+<li>几乎不需要记录除彩票数的其他状态</li>
+<li>迅速</li>
 </ol>
+<p><strong>彩票机制</strong></p>
+<ol>
+<li>彩票货币: 分给子进程的货币按照比例兑换全局彩票</li>
+<li>彩票转让: 某个进程想让另一个进程更快, 可以进行彩票转让</li>
+<li>彩票通胀: 用于进程之间相互信任的环境, 临时提升自己的彩票数量</li>
+</ol>
+<p><strong>实现</strong></p>
+<p>把进程按照彩票数从多到少排序, 按顺序遍历从而找到下一个运行的进程</p>
+<p><strong>分配彩票</strong></p>
+<p>除了用户自己分配之外, 分配问题到现在还没有最佳答案</p>
+<p><strong>步长调度: 一个确定性的公平分配算法</strong></p>
+<ol>
+<li>每个进程用一个大数除以彩票数, 得到步长, 总步长设为 0</li>
+<li>每次选择所有进程中总步数最小的开始运行一段时间</li>
+<li>运行完毕之后总步数加上步长, 随后回到第二步</li>
+</ol>
+<p><strong>比例分额模式的缺点</strong></p>
+<ol>
+<li>无法确定各个进程应该有多少彩票数</li>
+<li>不能很好适配 IO 操作</li>
+</ol>
+<h2 id="作业-5">作业</h2>
+<ol start="2">
+<li>彩票数量不平衡时, 彩票数量多的几乎是一直运行到结束 <br>
+出现饥饿现象</li>
+<li>不公平性不多</li>
+<li>不公平性增大</li>
+</ol>
+<h1>多处理器调度</h1>
+<p>暂时搁置, 学完并发再回来读</p>
 
       </div>
       
@@ -501,7 +540,7 @@ $$</li>
     <div class="title">Contents</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">操作系统介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">抽象: 进程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">插叙: 进程 API</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-2"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">机制: 受限直接执行</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-2"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-3"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">进程调度: 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-3"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-4"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">调度: 多级反馈队列</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">操作系统介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">抽象: 进程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">插叙: 进程 API</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-2"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">机制: 受限直接执行</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-2"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-3"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">进程调度: 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-3"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-4"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">调度: 多级反馈队列</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-%E7%95%A5"><span class="toc-text">作业(略)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">调度: 比例分额</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-5"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">多处理器调度</span></a></li></ol>
       
     </div>
   </div>
@@ -787,7 +826,7 @@ $$</li>
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + OSTEP%20%E7%AB%A0%E8%8A%82%201~8 + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F09%2F10%2F1ostep%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + OSTEP%20%E7%AB%A0%E8%8A%82%201~11 + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F09%2F10%2F1ostep%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
