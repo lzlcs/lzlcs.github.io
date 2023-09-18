@@ -224,8 +224,8 @@
 <h3 id="2-1-6-表示代码">2.1.6 表示代码</h3>
 <p>不同的机器使用不同且不兼容的指令和编码格式, 二进制代码很少可以做移植</p>
 <h3 id="2-1-7-布尔代数和环">2.1.7 布尔代数和环</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.jcndpw581w8.webp" alt=""></p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2rfa517i1ok0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.jcndpw581w8.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.2rfa517i1ok0.webp" alt=""></p>
 <p>布尔 <code>and</code> 和 <code>xor</code> 分别表示模 2 的乘法和加法, 每个元素都是它自己的加法逆元 <code>a ^ a = 0</code></p>
 <p>将这四种运算 (<code>&amp;</code>, <code>|</code>, <code>~</code>, <code>^</code>) 扩展到位向量上, 对于每一位都进行这些运算</p>
 <p>位向量的一个有用的应用就是表示有限集合 <code>&amp;</code> 就是交集, <code>|</code> 就是并集, <code>~</code> 相当于补集</p>
@@ -256,18 +256,18 @@
 <p>几乎所有的编译器都采用算数右移</p>
 <h2 id="2-2-整数表示">2.2 整数表示</h2>
 <h3 id="2-2-1-整数数据类型">2.2.1 整数数据类型</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.77vyucib1bc0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.77vyucib1bc0.webp" alt=""></p>
 <h3 id="2-2-2-无符号和二进制补码编码">2.2.2 无符号和二进制补码编码</h3>
 <p>$B2U_w$ 表示无符号的二进制, $B2U_w = \Sigma_{i = 0}^{w - 1} x_i 2^i$ <br>
 $B2T_w$ 表示二进制补码, $B2T_w = -x_{w-1}2^{w-1} +\Sigma_{i = 0}^{w - 2} x_i 2^i$ <br>
 $B2O_w$ 表示二进制反码, $B2O_w = -(x_{w-1}2^{w-1}-1) +\Sigma_{i = 0}^{w - 2} x_i 2^i$ <br>
 $B2S_w$ 表示符号数值, $B2S_w = (-1)^{x_{w-1}} \times \Sigma_{i = 0}^{w - 2} x_i 2^i$</p>
 <p>二进制补码所能表示的值是不对称的</p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3sv21t52zx60.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.3sv21t52zx60.webp" alt=""></p>
 <h3 id="2-2-3-有符号和无符号数的转换">2.2.3 有符号和无符号数的转换</h3>
 <p>注意强制类型转换:</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> x = <span class="number">-1</span>;</span><br><span class="line">cout &lt;&lt; (<span class="type">unsigned</span>)x &lt;&lt; endl;</span><br><span class="line"><span class="comment">// 4294967295 = 2 ^ 32 - 1</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3ig3ten820c0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.3ig3ten820c0.webp" alt=""></p>
 <h3 id="2-2-4-C-中的有符号和无符号数">2.2.4 C 中的有符号和无符号数</h3>
 <p>类型转换发生:</p>
 <ol>
@@ -377,14 +377,14 @@ $2^w = 1 &lt;&lt; w$ (二进制补码) <br>
 </ol>
 <h3 id="2-4-3-数值实例">2.4.3 数值实例</h3>
 <p>非规格化值如此定义 $E$ 是为了和规格化值免费多出的一位相适配</p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3x8snzo6zxq0.webp" alt=""><br>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.3x8snzo6zxq0.webp" alt=""><br>
 如此定义的非规格化值和规格化值是无缝衔接的</p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3jvwbxeylxg0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.3jvwbxeylxg0.webp" alt=""></p>
 <h3 id="2-4-4-舍入">2.4.4 舍入</h3>
 <p>浮点运算只能近似表示实数运算, <br>
 所以对于 $x$ 应该有一种系统的方法使它能被转换成浮点数, 这就是舍入</p>
 <p>一般有四种舍入方式:<br>
-<img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.44qais3bbvo0.webp" alt=""></p>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.44qais3bbvo0.webp" alt=""></p>
 <p>相似的, 这些舍入方法可以使用在二进制数上</p>
 <h3 id="2-4-5-浮点运算">2.4.5 浮点运算</h3>
 <p>浮点加法, 乘法没有结合律, 因为舍入的存在<br>

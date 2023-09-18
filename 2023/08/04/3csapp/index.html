@@ -230,14 +230,14 @@
 <p>所有以 <code>.</code> 开头的行都是指导汇编器和链接器工作的伪指令, 通常可以忽略</p>
 <p><code>ATT</code> 汇编格式与 <code>Intel</code> 有所不同, 本书使用 <code>ATT</code> 格式</p>
 <h2 id="3-3-数据格式">3.3 数据格式</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.7jkwgbr684w0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.7jkwgbr684w0.webp" alt=""></p>
 <p>由于系统从 16 位发展而来, 所以 16 位被称为 字 <br>
 32 位被称为双字, 64 位为四字</p>
 <p>大多数 GCC 生成的汇编指令代码都有一个字符后缀, 表明操作数的大小</p>
 <p><code>movb</code> 传送字节, <code>movw</code> 传送字, <code>movl</code> 传送双字, <code>movq</code> 传送四字</p>
 <h2 id="3-4-访问信息">3.4 访问信息</h2>
 <p>一组 <code>x86-64</code> 的 CPU 包含一组 16 个存储 64 位的 <strong>通用目的寄存器</strong>, 存储整数和指针</p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5js7ywj3kcw0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.5js7ywj3kcw0.webp" alt=""></p>
 <p>指令可以对这些寄存器的低位字节进行访问</p>
 <h3 id="3-4-1-操作数指示符">3.4.1 操作数指示符</h3>
 <p>大多数指令由一个或多个操作数, 操作数被分为三种类型</p>
@@ -259,7 +259,7 @@
 </li>
 </ol>
 <h3 id="3-4-2-数据传送指令">3.4.2 数据传送指令</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5h8n3yati90.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.5h8n3yati90.png" alt=""></p>
 <blockquote>
 <p>注意 <code>movl</code> 指令会把最高四个字节设置为 0, 这是惯例</p>
 </blockquote>
@@ -268,16 +268,16 @@
 <code>movabsq</code> 能以任意 64 位立即数作为操作数, 并且只能以寄存器作为目的</p>
 </blockquote>
 <p>传送指令的两个操作数不能都是内存引用, 需要先将源内存引用传送到寄存器, 再传送到目标内存引用</p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.69cyhxhnmc00.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.69cyhxhnmc00.png" alt=""></p>
 <p>数据传送改变寄存器的方式<br>
-<img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2z8sg6a88xk0.webp" alt=""></p>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.2z8sg6a88xk0.webp" alt=""></p>
 <h3 id="3-4-3-数据传送示例">3.4.3 数据传送示例</h3>
 <p>代码和汇编的互相转化</p>
 <h3 id="3-4-4-压入和弹出栈数据">3.4.4 压入和弹出栈数据</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.443ubut3zz40.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.443ubut3zz40.webp" alt=""></p>
 <p>根据惯例, 栈顶地址最小</p>
 <h2 id="3-5-算数和逻辑操作">3.5 算数和逻辑操作</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5nkw0oiuw380.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.5nkw0oiuw380.png" alt=""></p>
 <h3 id="3-5-1-加载有效地址">3.5.1 加载有效地址</h3>
 <p><code>leaq</code> 的第一个操作数是内存引用, 第二个操作数是寄存器 <br>
 效果就是把寄存器存储上第一个操作数</p>
@@ -292,7 +292,7 @@
 <h3 id="3-5-4-讨论">3.5.4 讨论</h3>
 <p>函数会返回寄存器 <code>%rax</code> 的值</p>
 <h3 id="3-5-5-特殊的算数操作">3.5.5 特殊的算数操作</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.7drv1ofepjo0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.7drv1ofepjo0.webp" alt=""></p>
 <p>128 位的数称为 八字(oct word)</p>
 <p>乘法指令:  <br>
 <code>mul</code> 无符号乘法, <code>imul</code> 有符号乘法 <br>
@@ -322,9 +322,9 @@
 <blockquote>
 <p><code>leaq</code> 指令不改变条件码, 图 <code>3-10</code> 中所有的操作都会改变条件码</p>
 </blockquote>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.28ycgvvihkp.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.28ycgvvihkp.webp" alt=""></p>
 <h3 id="3-6-2-访问条件码">3.6.2 访问条件码</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.36ttwwgcbb40.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.36ttwwgcbb40.png" alt=""></p>
 <p><code>set</code> 命令把一个字节设置成 0 或者 1</p>
 <h3 id="3-6-3-跳转指令">3.6.3 跳转指令</h3>
 <p>跳转由两种方法</p>
@@ -332,7 +332,7 @@
 <li>直接跳转, <code>jmp .L1</code></li>
 <li>间接跳转, <code>jmp *%rax</code></li>
 </ol>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.55kb1waancc0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.55kb1waancc0.webp" alt=""></p>
 <h3 id="3-6-4-跳转指令的编码">3.6.4 跳转指令的编码</h3>
 <p>跳转指令编码方式:</p>
 <ol>
@@ -346,7 +346,7 @@
 <p>处理器使用流水线来获得高性能, 通过重叠连续指令的步骤获得高性能 <br>
 当机器遇到条件分支的时候, 会使用分支预测逻辑来猜测跳转指令是否会执行 <br>
 错误预测一个跳转会让处理器丢掉跳转指令后所有的工作, 重新开始</p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6v82v2jsq400.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.6v82v2jsq400.png" alt=""></p>
 <p>条件传送指令可以根据操作数来推断类型, 所以不用限定类型</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v = test-expr ? then-expr : <span class="keyword">else</span>-expr;</span><br></pre></td></tr></table></figure>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">if</span> (!test-expr)</span><br><span class="line">    <span class="keyword">goto</span> <span class="literal">false</span>;</span><br><span class="line">    v = then-expr;</span><br><span class="line">    <span class="keyword">goto</span> done;</span><br><span class="line"><span class="literal">false</span>:</span><br><span class="line">    v = <span class="keyword">else</span>-expr;</span><br><span class="line">done:</span><br></pre></td></tr></table></figure>
@@ -387,9 +387,9 @@
 <p>过程所需空间超出寄存器能存放的大小时, 就会在栈上分配空间, 这个部分称为 <strong>栈帧</strong></p>
 <p>$P$ 调用 $Q$ 时, 会把返回地址压入栈中, $Q$ 返回时从这个地址开始继续执行</p>
 <h3 id="3-7-2-转移控制">3.7.2 转移控制</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.78ygtm5gl3c0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.78ygtm5gl3c0.webp" alt=""></p>
 <h3 id="3-7-3-数据传送">3.7.3 数据传送</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.53r8048unb80.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.53r8048unb80.webp" alt=""></p>
 <p>大于六个的参数会放在栈中, 第七个参数位置是 <code>(%rsp)</code>, 第八个参数位置是 <code>8(%rsp)</code> <br>
 无论多出的参数是什么类型, 都会在栈中使用 8 位存储</p>
 <h3 id="3-7-4-栈上的局部存储">3.7.4 栈上的局部存储</h3>
@@ -405,7 +405,7 @@
 其他寄存器是 <strong>调用者保存寄存器</strong></p>
 <h2 id="3-8-数组分配与访问">3.8 数组分配与访问</h2>
 <h3 id="3-8-1-基本原则">3.8.1 基本原则</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5tsehwm671s0.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.5tsehwm671s0.png" alt=""></p>
 <h3 id="3-8-2-指针运算">3.8.2 指针运算</h3>
 <p>介绍 $C$ 中的指针运算</p>
 <h3 id="3-8-3-嵌套的数组">3.8.3 嵌套的数组</h3>
@@ -445,7 +445,7 @@ $$</p>
 <li>指针可以指向函数</li>
 </ol>
 <h3 id="3-10-2-应用-使用-GDB-调试器">3.10.2 应用: 使用 GDB 调试器</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.fyuaz0a60o.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.fyuaz0a60o.webp" alt=""></p>
 <h3 id="3-10-3-内存越界引用和缓冲区溢出">3.10.3 内存越界引用和缓冲区溢出</h3>
 <p>C 对数组引用不进行任何边界检查, 局部变量和状态信息都存放在栈中 <br>
 所以对越界的数组进行写入操作会破坏掉状态信息, 程序使用状态信息的时候就会出现严重错误</p>
@@ -466,7 +466,7 @@ $$</p>
 32 位系统栈随机化范围一般是 $2^{23}$, 只需要枚举 $\frac{2^{23}}{256}$ 次即可 <br>
 64 位系统栈随机化范围一般是 $2^{32}$, 只需要枚举 $\frac{2^{32}}{256}$ 次即可(很多)</p>
 <p><strong>栈破坏检测</strong>: <br>
-<img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5wuhh5wgw740.webp" alt=""><br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.5wuhh5wgw740.webp" alt=""><br>
 通过设置金丝雀值(随即生成), 返回时检测金丝雀值是否被改变从而确认栈是否异常</p>
 <p><strong>限制可执行代码区域</strong>: <br>
 限制哪部分内存可以存储可执行代码</p>
@@ -474,11 +474,11 @@ $$</p>
 <p>在函数中使用变长数组的时候, 外部函数无法确定应该分配多少栈空间 <br>
 <code>%rbp</code> 为基指针, 在函数内部修改栈指针分配空间之后, 再把栈指针设置成基指针</p>
 <h2 id="3-11-浮点代码">3.11 浮点代码</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3w4ivs5wv880.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.3w4ivs5wv880.webp" alt=""></p>
 <h3 id="3-11-1-浮点传送和转换操作">3.11.1 浮点传送和转换操作</h3>
 <p>保存在内存中的数据 $M_{32}$ 和 $M_{64}$, 保存在 $XMM$ 寄存器中的数据 $X$</p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.592c9ve19r80.png" alt=""></p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.459e70calhu0.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.592c9ve19r80.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.459e70calhu0.png" alt=""></p>
 <h3 id="3-11-2-过程中的浮点代码">3.11.2 过程中的浮点代码</h3>
 <p><code>%xmm0 ~ %xmm7</code> 存储 7 个参数, 多余的参数可以使用栈空间 <br>
 <code>%xmm0</code> 为返回值 <br>
@@ -487,20 +487,20 @@ $$</p>
 第一个整数参数, 第二个… 保存在 <code>%rdi</code>, <code>%rsi</code>… <br>
 第一个浮点数参数, 第二个… 保存在 <code>%xmm0</code>, <code>%xmm1</code> …</p>
 <h3 id="3-11-3-浮点运算操作">3.11.3 浮点运算操作</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3v0ud7q19qm0.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.3v0ud7q19qm0.png" alt=""></p>
 <h3 id="3-11-4-定义和使用浮点常数">3.11.4 定义和使用浮点常数</h3>
 <p>浮点数不能以立即数形式出现, 需要保存在内存中, 代码再读入</p>
 <h3 id="3-11-5-在浮点代码中使用位级操作">3.11.5 在浮点代码中使用位级操作</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.61garb5k7ug0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.61garb5k7ug0.webp" alt=""></p>
 <h3 id="3-11-6-浮点比较操作">3.11.6 浮点比较操作</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.72g4fdc2qa40.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.72g4fdc2qa40.webp" alt=""></p>
 <p>浮点比较指令有三个条件码</p>
 <ol>
 <li>零标志位 <code>ZF</code></li>
 <li>进位标志位 <code>CF</code></li>
 <li>奇偶标志位 <code>PF</code>, 两个操作数任意一个是 <code>nan</code> 该位为 1</li>
 </ol>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6x72lf3o49s0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.6x72lf3o49s0.webp" alt=""></p>
 <h3 id="3-11-7-对浮点代码的观察讨论">3.11.7 对浮点代码的观察讨论</h3>
 <p>类似整数的寄存器和汇编代码风格</p>
 <h2 id="3-12-小结">3.12 小结</h2>
@@ -740,15 +740,15 @@ $i_{old} = k * N + k$, $i_{new} = (k + 1) * N + k + 1$, $delta = N + 1$</li>
 <h2 id="3-44">3.44</h2>
 <p>算数</p>
 <h2 id="3-45">3.45</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.12ivr9wu089c.webp" alt=""><br>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.12ivr9wu089c.webp" alt=""><br>
 56 个字节大小 <br>
 一个策略是降序排列<br>
-<img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5tahd0a6qho0.webp" alt=""><br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.5tahd0a6qho0.webp" alt=""><br>
 40 个字节大小</p>
 <h2 id="3-46">3.46</h2>
 <ol>
-<li><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5v51kxh3oa80.webp" alt=""></li>
-<li><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2gowpyq4xsw0.webp" alt=""></li>
+<li><img src="https://github.com/lzlcs/image-hosting/raw/master/image.5v51kxh3oa80.webp" alt=""></li>
+<li><img src="https://github.com/lzlcs/image-hosting/raw/master/image.2gowpyq4xsw0.webp" alt=""></li>
 <li>试图返回到 <code>0x00 00 00 00 00 40 00 34</code></li>
 <li><code>%rbx</code> 的值被破坏了</li>
 <li>
@@ -774,14 +774,14 @@ $i_{old} = k * N + k$, $i_{new} = (k + 1) * N + k + 1$, $delta = N + 1$</li>
 <li><code>leaq</code> 计算 $8n+22$, 与上 16 之后 <br>
 如果 $n$ 为奇数, 那么结果为 $8n+8$, $n$ 为偶数则为 $8n+16$</li>
 <li>整除 8 (向上取整)</li>
-<li><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6ok0vhfnueg0.webp" alt=""></li>
+<li><img src="https://github.com/lzlcs/image-hosting/raw/master/image.6ok0vhfnueg0.webp" alt=""></li>
 <li>$s_2$ 是 $s_1 - e_1 - e_2 - 8n$, 是个相对于 $s_1$ 8 对齐的位置 <br>
 $p$ 是 $s_1 - e_1 - 8n$, 本身就是 8 对齐的位置</li>
 </ol>
 <h2 id="3-50">3.50</h2>
 <p>$d$, $i$, $l$, $f$</p>
 <h2 id="3-51">3.51</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6argxj9soeg0.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.6argxj9soeg0.png" alt=""></p>
 <h2 id="3-52">3.52</h2>
 <ol>
 <li><code>%xmm0</code>, <code>%rdi</code>, <code>%xmm1</code>, <code>%esi</code></li>

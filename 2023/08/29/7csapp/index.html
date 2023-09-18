@@ -223,7 +223,7 @@
 <p>每个系统都有不同的目标文件格式, 但概念大致相同</p>
 <p>现在 <code>x86 Linux</code> 采用 <code>ELF (Executable and Linkable Format)</code> 格式, 讨论集中在 <code>ELF</code> 进行</p>
 <h2 id="7-4-可重定位目标文件">7.4 可重定位目标文件</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.z5yv0jb4ygg.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.z5yv0jb4ygg.webp" alt=""></p>
 <p>ELF头 和 节头部表中间的都是节</p>
 <ol>
 <li>ELF 头: 系统字的大小, 字节顺序, 头大小, 目标文件类型, 机器类型, 节头部表位置大小数量等</li>
@@ -320,7 +320,7 @@ $x$ 调用 $y$, 先放 $x$ 再放 $y$</p>
 <li><code>R_X86_64_32</code> 重定位绝对引用</li>
 </ol>
 <h2 id="7-7-2-重定位符号引用">7.7.2 重定位符号引用</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5kopgorsjq0.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.5kopgorsjq0.png" alt=""></p>
 <p><strong>重定位 PC 相对引用</strong></p>
 <p>找到应该修改的字段位置, 包括 <strong><code>0xf</code></strong> 所在的 4 个字节, 所以</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">offset = 0xf;</span><br><span class="line">symbol = sum;</span><br><span class="line">type = R_X86_64_PC32</span><br><span class="line">addend = -4;</span><br></pre></td></tr></table></figure>
@@ -334,10 +334,10 @@ $x$ 调用 $y$, 先放 $x$ 再放 $y$</p>
 <p>假设 <code>ADDR(array) = 0x601018</code></p>
 <p>所以值应该修改成 <code>18 10 60 00</code>, 所以 <code>addend = 0</code></p>
 <h2 id="7-8-可执行目标文件">7.8 可执行目标文件</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1lgcnlqk4mu8.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.1lgcnlqk4mu8.png" alt=""></p>
 <h2 id="7-9-加载可执行目标文件">7.9 加载可执行目标文件</h2>
 <p>加载: 将程序复制到内存并运行</p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6ne6dj1d8q80.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.6ne6dj1d8q80.webp" alt=""></p>
 <h2 id="7-10-动态链接共享库">7.10 动态链接共享库</h2>
 <p>静态库的缺点</p>
 <ol>
@@ -393,7 +393,7 @@ $x$ 调用 $y$, 先放 $x$ 再放 $y$</p>
 然后把动态链接器中的 <code>LD_PRELOAD</code> 环境变量改一下, 使得动态连接的时候先使用自己定义的库</p>
 <p>这样动态链接的时候就会优先使用自己定义的库</p>
 <h2 id="7-14-处理目标文件的工具">7.14 处理目标文件的工具</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4et8avjt5lk0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.4et8avjt5lk0.webp" alt=""></p>
 <h2 id="7-15-小结">7.15 小结</h2>
 <p>三种目标文件</p>
 <ol>
@@ -404,7 +404,7 @@ $x$ 调用 $y$, 先放 $x$ 再放 $y$</p>
 <p>链接器通过符号解析和重定位来连接</p>
 <h1>练习</h1>
 <h2 id="7-1">7.1</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6ajht71dsdw0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.6ajht71dsdw0.webp" alt=""></p>
 <h2 id="7-2">7.2</h2>
 <ol>
 <li><code>main.1</code>, <code>main.1</code></li>
@@ -420,7 +420,7 @@ $x$ 调用 $y$, 先放 $x$ 再放 $y$</p>
 <code>call</code> 下一条指令是 <code>0x4004de</code></p>
 <p>相减得 <code>0xa</code></p>
 <h2 id="7-6">7.6</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6ruvbzkj36k0.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.6ruvbzkj36k0.png" alt=""></p>
 <h2 id="7-7">7.7</h2>
 <p><code>bar5.c</code> 中 <code>static double x;</code></p>
 <h2 id="7-8">7.8</h2>

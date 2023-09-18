@@ -188,7 +188,7 @@
 <p>一个处理器支持的指令和指令的字节级编码称为它的 <strong>指令集体系结构(ISA)</strong></p>
 <h2 id="4-1-Y86-64-指令集体系结构">4.1 Y86-64 指令集体系结构</h2>
 <h3 id="4-1-1-程序员可见的状态">4.1.1 程序员可见的状态</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2jxl71rlhei0.png" alt=""><br>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.2jxl71rlhei0.png" alt=""><br>
 15 个寄存器 (省略 <code>%r15</code>) 以简化指令的编码 \</p>
 <h3 id="4-1-2-Y86-64-指令">4.1.2 Y86-64 指令</h3>
 <p>Y86-64 只包含八字节的整数操作</p>
@@ -211,14 +211,14 @@
 <li><code>halt</code> 指令停止指令的执行, 并将状态码设置成 <code>HLT</code></li>
 </ol>
 <h3 id="4-1-3-指令编码">4.1.3 指令编码</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2dv3hwhumk00.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.2dv3hwhumk00.png" alt=""></p>
 <p>每条指令的第一个字节表明指令的类型, 高四位是代码部分, 低四位是功能部分</p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6965wwbntzs0.webp" alt=""></p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.71p8q0sfgug0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.6965wwbntzs0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.71p8q0sfgug0.webp" alt=""></p>
 <p><code>RISC</code> 和 <code>CISC</code> 的区别:<br>
-<img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.29lao3kl50is.png" alt=""></p>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.29lao3kl50is.png" alt=""></p>
 <h3 id="4-1-4-Y86-64-异常">4.1.4 Y86-64 异常</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.pzpx8rvb528.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.pzpx8rvb528.webp" alt=""></p>
 <p>正常的处理器遇到错误时会调用异常处理程序, 在这里只是简单地让程序终止</p>
 <h3 id="4-1-5-Y86-64-程序">4.1.5 Y86-64 程序</h3>
 <p>Y86-64 将常数加载到寄存器, 因为它不能在算数指令中使用立即数</p>
@@ -234,7 +234,7 @@
 </ol>
 <p><code>HCL</code> 硬件控制语言, 用于描述处理器的控制逻辑</p>
 <h3 id="4-2-1-逻辑门">4.2.1 逻辑门</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.hj9p4vcwrug.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.hj9p4vcwrug.webp" alt=""></p>
 <h3 id="4-2-2-组合电路和-HCL-布尔表达式">4.2.2 组合电路和 HCL 布尔表达式</h3>
 <p>很多的逻辑门组合成的网可以构建一个计算块, 称为组合电路, 构建有如下限制</p>
 <ol>
@@ -252,17 +252,17 @@
 <li>没有短路效果</li>
 </ol>
 <h3 id="4-2-3-字级的组合电路和-HCL-整数表达式">4.2.3 字级的组合电路和 HCL 整数表达式</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.38bhs0bw8bm0.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.38bhs0bw8bm0.png" alt=""></p>
 <p>字级相等操作: <code>bool Eq = (A == B)</code></p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.fuwslqxadgw.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.fuwslqxadgw.png" alt=""></p>
 <p>字级多路复用器: <br>
 这种格式按顺序求 冒号之前的值, 到第一个结果为 1 的位置再执行冒号之后的代码 <br>
 结尾的 1 表示 <code>else</code></p>
 <figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">word Out = [</span><br><span class="line">    s: A;</span><br><span class="line">    <span class="number">1</span>: B;</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">word Out = [</span><br><span class="line">    !s0 &amp;&amp; !s1: A;</span><br><span class="line">    !s0       : B;</span><br><span class="line">    !s1       : C;</span><br><span class="line">    1         : D;</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.12bozstdokds.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.12bozstdokds.webp" alt=""></p>
 <h3 id="4-2-4-集合关系">4.2.4 集合关系</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1l9updfx4oow.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.1l9updfx4oow.webp" alt=""></p>
 <p>拆解 <code>code</code>:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bool s1 = (code == 2) || (code == 3);</span><br><span class="line">bool s0 = (code == 1) || (code == 3);</span><br></pre></td></tr></table></figure>
 <p>也可以</p>
@@ -274,7 +274,7 @@
 <li>内存(随机访问存储器): 用地址来决定读写哪个字</li>
 </ol>
 <p>硬件寄存器: 时钟是低电位则输出不变, 时钟变成高电位的时候, 输出变为输入</p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.22uac83gf2ao.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.22uac83gf2ao.webp" alt=""></p>
 <h2 id="4-3-Y86-64-的顺序实现">4.3 Y86-64 的顺序实现</h2>
 <h3 id="4-3-1-将处理组织成阶段">4.3.1 将处理组织成阶段</h3>
 <p>各个阶段:</p>
@@ -286,12 +286,12 @@
 <li>写回: 最多写两个结果到寄存器文件</li>
 <li>更新 PC: 下一条指令</li>
 </ol>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4daz640bsx40.png" alt=""><br>
-<img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2t22bubmw7q0.png" alt=""><br>
-<img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1ki6n5ahao00.png" alt=""><br>
-<img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.65xvm99mvko0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.4daz640bsx40.png" alt=""><br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.2t22bubmw7q0.png" alt=""><br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.1ki6n5ahao00.png" alt=""><br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.65xvm99mvko0.webp" alt=""></p>
 <h3 id="4-3-2-SEQ-硬件结构">4.3.2 SEQ 硬件结构</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6ylve3dk4t0.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.6ylve3dk4t0.png" alt=""></p>
 <h3 id="4-3-3-SEQ-的时序">4.3.3 SEQ 的时序</h3>
 <p>SEQ 的实现包括:</p>
 <ol>
@@ -308,39 +308,39 @@
 <p>当时钟开始下一个周期时, 所有状态才会更新</p>
 <h3 id="4-3-4-SEQ-阶段的实现">4.3.4 SEQ 阶段的实现</h3>
 <p>常数表:<br>
-<img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.252twoaililc.png" alt=""></p>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.252twoaililc.png" alt=""></p>
 <p><code>imem_error</code> 指令地址不合法 <br>
 <code>dmem_error</code> 内存地址不合法 <br>
 <code>instr_valid</code> 指令是否合法 <br>
 <code>need_regids</code> 是否需要寄存器 <br>
 <code>need_valC</code> 是否需要 <code>valC</code></p>
 <p><strong>取指阶段</strong></p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.73zd07zl3gw0.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.73zd07zl3gw0.png" alt=""></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bool need_regids = </span><br><span class="line">        icode in &#123; IRRMOVQ, IOPQ, IPUSHQ, IPOPQ, </span><br><span class="line">                   IIRMOVQ, IRMMOVQ, IMRMOVQ &#125;;</span><br><span class="line">bool need_valC = </span><br><span class="line">        icode in &#123; IRMMOVQ, IMRMOVQ, IIRMOVQ, IJXX, ICALL &#125;;</span><br></pre></td></tr></table></figure>
 <p>新的指令地址: <code>valP = PC + 1 + need_regids + 8 * need_valC</code></p>
 <p><strong>译码和写回阶段</strong></p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.35hadi9oyai0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.35hadi9oyai0.webp" alt=""></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">word srcA = [</span><br><span class="line">        icode in &#123; IRRMOVQ, IRMMOVQ, IOPQ, IPUSHQ &#125; : rA;</span><br><span class="line">        icode in &#123; IPOPQ, IRET &#125; : RRSP;</span><br><span class="line">        1 : RNONE;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">word srcB = [</span><br><span class="line">        icode in &#123; IOPQ, IRMMOVQ, IMRMOVQ &#125; : rB;</span><br><span class="line">        icode in &#123; IPUSHQ, IPOPQ, ICALL, IRET &#125; : RRSP;</span><br><span class="line">        1 : RNONE;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">word dstE = [</span><br><span class="line">        icode in &#123; IRRMOVQ &#125; : rB;</span><br><span class="line">        icode in &#123; IIRMOVQ, IOPQ &#125; : rB;</span><br><span class="line">        icode in &#123; IPUSHQ, IPOPQ, ICALL, IRET &#125; : RRSP;</span><br><span class="line">        1 : RNONE;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">word dstM = [</span><br><span class="line">        icode in &#123; IMRMOVQ, IPOPQ &#125; : rA;</span><br><span class="line">        1 : RNONE;</span><br><span class="line">]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p><strong>执行阶段</strong></p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.f89igfzn714.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.f89igfzn714.webp" alt=""></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">word aluA = [</span><br><span class="line">        icode in &#123; IRRMOVQ, IOPQ &#125; : valA;</span><br><span class="line">        icode in &#123; IIRMOVQ, IRMMOVQ, IMRMOVQ &#125; : valC;</span><br><span class="line">        icode in &#123; ICALL, IPUSHQ &#125; : -8;</span><br><span class="line">        icode in &#123; IRET, IPOPQ &#125; : 8;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">word aluB = [</span><br><span class="line">        icode in &#123; IOPQ, IRMMOVQ, IMRMOVQ, IPUSHQ, </span><br><span class="line">                   IPOPQ, ICALL, IRET &#125; : valB;</span><br><span class="line">        icode in &#123; IRRMOVQ, IIRMOVQ &#125; : 0;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">word alufun = [</span><br><span class="line">        icode == IOPQ : ifun;</span><br><span class="line">        1 : ALUADD;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">bool setCC = icode in &#123; IOPQ &#125;;</span><br></pre></td></tr></table></figure>
 <p>在这里省略 <code>cond</code> 模块的设计</p>
 <p><strong>访存阶段</strong></p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.32vg9spt8js0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.32vg9spt8js0.webp" alt=""></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">word mem_addr = [</span><br><span class="line">        icode in &#123; IRMMOVQ, IPUSHQ, ICALL, IMRMOVQ &#125; : valE;</span><br><span class="line">        icode in &#123; IPOPQ, IRET &#125; : valA;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">word mem_data = [</span><br><span class="line">        icode in &#123; IRMMOVQ, IPUSHQ &#125; : valA;</span><br><span class="line">        icode in &#123; ICALL &#125; : valP;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">bool mem_read = </span><br><span class="line">        icode in &#123; IMRMOVQ, IPOPQ, IRET &#125;;</span><br><span class="line"></span><br><span class="line">bool mem_write = </span><br><span class="line">        icode in &#123; IRMMOVQ, IPUSHQ, ICALL &#125;;</span><br><span class="line"></span><br><span class="line">word Stat = [</span><br><span class="line">        imem_error || dmem_error : SADR;</span><br><span class="line">        !instr_valid : SINS;</span><br><span class="line">        icode == IHALT : SHLT;</span><br><span class="line">        1 : SAOK;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
 <p><strong>更新 PC 阶段</strong></p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2si6ar556eq0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.2si6ar556eq0.webp" alt=""></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">word new_pc = [</span><br><span class="line">        icode == ICALL : valC;</span><br><span class="line">        icode == IJXX &amp;&amp; Cnd : valC;</span><br><span class="line">        icode == IRET : valM;</span><br><span class="line">        1 : valP;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
 <p><strong>SEQ小结</strong></p>
 <p>顺序执行使得每个时钟周期都必须完成这一系列操作, 所以时钟频率会非常低</p>
 <h2 id="4-4-流水线的通用原理">4.4 流水线的通用原理</h2>
 <h3 id="4-4-1-计算流水线">4.4.1 计算流水线</h3>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6yys0oce0hc0.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.6yys0oce0hc0.png" alt=""></p>
 <p>$$<br>
 吞吐量 = \frac { 1 条指令 }{ (20 + 300)ps } \times \frac {1000ps}{lns} = 3.12GPS<br>
 $$<br>
 $lns = 10^{-9}s$</p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.418nh9ufbak0.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.418nh9ufbak0.png" alt=""></p>
 <p>把任务分成一些阶段, 在中间放上流水线寄存器</p>
 <ol>
 <li>时钟周期为 $120ps$</li>
@@ -354,7 +354,7 @@ $lns = 10^{-9}s$</p>
 <h3 id="4-4-3-流水线的局限性">4.4.3 流水线的局限性</h3>
 <p><strong>不一致的划分</strong></p>
 <p>时钟周期是按照最慢的阶段来划分的<br>
-<img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.yqlvy2soh28.png" alt=""></p>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.yqlvy2soh28.png" alt=""></p>
 <p><strong>流水线过深, 收益反而下降</strong></p>
 <p>更多寄存器产生的延迟成为了时钟周期的限制因素</p>
 <h3 id="4-4-4-带反馈的流水线系统">4.4.4 带反馈的流水线系统</h3>
@@ -367,7 +367,7 @@ $lns = 10^{-9}s$</p>
 <h2 id="4-5-Y86-64-的流水线实现">4.5 Y86-64 的流水线实现</h2>
 <h3 id="4-5-1-SEQ-重新安排计算阶段">4.5.1 SEQ+: 重新安排计算阶段</h3>
 <p>创建寄存器来保存上一条指令的状态从而计算 PC<br>
-<img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5eqgg2739kg0.webp" alt=""></p>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.5eqgg2739kg0.webp" alt=""></p>
 <p>这种改进称作电路重定时, 可以用来平衡流水线中各个阶段的延迟</p>
 <h3 id="4-5-2-插入流水线寄存器">4.5.2 插入流水线寄存器</h3>
 <p>流水线寄存器按照如下标号</p>
@@ -378,7 +378,7 @@ $lns = 10^{-9}s$</p>
 <li>$M$, 执行和访存阶段间, 保存最新执行的指令的结果, 保存分支条件和目标</li>
 <li>$W$, 访存和反馈路径之间, 提供给寄存器文件写, 向 PC 选择逻辑提供返回地址</li>
 </ol>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3knykm65sz60.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.3knykm65sz60.webp" alt=""></p>
 <h3 id="4-5-3-对信号进行重新排列和标号">4.5.3 对信号进行重新排列和标号</h3>
 <p>在信号前面加上大写的流水线寄存器名字 <br>
 在信号名前面加上小写的阶段首字母</p>
@@ -407,7 +407,7 @@ $lns = 10^{-9}s$</p>
 <p><strong>转发</strong></p>
 <p>保存 <code>e_valE</code>, <code>m_valM</code>, <code>M_valE</code>, <code>W_valM</code>, <code>W_valE</code> 作为转发源 <br>
 以及两个转发目的 <code>valA</code>, <code>valB</code></p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.70wvuj6utr80.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.70wvuj6utr80.png" alt=""></p>
 <p><strong>加载/使用数据冒险</strong></p>
 <p>暂停处理 加载/使用冒险 的方法称为 <strong>加载互锁</strong> <br>
 加载互锁和转发结合起来可以处理所有可能的数据冒险</p>
@@ -425,7 +425,7 @@ $lns = 10^{-9}s$</p>
 <p>当处于访存或写回阶段中的指令导致异常时, 流水线必须禁止更新条件码寄存器或者数据内存</p>
 <h3 id="4-5-7-PIPE-各阶段的实现">4.5.7 PIPE 各阶段的实现</h3>
 <p><strong>PC 选择和取指阶段</strong></p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1t1hnxiuehfk.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.1t1hnxiuehfk.webp" alt=""></p>
 <p><strong>译码和写回阶段</strong></p>
 <h1>练习</h1>
 <h2 id="4-1-4-2">4.1 ~ 4.2</h2>
@@ -446,23 +446,23 @@ Y86-64 中, <code>mrmovq (%rsp), %rsp</code></p>
 <h2 id="4-9">4.9</h2>
 <figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bool <span class="keyword">xor</span> = (!a &amp;&amp; b) || (!b &amp;&amp; a);</span><br></pre></td></tr></table></figure>
 <h2 id="4-10">4.10</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6xh7p6q5sqs0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.6xh7p6q5sqs0.webp" alt=""></p>
 <h2 id="4-11">4.11</h2>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">word MIN3 = [</span><br><span class="line">    A &lt;= B &amp;&amp; A &lt;= C: A;</span><br><span class="line">    B &lt;= C          : B;</span><br><span class="line">    1               : C;</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
 <h2 id="4-12">4.12</h2>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">word MID3 = [</span><br><span class="line">    B &lt;= A &amp;&amp; A &lt;= C: A;</span><br><span class="line">    C &lt;= A &amp;&amp; A &lt;= B: A;</span><br><span class="line">    A &lt;= B &amp;&amp; B &lt;= C: B;</span><br><span class="line">    C &lt;= B &amp;&amp; B &lt;= A: B;</span><br><span class="line">    1               : C;</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
 <h2 id="4-13">4.13</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1ki6n5ahao00.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.1ki6n5ahao00.png" alt=""></p>
 <h2 id="4-14">4.14</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.f82f8hmm6x4.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.f82f8hmm6x4.webp" alt=""></p>
 <h2 id="4-15">4.15</h2>
 <p>压入栈原始值, 一致</p>
 <h2 id="4-16">4.16</h2>
 <p>最终结果是把 栈指针 所指的值 $\rightarrow$ 栈指针</p>
 <h2 id="4-17">4.17</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.397ht1qwqzs0.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.397ht1qwqzs0.png" alt=""></p>
 <h2 id="4-18">4.18</h2>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.62suaq2o9780.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.62suaq2o9780.webp" alt=""></p>
 <h2 id="4-19">4.19</h2>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bool need_valC = </span><br><span class="line">        icode in &#123; IRMMOVQ, IMRMOVQ, IIRMOVQ, IJXX, ICALL &#125;;</span><br></pre></td></tr></table></figure>
 <h2 id="4-20">4.20</h2>
