@@ -11,7 +11,7 @@
   
   <title>
     
-      CSAPP 学习笔记 (第一章) 
+      计算机网络 
       
       
       |
@@ -147,19 +147,19 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">CSAPP 学习笔记 (第一章)</div>
+      <div class="post-title">计算机网络</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-          2023-07-26 12:50:00
+          2023-09-16 16:14:00
         </span>
         
               <span class="post-categories">
                 <i class="iconfont icon-bookmark" title="Categories"></i>
                 
                 <span class="span--category">
-                  <a href="/categories/Book/" title="Book">
-                    <b>#</b> Book
+                  <a href="/categories/Base/" title="Base">
+                    <b>#</b> Base
                   </a>
                 </span>
                 
@@ -169,14 +169,8 @@
                 <i class="iconfont icon-tags mr-10" title="Tags"></i>
                 
                 <span class="span--tag mr-8">
-                  <a href="/tags/C/" title="C">
-                    #C
-                  </a>
-                </span>
-                
-                <span class="span--tag mr-8">
-                  <a href="/tags/CSAPP/" title="CSAPP">
-                    #CSAPP
+                  <a href="/tags/Internet/" title="Internet">
+                    #Internet
                   </a>
                 </span>
                 
@@ -184,93 +178,166 @@
           
       </div>
       <div class="markdown-body">
-        <h1>Chapter 1: 计算机系统漫游</h1>
-<h2 id="1-1-信息就是位-上下文">1.1 信息就是位+上下文</h2>
-<p>只使用 $ASCII$ 字符构成的文件称为<strong>文本文件</strong> <br>
-所有其他的文件称为<strong>二进制文件</strong></p>
-<p>系统中所有的信息都是由比特序列表示的, 通过上下文来区分这些数据表示什么</p>
-<h2 id="1-2-程序被其他程序翻译成不同的格式">1.2 程序被其他程序翻译成不同的格式</h2>
-<p>每条 C 语句都被<strong>编译器驱动程序</strong>翻译成低级<strong>机器语言</strong>指令, 这些指令被打包成<strong>可执行目标文件</strong> \</p>
+        <h1>Chapter 1</h1>
+<h2 id="因特网概述">因特网概述</h2>
 <ol>
-<li>预处理阶段: 预处理器把头文件内容直接插入到 <code>hello.c</code> 中, 得到 <code>hello.i</code></li>
-<li>编译阶段: 编译器把 <code>hello.i</code> 翻译成 <code>hello.s</code>, 这是一个汇编程序</li>
-<li>汇编阶段: 汇编器把 <code>hello.s</code> 翻译成机器语言, 打包成 <code>hello.o</code>, 可重定位目标程序</li>
-<li>链接阶段: 链接器负责将预编译的目标文件并入当前文件, 如 <code>printf.o</code>, 得到 <code>hello</code>, 可执行目标程序</li>
+<li>若干节点和链路互联形成网络</li>
+<li>若干网络通过路由器互联形成互联网</li>
+<li>因特网是世界上最大的互联网</li>
 </ol>
-<h2 id="1-3-了解编译系统如何工作是大有益处的">1.3 了解编译系统如何工作是大有益处的</h2>
+<p><code>Internet Service Provider</code> 因特网服务提供者, 如电信移动联通 <br>
+用户先接入 <code>ISP</code> 之后再接入因特网</p>
+<p><strong>因特网的组成</strong></p>
 <ol>
-<li>优化程序性能</li>
-<li>理解链接时出现的错误</li>
-<li>避免安全漏洞</li>
+<li>边缘部分: 用户直接使用的主机, 进行通信和资源共享</li>
+<li>核心部分: 大量网络和路由器组成, 提供连通性和交换</li>
 </ol>
-<h2 id="1-4-处理器读并解释储存在存储器中的指令">1.4 处理器读并解释储存在存储器中的指令</h2>
-<p>把文件名输入到 <code>shell</code>, 一种命令行解释器中</p>
-<h3 id="1-4-1-系统的硬件组成">1.4.1 系统的硬件组成</h3>
-<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.3lsioy5nita.webp" alt="图片"></p>
-<p><strong>总线</strong>: 传递字, 字包含若干字节, 一个字包含的字节数称作字长 <br>
-<strong>IO设备</strong>: 通过控制器或适配器和 IO总线连接 <br>
-<strong>主存</strong>: 一个临时存储设备, 由一些 <code>DRAM</code> (动态随机存取储存器)芯片组成, 是一个线性的字节数组 <br>
-<strong>处理器</strong>: 从 PC 指向的存储器中取出指令并执行 <br></p>
+<p><strong>三种交换方式</strong></p>
+<ol>
+<li>电路交换:
 <ul>
-<li>加载: 从主存拷贝一个字节或者一个字存到寄存器中</li>
-<li>存储: 从寄存器拷贝到主存</li>
-<li>更新: 用 ALU 计算并存到寄存器中</li>
-<li>I/O 读: 从 IO 设备到寄存器</li>
-<li>I/O 写: 从寄存器到 IO 设备</li>
-<li>转移: 从指令本身抽取一个字放在 PC 中</li>
+<li>建立连接</li>
+<li>通话</li>
+<li>释放连接</li>
 </ul>
-<h3 id="1-4-2-执行-hello-程序">1.4.2 执行 <code>hello</code> 程序</h3>
-<ol>
-<li>从键盘逐一读取 <code>hello</code> 命令放到寄存器, 最后放到主存中</li>
-<li>通过 DMA 技术从磁盘调用可执行文件到主存中</li>
-<li>逐条运行机器语言指令, 把 <code>hello, world!</code> 从主存拷贝到寄存器再到输出设备</li>
+</li>
+<li>报文交换:
+<ul>
+<li>把要传输的数据(报文)整个发送出去</li>
+</ul>
+</li>
+<li>分组交换:
+<ul>
+<li>报文分组之后加上首部</li>
+<li>分别通过路由器网络发送到目标位置</li>
+<li>组合各组成为完整报文</li>
+</ul>
+</li>
 </ol>
-<h2 id="1-5-高速缓存">1.5 高速缓存</h2>
-<p>较大的存储设备比较小的存储设备运行慢, 但快速设备的造价远高于低速同类设备</p>
-<p>系统设计者采用 SRAM技术实现的高速缓存存储器来加快拷贝速度</p>
-<h2 id="1-6-形成层次结构的存储设备">1.6 形成层次结构的存储设备</h2>
-<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.44pb2oin5va0.webp" alt=""></p>
-<h2 id="1-7-操作系统管理硬件">1.7 操作系统管理硬件</h2>
-<p>程序并没有直接访问硬件, 而是靠 <strong>操作系统</strong> 提供的服务</p>
-<p>操作系统有两个基本功能:</p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.7fkr0a82w8w0.png" alt=""></p>
+<p><strong>性能指标</strong></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.76c1gair1ps0.webp" alt=""></p>
 <ol>
-<li>防止硬件被失控的程序滥用</li>
-<li>为应用程序提供简单且一致的硬件操作方法</li>
+<li>速率: <code>bps</code>: 表示数据传送的速率 <code>min(主机接口速率, 线路带宽, 路由器接口速率)</code><br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.622gbg6uucg0.webp" alt=""></li>
+<li>带宽: <code>bps</code>: 表示数据传送的能力</li>
+<li>吞吐量: 单位时间内通过某个网络或接口的实际数据量</li>
+<li>时延: 数据传送耗费的时间<br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.2pb9mo6nd9u0.webp" alt=""></li>
+<li>时延带宽积: $传播时延 \times 带宽$
+<ul>
+<li>发送的第一个比特到达终点时, 发送端已经发送了 时延带宽积 个比特</li>
+</ul>
+</li>
+<li>往返时间 <code>(RTT)</code></li>
+<li>利用率: 利用率越高, 时延越高
+<ul>
+<li>信道利用率: 某个信道有数据通过的时间占比</li>
+<li>网络利用率: 网络中所有信道的利用率加权平均</li>
+</ul>
+</li>
+<li>丢包率: 一定时间内丢失的分组数量比全部分组数量
+<ul>
+<li>传输过程中出现误码</li>
+<li>到达的分组交换机队列已满</li>
+</ul>
+</li>
 </ol>
-<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.hxxuwi335ww.webp" alt=""></p>
-<h3 id="1-7-1-进程">1.7.1 进程</h3>
-<p>进程是操作系统对运行程序的一种抽象</p>
-<p>每个进程好像在独自使用硬件, 这称之为并行, 实际上是不同进程的指令的交错执行 <br><br>
-这种机制称作 <strong>上下文切换</strong>, 上下文也就是进程运行所需的所有状态信息</p>
-<h3 id="1-7-2-线程">1.7.2 线程</h3>
-<p>一个进程可以由多个线程组成, 多线程比多进程更容易共享数据</p>
-<h3 id="1-7-3-虚拟存储器">1.7.3 虚拟存储器</h3>
-<p>虚拟存储器是一个抽象概念, 它为每个进程提供一个假象 <br>
-每个进程看到的存储器都是一致的, 称为虚拟地址空间</p>
-<p>虚拟存储空间由大量准确定义的区组成, 包括程序代码和数据, 堆, 共享库, 栈, 内核虚拟储存器</p>
-<h3 id="1-7-4-文件">1.7.4 文件</h3>
-<p>所有的设备甚至网络, 都可以被看成文件</p>
-<h2 id="1-8-利用网络系统和其他系统通信">1.8 利用网络系统和其他系统通信</h2>
-<p>一个网络也可以看作一个IO设备</p>
-<h2 id="1-9-下一步">1.9 下一步</h2>
-<p>系统是互相交织的硬件和软件的集合体, 他们必须共同协作</p>
-<h2 id="1-10-小结">1.10 小结</h2>
-<p>信息是一串01序列, 根据上下文有不同的解释方式 <br>
-程序被其他程序翻译成其他格式, 最终变为可执行文件</p>
-<p>存储设备按层次排列</p>
-<p>操作系统内核提供三个基本的抽象概念</p>
+<h2 id="计算机网络体系结构">计算机网络体系结构</h2>
+<p><strong>常见的结构</strong></p>
+<p><code>TCP/IP</code>: 网络接口层, 网际层, 运输层, 应用层 <br>
+原理体系结构(用于教学): 物理层, 数据链路层, 网络层, 运输层, 应用层</p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.ap3xsleznq0.png" alt=""></p>
+<p><strong>术语</strong></p>
 <ol>
-<li>文件是对 IO 设备的抽象概念</li>
-<li>虚拟存储器是对主存和磁盘的抽象概念</li>
-<li>进程是处理器, 主存和 IO 设备的抽象概念</li>
+<li>实体: 任何可发送或可接收信息的硬件或软件进程 <br>
+对等实体: 收发双方相同层次的实体</li>
+<li>协议: 控制两个对等实体进行逻辑通信的规则的集合
+<ul>
+<li>语法: 定义所交换信息的格式</li>
+<li>语义: 定义接收双方所要完成的操作</li>
+<li>同步: 定义收发双方的时序关系<br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.5kwzh7x7wro0.png" alt=""></li>
+</ul>
+</li>
+<li>服务: 两个对等实体之间的协议使得他们能向上一层提供服务</li>
 </ol>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.3nfltb1mk460.webp" alt=""></p>
+<h1>物理层</h1>
+<p><strong>传输媒体</strong></p>
+<ol>
+<li>导引型传输媒体: 同轴电缆, 双绞线, 光纤, 电力线</li>
+<li>非导引型传输媒体: 无线电波, 微波, 红外线, 可见光</li>
+</ol>
+<p><strong>传输方式</strong></p>
+<p>串行, 并行 <br>
+同步, 异步 <br>
+单工, 半双工, 全双工</p>
+<p><strong>编码和调制</strong></p>
+<p>编码:<br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.39viprf3a4u0.webp" alt=""><br>
+调制:<br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.6ggh08kbc1k0.webp" alt=""></p>
+<p><strong>信道的极限容量</strong></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.31p7lezchzu0.webp" alt=""></p>
+<p><strong>信道复用技术</strong></p>
+<ol>
+<li>频分复用: 子信道占据一定频带, 频带之间有隔离频带</li>
+<li>时分复用: 类似 CPU 并行</li>
+<li>波分复用: 光的频分复用</li>
+<li>码分复用: 谁发乘谁</li>
+</ol>
+<h1>链路层</h1>
+<p>数据链路层向上层提供的服务模型</p>
+<ol>
+<li>不可靠传输服务: 丢弃有误码的帧</li>
+<li>可靠传输服务: 实现准确的信息传送 (不局限于链路层)</li>
+</ol>
+<p><strong>封装成帧</strong></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.6t9vhndrirg0.webp" alt=""></p>
+<p><strong>透明传输</strong></p>
+<p>透明传输对上层传下来的数据没有任何要求</p>
+<p>面向字节的物理链路: 字节填充<br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.1zzorbcw6a2o.webp" alt=""><br>
+面向比特的物理链路: 比特填充<br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.50y01r0rz2o0.webp" alt=""></p>
+<p>最大传送单元 (MTU): 帧的数据部分的长度上限</p>
+<p><strong>差错检验</strong></p>
+<ol>
+<li>奇偶校验: 添加一位奇偶校验码, 但是在偶数个位出错的时候会漏检</li>
+<li>循环冗余校验(CRC): <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1NT411g7n6?p=20">视频</a></li>
+</ol>
+<p><strong>可靠传输</strong></p>
+<ol>
+<li>停止等待协议<br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.3bsjjwyu57c0.webp" alt=""></li>
+<li>回退 N 帧协议<br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.5c5wfavh0rk0.webp" alt=""></li>
+<li>选择重传协议<br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.76k0knf06ko0.png" alt=""></li>
+</ol>
+<p><strong>点对点协议 PPP</strong></p>
+<ol>
+<li>帧格式<br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.38e5hht4mrg0.webp" alt=""></li>
+<li>透明传输<br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.2jzk39pf2gy0.png" alt=""><br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.7c7fxkefow80.webp" alt=""></li>
+</ol>
+<p><strong>网络适配器(网卡)</strong></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.2zgynsooagw0.webp" alt=""></p>
+<p><strong><code>MAC</code>地址</strong></p>
+<p>以太网卡用于接入有限局域网 <br>
+WiFi 网卡用于接入无限局域网</p>
+<p>MAC 地址是对网络上各接口的唯一标识</p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.4o9tfmuwpyq0.webp" alt=""></p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2023/07/02/1sicp/" target="_self">
+              <a href="/2023/09/10/os/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>Prev</span>
               </a>
@@ -279,15 +346,15 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-              2023-07-26 12:50:00
+              2023-09-16 16:14:00
             </span>
             
                   <span class="post-categories">
                     <i class="iconfont icon-bookmark" title="Categories"></i>
                     
                     <span class="span--category">
-                      <a href="/categories/Book/" title="Book">
-                        <b>#</b> Book
+                      <a href="/categories/Base/" title="Base">
+                        <b>#</b> Base
                       </a>
                     </span>
                     
@@ -297,14 +364,8 @@
                     <i class="iconfont icon-tags mr-10" title="Tags"></i>
                     
                     <span class="span--tag mr-8">
-                      <a href="/tags/C/" title="C">
-                        #C
-                      </a>
-                    </span>
-                    
-                    <span class="span--tag mr-8">
-                      <a href="/tags/CSAPP/" title="CSAPP">
-                        #CSAPP
+                      <a href="/tags/Internet/" title="Internet">
+                        #Internet
                       </a>
                     </span>
                     
@@ -312,11 +373,6 @@
               
           </div>
           <div class="post-foot-prev">
-            
-              <a href="/2023/08/01/2csapp/" target="_self">
-                <span>Next</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
             
           </div>
         </div>
@@ -330,7 +386,7 @@
     <div class="title">Contents</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Chapter 1: 计算机系统漫游</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E4%BF%A1%E6%81%AF%E5%B0%B1%E6%98%AF%E4%BD%8D-%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-text">1.1 信息就是位+上下文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-%E7%A8%8B%E5%BA%8F%E8%A2%AB%E5%85%B6%E4%BB%96%E7%A8%8B%E5%BA%8F%E7%BF%BB%E8%AF%91%E6%88%90%E4%B8%8D%E5%90%8C%E7%9A%84%E6%A0%BC%E5%BC%8F"><span class="toc-text">1.2 程序被其他程序翻译成不同的格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-%E4%BA%86%E8%A7%A3%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E6%98%AF%E5%A4%A7%E6%9C%89%E7%9B%8A%E5%A4%84%E7%9A%84"><span class="toc-text">1.3 了解编译系统如何工作是大有益处的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4-%E5%A4%84%E7%90%86%E5%99%A8%E8%AF%BB%E5%B9%B6%E8%A7%A3%E9%87%8A%E5%82%A8%E5%AD%98%E5%9C%A8%E5%AD%98%E5%82%A8%E5%99%A8%E4%B8%AD%E7%9A%84%E6%8C%87%E4%BB%A4"><span class="toc-text">1.4 处理器读并解释储存在存储器中的指令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-1-%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%A1%AC%E4%BB%B6%E7%BB%84%E6%88%90"><span class="toc-text">1.4.1 系统的硬件组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-2-%E6%89%A7%E8%A1%8C-hello-%E7%A8%8B%E5%BA%8F"><span class="toc-text">1.4.2 执行 hello 程序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-5-%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98"><span class="toc-text">1.5 高速缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-6-%E5%BD%A2%E6%88%90%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84%E7%9A%84%E5%AD%98%E5%82%A8%E8%AE%BE%E5%A4%87"><span class="toc-text">1.6 形成层次结构的存储设备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-7-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E7%A1%AC%E4%BB%B6"><span class="toc-text">1.7 操作系统管理硬件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-7-1-%E8%BF%9B%E7%A8%8B"><span class="toc-text">1.7.1 进程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-7-2-%E7%BA%BF%E7%A8%8B"><span class="toc-text">1.7.2 线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-7-3-%E8%99%9A%E6%8B%9F%E5%AD%98%E5%82%A8%E5%99%A8"><span class="toc-text">1.7.3 虚拟存储器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-7-4-%E6%96%87%E4%BB%B6"><span class="toc-text">1.7.4 文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-8-%E5%88%A9%E7%94%A8%E7%BD%91%E7%BB%9C%E7%B3%BB%E7%BB%9F%E5%92%8C%E5%85%B6%E4%BB%96%E7%B3%BB%E7%BB%9F%E9%80%9A%E4%BF%A1"><span class="toc-text">1.8 利用网络系统和其他系统通信</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-9-%E4%B8%8B%E4%B8%80%E6%AD%A5"><span class="toc-text">1.9 下一步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-10-%E5%B0%8F%E7%BB%93"><span class="toc-text">1.10 小结</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Chapter 1</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%A0%E7%89%B9%E7%BD%91%E6%A6%82%E8%BF%B0"><span class="toc-text">因特网概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="toc-text">计算机网络体系结构</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">物理层</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">链路层</span></a></li></ol>
       
     </div>
   </div>
@@ -616,12 +672,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + CSAPP%20%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20(%E7%AC%AC%E4%B8%80%E7%AB%A0) + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F07%2F26%2F1csapp%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F09%2F16%2Finternet%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/07/26/1csapp/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/09/16/internet/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         

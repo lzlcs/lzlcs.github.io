@@ -11,7 +11,7 @@
   
   <title>
     
-      OSTEP 章节 1~11 
+      操作系统 
       
       
       |
@@ -147,7 +147,7 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">OSTEP 章节 1~11</div>
+      <div class="post-title">操作系统</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
@@ -158,8 +158,8 @@
                 <i class="iconfont icon-bookmark" title="Categories"></i>
                 
                 <span class="span--category">
-                  <a href="/categories/Book/" title="Book">
-                    <b>#</b> Book
+                  <a href="/categories/Base/" title="Base">
+                    <b>#</b> Base
                   </a>
                 </span>
                 
@@ -175,8 +175,8 @@
                 </span>
                 
                 <span class="span--tag mr-8">
-                  <a href="/tags/OSTEP/" title="OSTEP">
-                    #OSTEP
+                  <a href="/tags/OS/" title="OS">
+                    #OS
                   </a>
                 </span>
                 
@@ -244,7 +244,7 @@
 <li>就绪: 准备好运行, 但是操作系统选择先做别的事</li>
 <li>阻塞: 直到发生一些其他事情时才会开始运行</li>
 </ol>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1nblosu9jtxc.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.1nblosu9jtxc.webp" alt=""></p>
 <p><strong>数据结构</strong></p>
 <ol>
 <li>保存寄存器值的数据结构</li>
@@ -320,12 +320,12 @@
 <h2 id="内容-3">内容</h2>
 <p>在保持控制的同时实现高性能</p>
 <p><strong>基本技巧: 受限直接执行(LDE)</strong></p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.8tk9ru1ygps.png" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.8tk9ru1ygps.png" alt=""></p>
 <p><strong>问题 1: 受限制的操作</strong></p>
 <p>操作系统使用 内核模式 <br>
 应用程序使用 用户模式</p>
 <p>内核模式具有所有权限</p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.66adso3ctbc0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.66adso3ctbc0.webp" alt=""></p>
 <p>LDE 协议的两个阶段</p>
 <ol>
 <li>系统引导时初始化陷阱表</li>
@@ -346,7 +346,7 @@
 <p>保存和恢复上下文</p>
 <p>调度进程来决定 操作系统重新获得控制权之后的 操作</p>
 <p>上下文切换: 为当前执行的进程保存一些寄存器的值, 为即将执行的进程恢复一些寄存器的值</p>
-<p><img src="https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4r6z6euckay0.webp" alt=""></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.4r6z6euckay0.webp" alt=""></p>
 <p>此协议中有两种类型的寄存器 保存 / 恢复</p>
 <ol>
 <li>时钟中断时: 硬件隐式保存用户寄存器</li>
@@ -481,6 +481,31 @@ $$</li>
 </ol>
 <h1>多处理器调度</h1>
 <p>暂时搁置, 学完并发再回来读</p>
+<h1>抽象: 地址空间</h1>
+<p><strong>早期系统</strong></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.48xmqeb3hbc0.png" alt=""></p>
+<p><strong>多道程序和时分共享</strong></p>
+<p>一种粗糙的机器共享(慢): 一个程序使用全部内存, 上下文切换的时候把程序数据放到硬盘中 <br>
+加载其他程序的信息再继续运行</p>
+<p><strong>地址空间</strong></p>
+<p>地址空间包括运行程序的所有内存状态: 包括代码段, 栈段, 堆段等等</p>
+<p><strong>目标</strong></p>
+<ol>
+<li>透明: 让运行的程序不知道内存被虚拟化了</li>
+<li>效率: 追求更低的时间空间复杂度</li>
+<li>保护: 保护进程之间相互隔离, 不受其他进程影响</li>
+</ol>
+<p>程序中打印的地址都是虚拟地址, 需要操作系统翻译成物理地址</p>
+<h1>插叙: 内存操作 <code>API</code></h1>
+<p><strong>内存类型</strong></p>
+<p>栈内存: 申请和释放操作由编译器隐式管理, 也被称为自动内存 <br>
+堆内存: 申请和释放操作由程序员显式管理</p>
+<p><strong><code>malloc()</code>调用</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> *<span class="title function_">malloc</span><span class="params">(<span class="type">size_t</span> size)</span>;</span><br></pre></td></tr></table></figure>
+<p>传入参数的时候使用 <code>sizeof()</code> 和 <code>strlen(s) + 1</code> <br>
+<code>malloc</code> 返回 <code>void *</code>, 所以最好是显式写出强制类型转换</p>
+<p><strong><code>free()</code> 调用</strong></p>
+<p>释放不使用的堆内存: <code>free(x)</code></p>
 
       </div>
       
@@ -503,8 +528,8 @@ $$</li>
                     <i class="iconfont icon-bookmark" title="Categories"></i>
                     
                     <span class="span--category">
-                      <a href="/categories/Book/" title="Book">
-                        <b>#</b> Book
+                      <a href="/categories/Base/" title="Base">
+                        <b>#</b> Base
                       </a>
                     </span>
                     
@@ -520,8 +545,8 @@ $$</li>
                     </span>
                     
                     <span class="span--tag mr-8">
-                      <a href="/tags/OSTEP/" title="OSTEP">
-                        #OSTEP
+                      <a href="/tags/OS/" title="OS">
+                        #OS
                       </a>
                     </span>
                     
@@ -529,6 +554,11 @@ $$</li>
               
           </div>
           <div class="post-foot-prev">
+            
+              <a href="/2023/09/16/internet/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
             
           </div>
         </div>
@@ -542,7 +572,7 @@ $$</li>
     <div class="title">Contents</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">操作系统介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">抽象: 进程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">插叙: 进程 API</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-2"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-2"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">机制: 受限直接执行</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-3"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-3"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">进程调度: 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-4"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-4"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">调度: 多级反馈队列</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-5"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-%E7%95%A5"><span class="toc-text">作业(略)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">调度: 比例分额</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-5"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">多处理器调度</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">操作系统介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">抽象: 进程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">插叙: 进程 API</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-2"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-2"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">机制: 受限直接执行</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-3"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-3"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">进程调度: 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-4"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-4"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">调度: 多级反馈队列</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-5"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-%E7%95%A5"><span class="toc-text">作业(略)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">调度: 比例分额</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-5"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">多处理器调度</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">抽象: 地址空间</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">插叙: 内存操作 API</span></a></li></ol>
       
     </div>
   </div>
@@ -828,12 +858,12 @@ $$</li>
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + OSTEP%20%E7%AB%A0%E8%8A%82%201~11 + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F09%2F10%2F1ostep%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F09%2F10%2Fos%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/09/10/1ostep/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/09/10/os/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
