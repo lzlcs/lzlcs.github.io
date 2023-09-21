@@ -855,7 +855,7 @@ $$
 
 ## 1.14
 
-![img](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/QQ截图20230703174405.47ncpxb1kgc0.webp)
+![img](https://github.com/lzlcs/image-hosting/raw/master/QQ截图20230703174405.47ncpxb1kgc0.webp)
 空间 $\Theta(n)$ \
 时间 [$\Theta(n^5$)](https://sicp-solutions.net/post/sicp-solution-exercise-1-14/)
 

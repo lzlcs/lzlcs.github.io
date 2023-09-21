@@ -17,7 +17,7 @@ categories:
 
 ### 4.1.1 程序员可见的状态
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2jxl71rlhei0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.2jxl71rlhei0.png)
 15 个寄存器 (省略 `%r15`) 以简化指令的编码 \
 
 ### 4.1.2 Y86-64 指令
@@ -41,20 +41,20 @@ Y86-64 只包含八字节的整数操作
 
 ### 4.1.3 指令编码
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2dv3hwhumk00.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.2dv3hwhumk00.png)
 
 每条指令的第一个字节表明指令的类型, 高四位是代码部分, 低四位是功能部分
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6965wwbntzs0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6965wwbntzs0.webp)
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.71p8q0sfgug0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.71p8q0sfgug0.webp)
 
 `RISC` 和 `CISC` 的区别:
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.29lao3kl50is.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.29lao3kl50is.png)
 
 ### 4.1.4 Y86-64 异常
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.pzpx8rvb528.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.pzpx8rvb528.webp)
 
 正常的处理器遇到错误时会调用异常处理程序, 在这里只是简单地让程序终止
 
@@ -79,7 +79,7 @@ Y86-64 将常数加载到寄存器, 因为它不能在算数指令中使用立�
 
 ### 4.2.1 逻辑门
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.hj9p4vcwrug.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.hj9p4vcwrug.webp)
 
 ### 4.2.2 组合电路和 HCL 布尔表达式
 
@@ -101,11 +101,11 @@ bool out = (s && a) || (!s && b);
 
 ### 4.2.3 字级的组合电路和 HCL 整数表达式
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.38bhs0bw8bm0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.38bhs0bw8bm0.png)
 
 字级相等操作: `bool Eq = (A == B)`
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.fuwslqxadgw.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.fuwslqxadgw.png)
 
 字级多路复用器: \
 这种格式按顺序求 冒号之前的值, 到第一个结果为 1 的位置再执行冒号之后的代码 \
@@ -125,11 +125,11 @@ word Out = [
 ];
 ```
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.12bozstdokds.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.12bozstdokds.webp)
 
 ### 4.2.4 集合关系
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1l9updfx4oow.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.1l9updfx4oow.webp)
 
 拆解 `code`:
 ```
@@ -150,7 +150,7 @@ bool s0 = code in { 1, 3 };
 
 硬件寄存器: 时钟是低电位则输出不变, 时钟变成高电位的时候, 输出变为输入
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.22uac83gf2ao.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.22uac83gf2ao.webp)
 
 ## 4.3 Y86-64 的顺序实现
 
@@ -164,15 +164,15 @@ bool s0 = code in { 1, 3 };
 5. 写回: 最多写两个结果到寄存器文件
 6. 更新 PC: 下一条指令
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4daz640bsx40.png)
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2t22bubmw7q0.png)
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1ki6n5ahao00.png)
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.65xvm99mvko0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.4daz640bsx40.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.2t22bubmw7q0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.1ki6n5ahao00.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.65xvm99mvko0.webp)
 
 
 ### 4.3.2 SEQ 硬件结构
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6ylve3dk4t0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6ylve3dk4t0.png)
 
 ### 4.3.3 SEQ 的时序
 
@@ -192,7 +192,7 @@ SEQ 的实现包括:
 ### 4.3.4 SEQ 阶段的实现
 
 常数表:
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.252twoaililc.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.252twoaililc.png)
 
 `imem_error` 指令地址不合法 \
 `dmem_error` 内存地址不合法 \
@@ -202,7 +202,7 @@ SEQ 的实现包括:
 
 **取指阶段**
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.73zd07zl3gw0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.73zd07zl3gw0.png)
 
 ```
 bool need_regids = 
@@ -216,7 +216,7 @@ bool need_valC =
 
 **译码和写回阶段**
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.35hadi9oyai0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.35hadi9oyai0.webp)
 
 ```
 word srcA = [
@@ -247,7 +247,7 @@ word dstM = [
 
 **执行阶段**
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.f89igfzn714.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.f89igfzn714.webp)
 
 ```
 word aluA = [
@@ -275,7 +275,7 @@ bool setCC = icode in { IOPQ };
 
 **访存阶段**
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.32vg9spt8js0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.32vg9spt8js0.webp)
 
 ```
 word mem_addr = [
@@ -304,7 +304,7 @@ word Stat = [
 
 **更新 PC 阶段**
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2si6ar556eq0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.2si6ar556eq0.webp)
 
 ```
 word new_pc = [
@@ -323,14 +323,14 @@ word new_pc = [
 
 ### 4.4.1 计算流水线
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6yys0oce0hc0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6yys0oce0hc0.png)
 
 $$
 吞吐量 = \frac { 1 条指令 }{ (20 + 300)ps } \times \frac {1000ps}{lns} = 3.12GPS
 $$
 $lns = 10^{-9}s$
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.418nh9ufbak0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.418nh9ufbak0.png)
 
 把任务分成一些阶段, 在中间放上流水线寄存器
 1. 时钟周期为 $120ps$
@@ -348,7 +348,7 @@ $lns = 10^{-9}s$
 **不一致的划分**
 
 时钟周期是按照最慢的阶段来划分的 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.yqlvy2soh28.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.yqlvy2soh28.png)
 
 **流水线过深, 收益反而下降**
 
@@ -368,7 +368,7 @@ $lns = 10^{-9}s$
 ### 4.5.1 SEQ+: 重新安排计算阶段
 
 创建寄存器来保存上一条指令的状态从而计算 PC
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5eqgg2739kg0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5eqgg2739kg0.webp)
 
 这种改进称作电路重定时, 可以用来平衡流水线中各个阶段的延迟
 
@@ -381,7 +381,7 @@ $lns = 10^{-9}s$
 3. $M$, 执行和访存阶段间, 保存最新执行的指令的结果, 保存分支条件和目标
 1. $W$, 访存和反馈路径之间, 提供给寄存器文件写, 向 PC 选择逻辑提供返回地址
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3knykm65sz60.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.3knykm65sz60.webp)
 
 ### 4.5.3 对信号进行重新排列和标号
 
@@ -424,7 +424,7 @@ Y86-64 采用 valP 作为预测结果, 这是非常简单的处理方式
 保存 `e_valE`, `m_valM`, `M_valE`, `W_valM`, `W_valE` 作为转发源 \
 以及两个转发目的 `valA`, `valB`
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.70wvuj6utr80.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.70wvuj6utr80.png)
 
 **加载/使用数据冒险**
 
@@ -452,7 +452,7 @@ Y86-64 采用 valP 作为预测结果, 这是非常简单的处理方式
 
 **PC 选择和取指阶段**
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1t1hnxiuehfk.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.1t1hnxiuehfk.webp)
 
 
 
@@ -588,7 +588,7 @@ bool xor = (!a && b) || (!b && a);
 
 ## 4.10
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6xh7p6q5sqs0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6xh7p6q5sqs0.webp)
 
 ## 4.11
 
@@ -614,11 +614,11 @@ word MID3 = [
 
 ## 4.13
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1ki6n5ahao00.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.1ki6n5ahao00.png)
 
 ## 4.14
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.f82f8hmm6x4.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.f82f8hmm6x4.webp)
 
 ## 4.15
 
@@ -630,11 +630,11 @@ word MID3 = [
 
 ## 4.17
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.397ht1qwqzs0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.397ht1qwqzs0.png)
 
 ## 4.18
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.62suaq2o9780.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.62suaq2o9780.webp)
 
 ## 4.19
 

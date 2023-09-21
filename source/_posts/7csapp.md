@@ -64,7 +64,7 @@ ld -o prog [system files] ./tmp/main.o ./tmp/sum.o
 
 ## 7.4 可重定位目标文件
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.z5yv0jb4ygg.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.z5yv0jb4ygg.webp)
 
 ELF头 和 节头部表中间的都是节
 1. ELF 头: 系统字的大小, 字节顺序, 头大小, 目标文件类型, 机器类型, 节头部表位置大小数量等
@@ -247,7 +247,7 @@ typedef struct {
 
 ## 7.7.2 重定位符号引用
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5kopgorsjq0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5kopgorsjq0.png)
 
 **重定位 PC 相对引用**
 
@@ -282,13 +282,13 @@ addend = 0
 
 ## 7.8 可执行目标文件
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1lgcnlqk4mu8.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.1lgcnlqk4mu8.png)
 
 ## 7.9 加载可执行目标文件
 
 加载: 将程序复制到内存并运行
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6ne6dj1d8q80.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6ne6dj1d8q80.webp)
 
 ## 7.10 动态链接共享库
 
@@ -375,7 +375,7 @@ gcc -Wl, --wrap, malloc -Wl, --wrap, free -o intl int.o mymalloc.o
 
 ## 7.14 处理目标文件的工具
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4et8avjt5lk0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.4et8avjt5lk0.webp)
 
 ## 7.15 小结
 
@@ -392,7 +392,7 @@ gcc -Wl, --wrap, malloc -Wl, --wrap, free -o intl int.o mymalloc.o
 
 ## 7.1 
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6ajht71dsdw0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6ajht71dsdw0.webp)
 
 ## 7.2
 
@@ -421,7 +421,7 @@ gcc -static -o prog p.o libx.a liby.a libx.a
 
 ## 7.6
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6ruvbzkj36k0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6ruvbzkj36k0.png)
 
 ## 7.7
 

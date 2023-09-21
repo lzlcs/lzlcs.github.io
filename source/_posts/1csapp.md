@@ -42,7 +42,7 @@ categories:
 
 
 
-![图片](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3lsioy5nita.webp)
+![图片](https://github.com/lzlcs/image-hosting/raw/master/image.3lsioy5nita.webp)
 
 **总线**: 传递字, 字包含若干字节, 一个字包含的字节数称作字长 \
 **IO设备**: 通过控制器或适配器和 IO总线连接 \
@@ -69,7 +69,7 @@ categories:
 
 ## 1.6 形成层次结构的存储设备
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.44pb2oin5va0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.44pb2oin5va0.webp)
 
 ## 1.7 操作系统管理硬件
 
@@ -79,7 +79,7 @@ categories:
 1. 防止硬件被失控的程序滥用
 2. 为应用程序提供简单且一致的硬件操作方法
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.hxxuwi335ww.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.hxxuwi335ww.webp)
 
 ### 1.7.1 进程
 

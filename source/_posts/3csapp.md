@@ -81,7 +81,7 @@ objdump -d mstore.o
 
 ## 3.3 数据格式
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.7jkwgbr684w0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.7jkwgbr684w0.webp)
 
 由于系统从 16 位发展而来, 所以 16 位被称为 字 \
 32 位被称为双字, 64 位为四字
@@ -94,7 +94,7 @@ objdump -d mstore.o
 
 一组 `x86-64` 的 CPU 包含一组 16 个存储 64 位的 **通用目的寄存器**, 存储整数和指针
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5js7ywj3kcw0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5js7ywj3kcw0.webp)
 
 指令可以对这些寄存器的低位字节进行访问
 
@@ -115,7 +115,7 @@ objdump -d mstore.o
 
 ### 3.4.2 数据传送指令
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5h8n3yati90.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5h8n3yati90.png)
 > 注意 `movl` 指令会把最高四个字节设置为 0, 这是惯例
 
 > 常规的 `movq` 只能以表示为 32 位补码数字的立即数作为操作数, 并进行符号扩展得到 64 位值 
@@ -123,10 +123,10 @@ objdump -d mstore.o
 
 传送指令的两个操作数不能都是内存引用, 需要先将源内存引用传送到寄存器, 再传送到目标内存引用
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.69cyhxhnmc00.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.69cyhxhnmc00.png)
 
 数据传送改变寄存器的方式
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2z8sg6a88xk0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.2z8sg6a88xk0.webp)
 
 ### 3.4.3 数据传送示例
 
@@ -134,13 +134,13 @@ objdump -d mstore.o
 
 ### 3.4.4 压入和弹出栈数据
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.443ubut3zz40.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.443ubut3zz40.webp)
 
 根据惯例, 栈顶地址最小
 
 ## 3.5 算数和逻辑操作
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5nkw0oiuw380.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5nkw0oiuw380.png)
 
 ### 3.5.1 加载有效地址
 
@@ -176,7 +176,7 @@ scale:
 
 ### 3.5.5 特殊的算数操作
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.7drv1ofepjo0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.7drv1ofepjo0.webp)
 
 128 位的数称为 八字(oct word)
 
@@ -211,11 +211,11 @@ CPU 不仅维护整数寄存器, 还维护一组单个位的 **条件码寄存�
 
 > `leaq` 指令不改变条件码, 图 `3-10` 中所有的操作都会改变条件码
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.28ycgvvihkp.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.28ycgvvihkp.webp)
 
 ### 3.6.2 访问条件码
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.36ttwwgcbb40.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.36ttwwgcbb40.png)
 
 `set` 命令把一个字节设置成 0 或者 1
 
@@ -225,7 +225,7 @@ CPU 不仅维护整数寄存器, 还维护一组单个位的 **条件码寄存�
 1. 直接跳转, `jmp .L1`
 2. 间接跳转, `jmp *%rax`
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.55kb1waancc0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.55kb1waancc0.webp)
 
 ### 3.6.4 跳转指令的编码
 
@@ -260,7 +260,7 @@ done:
 当机器遇到条件分支的时候, 会使用分支预测逻辑来猜测跳转指令是否会执行 \
 错误预测一个跳转会让处理器丢掉跳转指令后所有的工作, 重新开始
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6v82v2jsq400.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6v82v2jsq400.png)
 
 条件传送指令可以根据操作数来推断类型, 所以不用限定类型
 
@@ -361,11 +361,11 @@ $P$ 调用 $Q$ 时, 会把返回地址压入栈中, $Q$ 返回时从这个地址
 
 ### 3.7.2 转移控制
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.78ygtm5gl3c0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.78ygtm5gl3c0.webp)
 
 ### 3.7.3 数据传送
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.53r8048unb80.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.53r8048unb80.webp)
 
 大于六个的参数会放在栈中, 第七个参数位置是 `(%rsp)`, 第八个参数位置是 `8(%rsp)` \
 无论多出的参数是什么类型, 都会在栈中使用 8 位存储
@@ -387,7 +387,7 @@ $P$ 调用 $Q$ 时, 会把返回地址压入栈中, $Q$ 返回时从这个地址
 
 ### 3.8.1 基本原则
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5tsehwm671s0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5tsehwm671s0.png)
 
 ### 3.8.2 指针运算
 
@@ -447,7 +447,7 @@ $$
 
 ### 3.10.2 应用: 使用 GDB 调试器
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.fyuaz0a60o.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.fyuaz0a60o.webp)
 
 ### 3.10.3 内存越界引用和缓冲区溢出
 
@@ -482,7 +482,7 @@ int main() {
 64 位系统栈随机化范围一般是 $2^{32}$, 只需要枚举 $\frac{2^{32}}{256}$ 次即可(很多)
 
 **栈破坏检测**: \
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5wuhh5wgw740.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5wuhh5wgw740.webp)
 通过设置金丝雀值(随即生成), 返回时检测金丝雀值是否被改变从而确认栈是否异常
 
 **限制可执行代码区域**: \
@@ -495,15 +495,15 @@ int main() {
 
 ## 3.11 浮点代码
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3w4ivs5wv880.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.3w4ivs5wv880.webp)
 
 ### 3.11.1 浮点传送和转换操作
 
 保存在内存中的数据 $M_{32}$ 和 $M_{64}$, 保存在 $XMM$ 寄存器中的数据 $X$
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.592c9ve19r80.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.592c9ve19r80.png)
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.459e70calhu0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.459e70calhu0.png)
 
 ### 3.11.2 过程中的浮点代码
 
@@ -517,7 +517,7 @@ int main() {
 
 ### 3.11.3 浮点运算操作
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3v0ud7q19qm0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.3v0ud7q19qm0.png)
 
 ### 3.11.4 定义和使用浮点常数
 
@@ -525,18 +525,18 @@ int main() {
 
 ### 3.11.5 在浮点代码中使用位级操作
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.61garb5k7ug0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.61garb5k7ug0.webp)
 
 ### 3.11.6 浮点比较操作
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.72g4fdc2qa40.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.72g4fdc2qa40.webp)
 
 浮点比较指令有三个条件码
 1. 零标志位 `ZF`
 2. 进位标志位 `CF`
 3. 奇偶标志位 `PF`, 两个操作数任意一个是 `nan` 该位为 1
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6x72lf3o49s0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6x72lf3o49s0.webp)
 
 ### 3.11.7 对浮点代码的观察讨论
 
@@ -1045,16 +1045,16 @@ movb %al, (%rsi)
 
 ## 3.45
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.12ivr9wu089c.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.12ivr9wu089c.webp)
 56 个字节大小 \
 一个策略是降序排列
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5tahd0a6qho0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5tahd0a6qho0.webp)
 40 个字节大小
 
 ## 3.46
 
-1. ![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5v51kxh3oa80.webp)
-2. ![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2gowpyq4xsw0.webp)
+1. ![](https://github.com/lzlcs/image-hosting/raw/master/image.5v51kxh3oa80.webp)
+2. ![](https://github.com/lzlcs/image-hosting/raw/master/image.2gowpyq4xsw0.webp)
 3. 试图返回到 `0x00 00 00 00 00 40 00 34`
 4. `%rbx` 的值被破坏了
 5. - `malloc(strlen(buf) + 1)`
@@ -1077,7 +1077,7 @@ movb %al, (%rsi)
 1. `leaq` 计算 $8n+22$, 与上 16 之后 \
    如果 $n$ 为奇数, 那么结果为 $8n+8$, $n$ 为偶数则为 $8n+16$
 2. 整除 8 (向上取整)
-3. ![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6ok0vhfnueg0.webp)
+3. ![](https://github.com/lzlcs/image-hosting/raw/master/image.6ok0vhfnueg0.webp)
 4. $s_2$ 是 $s_1 - e_1 - e_2 - 8n$, 是个相对于 $s_1$ 8 对齐的位置 \
    $p$ 是 $s_1 - e_1 - 8n$, 本身就是 8 对齐的位置
 
@@ -1087,7 +1087,7 @@ $d$, $i$, $l$, $f$
 
 ## 3.51
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6argxj9soeg0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6argxj9soeg0.png)
 
 ## 3.52
 

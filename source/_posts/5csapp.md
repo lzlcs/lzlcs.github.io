@@ -336,7 +336,7 @@ gprof prog
 
 ## 5.3
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5olf3rvjv8w0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5olf3rvjv8w0.webp)
 
 ## 5.4
 
@@ -358,7 +358,7 @@ result += tmp1;
 xpwr = tmp2;
 ```
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2xb6ce0y7m40.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.2xb6ce0y7m40.webp)
 
 1. 2n 次乘法, n 次加法
 2. 如图
@@ -406,7 +406,7 @@ void combine5_5(vec_ptr v, data_t *dest) {
 
 ## 5.8
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.223emvu88q1s.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.223emvu88q1s.png)
 
 x, y, z 跟 r 无关, 所以可以并行计算
 

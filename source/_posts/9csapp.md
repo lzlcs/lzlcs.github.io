@@ -52,7 +52,7 @@ DRAM 缓存的不命中处罚很大, 所以使用很高的相联度 \
 
 页表将虚拟地址映射到物理地址, 是一个页表条目 (Page Table Entry, PTE) 的数组
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.434aowhbij00.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.434aowhbij00.webp)
 
 如果有效位为 1, 地址字段就指向 DRAM 中相应的物理页的起始地址 \
 如果有效位为 0, 地址字段就指向 该虚拟页在磁盘上的起始位置
@@ -82,7 +82,7 @@ CPU 引用了 VP3 中的一个字
 
 现在分配 VP5, 在磁盘上创建一个页面, 更新 页表使得 PTE5 指向该页的起始地址
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6icphhrha5g0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6icphhrha5g0.png)
 
 ### 9.3.6 又是局部性救了我们
 
@@ -95,7 +95,7 @@ CPU 引用了 VP3 中的一个字
 
 实际上操作系统为每个进程都提供了一个独立的页表
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.57mnaz61bq80.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.57mnaz61bq80.webp)
 
 1. 简化链接
 2. 简化加载
@@ -114,10 +114,10 @@ CPU 引用了 VP3 中的一个字
 
 ## 9.6 地址翻译
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6rc9dte9fqo0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6rc9dte9fqo0.png)
 
 有一个页表基址寄存器, 指向页表第一项
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.27msntc6vfwg.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.27msntc6vfwg.webp)
 
 如果有效位为 1
 1. 虚拟地址被分为两半, $n-1 到 p$ 位是虚拟页号, $0 到 p-1$ 位是虚拟页偏移量
@@ -125,7 +125,7 @@ CPU 引用了 VP3 中的一个字
 3. 根据 PTE 的地址字段找到对应的物理页号, 后面跟上虚拟页号就是真正的物理地址
 
 因为物理页和虚拟页是一样大的, 所以偏移量也相同
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3vae7c31oqw0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.3vae7c31oqw0.webp)
 如果有效位为 0
 
 1. 调用缺页异常处理程序
@@ -134,42 +134,42 @@ CPU 引用了 VP3 中的一个字
 
 ### 9.6.1 结合高速缓存和虚拟内存
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6g7t2lbr8eo0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6g7t2lbr8eo0.png)
 
 ### 9.6.2 使用 TLB 加速地址翻译
 
 MMU 中包括一个小缓存, 称作翻译后备缓冲器 (Translation Lookaside Buffer, TLB)
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4iq8bgkq99y0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.4iq8bgkq99y0.png)
 
 ### 9.6.3 多级页表
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2j4jiaujx3g0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.2j4jiaujx3g0.png)
 
 一级页表有 $1024$ 项, 总大小是 $4KB$ \
 二级页表同理, 这跟一页的大小正好相等, 减少了内存需求
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5wdqvl8ylbg0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5wdqvl8ylbg0.webp)
 
 ### 9.6.4 综合: 端到端的地址翻译
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2v2c540qo1e0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.2v2c540qo1e0.webp)
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3u6wrzimc9g0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.3u6wrzimc9g0.webp)
 
 ## 9.7 案例研究: Intel Core i7 / Linux 内存系统
 
 ### 9.7.1 Core i7 地址翻译
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.33lg2o7p3gu0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.33lg2o7p3gu0.png)
 
 ### 9.7.2 Linux 虚拟内存系统
 
 **虚拟内存区域**
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.62fnb2wg1q40.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.62fnb2wg1q40.png)
 **Linux 虚拟内存处理**
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1tzyb7hm9y8w.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.1tzyb7hm9y8w.png)
 
 ## 9.8 内存映射
 
@@ -225,7 +225,7 @@ Cpp: `new`, `delete`
 
 ### 9.9.1 `free` 和 `malloc` 函数
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3bubcv07gde0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.3bubcv07gde0.png)
 
 ### 9.9.2 为什么要使用动态内存分配
 
@@ -260,7 +260,7 @@ Cpp: `new`, `delete`
 
 ### 9.9.6 隐式空闲链表
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.7qkkgeijc58.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.7qkkgeijc58.webp)
 
 强加一个双字的对齐条件, 就是块大小一定是 8 的倍数, 这样二进制表示的后三位全是 0
 
@@ -295,14 +295,14 @@ Cpp: `new`, `delete`
 
 ### 9.9.11 带边界标记的合并
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4gfwy1lm55e0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.4gfwy1lm55e0.png)
 
 释放当前块之后, 检查本块头部之前的 上一块的尾部, 如果为 $f$ 则合并 \
 检查本块尾部 之后的 下一块的头部, 如果为 $f$ 则合并
 
 ### 9.9.12 综合: 实现一个简单的分配器
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6qh599fznw00.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6qh599fznw00.webp)
 
 设置序言块和结尾块作为哨兵, 他们只包含头脚
 ```cpp
@@ -676,7 +676,7 @@ void *mm_malloc(size_t size) {
 
 ## 9.9.13 显式空闲链表
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.p0o0bqo03eo.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.p0o0bqo03eo.png)
 
 将空闲块组织成显式的双向链表
 1. 分配时间从 所有块数量的线性时间 减少到了 空闲块数量的线性时间
@@ -725,7 +725,7 @@ void *mm_malloc(size_t size) {
 设一个节点为 $p$ 当从根节点有一条路径可以到达 $p$ 的时候, $p$ 就是可达的 \
 垃圾收集器维护可达图, 释放不可达节点到空闲链表从而实现回收功能
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2osnohf0xi00.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.2osnohf0xi00.png)
 
 `ML`, `Java` 这些语言的垃圾收集器能够维护可达图的精确表示, 能够回收所有垃圾
 
@@ -857,7 +857,7 @@ $PTE 数量 = 2^n / P$
 
 ## 9.4
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4lsph5f37do0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.4lsph5f37do0.webp)
 
 ## 9.5
 

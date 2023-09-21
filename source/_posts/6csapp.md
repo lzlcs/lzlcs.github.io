@@ -33,11 +33,11 @@ DRAM 把每个位存储为 对一个电容的充电, 电容大概是 $30\times 1
 所以内存系统必须周期性地通过读出, 重写来刷新每一位 \
 也可以使用纠错码, 其中计算机的字会被多编码几个位, 这样电路可以发现并纠正一个字中任何单个的错误位
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4ky32n0snko0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.4ky32n0snko0.webp)
 
 **传统的 DRAM**
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5ish8q9gmic0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5ish8q9gmic0.png)
 
 工作方式:
 1. 内存控制器 通过 `addr` 引脚向 DRAM 芯片传入两位的行地址 $Row Access Strobe (RAS)$
@@ -78,7 +78,7 @@ DRAM 中有 $d$ 个超单元, $r$ 行 $w$ 列, $r \times w = d$  \
 
 数据流通过 总线 的共享电子电路在处理器和 DRAM 主存之间来回 \
 CPU 和主存之间的数据传送通过一系列步骤来完成的, 称为总线事务, 分为读事务和写事务
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.qaqxhwuiqao.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.qaqxhwuiqao.webp)
 
 ### 6.1.2 磁盘存储
 
@@ -86,7 +86,7 @@ CPU 和主存之间的数据传送通过一系列步骤来完成的, 称为总�
 
 **磁盘构造**
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2ansnd0kwj6s.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.2ansnd0kwj6s.png)
 
 
 **磁盘容量**
@@ -101,7 +101,7 @@ $$
 
 **磁盘操作**
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.71wfhieyq2c0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.71wfhieyq2c0.png)
 
 1. 寻道时间: 传动臂到特定磁道的时间 $T_{seek}$
 2. 旋转时间: 找扇区 $T_{max \ rotation} = \frac{60}{RPM}$, 也是转一圈需要的时间 \
@@ -117,7 +117,7 @@ $$
 
 **连接IO设备**
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4vml55dce7w0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.4vml55dce7w0.png)
 
 **访问磁盘**
 
@@ -128,7 +128,7 @@ CPU 使用 内存映射 技术来向 IO 设备发射命令 \
 
 $Solid \ State \ Disk (SSD)$ 
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5vqb8k86e300.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5vqb8k86e300.webp)
 
 数据是以页为单位读写的, 只有擦除一个块才能对块里的页进行写
 
@@ -157,13 +157,13 @@ $k$ 增大时, 空间局部性变差
 
 ## 6.3 存储器层次结构
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4fsrxudu8080.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.4fsrxudu8080.png)
 
 ### 6.3.1 存储器结构层次中的缓存
 
 高速缓存 `cache` 
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.319gfw72dnm0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.319gfw72dnm0.png)
 
 **缓存命中**
 当程序需要 $k+1$ 层的数据 $d$ 时, 会在 $k$ 层查找 $d$, 找到了就是缓存命中 \
@@ -200,7 +200,7 @@ $k$ 增大时, 空间局部性变差
 
 有 $m$ 位表示存储器地址, 形成 $M = 2^m$ 个不同地址
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3xr0fqxfdn20.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.3xr0fqxfdn20.png)
 
 元组 $(S, E, B, m)$ 可以描述高速缓存的结构 \
 高速缓存的大小 $C = S \times B \times E$, 其中去除了标记位和有效位
@@ -261,7 +261,7 @@ $E = C / B$ 只有一个组
 
 只保存指令的高速缓存: $i-cache$, 只保存数据的高速缓存: $d-cache$
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.31znbzd2lx40.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.31znbzd2lx40.png)
 
 ### 6.4.7 高速缓存参数的性能影响
 
@@ -289,7 +289,7 @@ $E = C / B$ 只有一个组
 
 读的速度: 读吞吐量 / 读带宽
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3bqykm96gjc.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.3bqykm96gjc.webp)
 
 ### 6.6.2 重新排列循环以提高时间局部性
 
@@ -313,7 +313,7 @@ RAM, ROM, 磁盘, 硬盘 \
 
 ## 6.1 
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2wz2cfmsutm0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.2wz2cfmsutm0.webp)
 
 ## 6.2 
 
@@ -375,11 +375,11 @@ $75\%$
 
 一步一步往 cache 里面塞即可
 
-1. ![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.d7slzagpcp4.webp)
-   ![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3q791xywxvc0.webp)
+1. ![](https://github.com/lzlcs/image-hosting/raw/master/image.d7slzagpcp4.webp)
+   ![](https://github.com/lzlcs/image-hosting/raw/master/image.3q791xywxvc0.webp)
 
 2. 32 个字节足够容纳两个数组, 所以当每个块开始的时候会有不命中
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3tffsz4tjk40.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.3tffsz4tjk40.webp)
 
 ## 6.18 ~ 6.20
 

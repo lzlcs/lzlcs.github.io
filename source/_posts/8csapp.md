@@ -22,7 +22,7 @@ categories:
 
 **异常** 控制流的突变, 用来响应处理器状态中某些变化
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.7cjcua34j1o0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.7cjcua34j1o0.png)
 
 **事件** 状态变化
 
@@ -35,7 +35,7 @@ categories:
 
 每种类型的异常都有一个异常号, 有些是处理器设计者分配的, 有些是操作系统内核分配的
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4nyapbmz38u0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.4nyapbmz38u0.png)
 
 异常表的起始地址放在一个 **异常表基址寄存器** 的特殊 CPU 寄存器中
 
@@ -47,24 +47,24 @@ categories:
 
 ### 8.1.2 异常的类别
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1bx3tew0w7k0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.1bx3tew0w7k0.png)
 
 **中断**
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1u9elplf1nb4.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.1u9elplf1nb4.png)
 
 **陷阱和系统调用**
 
 系统调用: 在用户程序和内核之间提供一个像过程的接口
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6x8g7yx7dow0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6x8g7yx7dow0.png)
 
 普通的函数运行在用户模式下, 只能访问与调用函数相同的栈 \
 系统调用运行在内核模式下, 可以访问任意系统资源
 
 **故障**
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4slop7tpd8u0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.4slop7tpd8u0.png)
 
 典型的故障是缺页异常
 
@@ -74,7 +74,7 @@ categories:
 
 ### 8.1.3 Linux/x86-64 系统中的异常
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4htjh5tsey20.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.4htjh5tsey20.webp)
 
 汇编中使用 `syscall` 进行系统调用, 编号存储在 `%rax` 中
 
@@ -84,7 +84,7 @@ categories:
 
 ### 8.2.1 逻辑控制流
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5rmf3bsnpoo0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5rmf3bsnpoo0.png)
 
 进程是轮流使用处理器的, 每个进程的每段指令之间看起来有一点时间间隔 \
 实际上是 CPU 将当前程序挂起, 转而执行其他进程, 执行完毕之后再切换回来
@@ -103,7 +103,7 @@ categories:
 进程为每个程序提供一种假象, 每个程序独占地使用系统内存空间 \
 进程为每个程序提供私有地址空间, 基本格式相同
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5y3ky9m9ivk0.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5y3ky9m9ivk0.png)
 
 ### 8.2.4 用户模式与内核模式
 
@@ -123,7 +123,7 @@ categories:
 调度: 内核决定抢占进程并重新开始一个之前被抢占的进程的决策 \
 通过上下文切换的机制来将控制转移到新的进程
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5shxebi3p600.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5shxebi3p600.webp)
 
 ## 8.3 系统调用错误处理
 
@@ -185,7 +185,7 @@ pid_t getppid(void);
 
 `int main(int argc, char **argv, char **envp);`
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6n50pv0ef980.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6n50pv0ef980.png)
 
 `getenv` 和 `unsetenv` 函数分别是 寻找环境变量和删除环境数组变量的函数
 
@@ -199,7 +199,7 @@ pid_t getppid(void);
 
 信号提供一种机制, 通知用户进程 发生了这些异常
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4dh6hijkln20.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.4dh6hijkln20.webp)
 
 ### 8.5.1 信号术语
 
@@ -207,7 +207,7 @@ pid_t getppid(void);
    发送信号有如下两种原因: 系统检测到一个事件 / 一个进程调用了 `kill` 函数
 2. 接收信号: 目的进程被内核强迫 对信号的发送做出反应 \
    进程可以执行一个信号处理程序的用户层函数捕获这个信号 \
-   ![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.7fwkde0xfvg0.webp)
+   ![](https://github.com/lzlcs/image-hosting/raw/master/image.7fwkde0xfvg0.webp)
 
 **待处理信号**: 发出而没有被接收的信号
 
@@ -247,14 +247,14 @@ pid_t getppid(void);
 
 `man signal`
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.7fsto8guq1g0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.7fsto8guq1g0.webp)
 
 ### 8.5.4 阻塞和解除阻塞信号
 
 1. 隐式阻塞机制: 内核默认阻塞当前信号处理程序所处理的信号类型 的待处理信号
 2. 显式阻塞机制: 使用一些辅助函数明确说明阻塞信号和解除阻塞信号
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5rr1oyus6m00.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5rr1oyus6m00.webp)
 
 ### 8.5.5 编写信号处理程序
 
@@ -264,7 +264,7 @@ pid_t getppid(void);
 1. 处理程序要尽可能简单: 例如处理程序设置个全局标志, 主程序周期性检查并处理
 2. 处理程序中只调用异步信号安全的函数 \ 
    异步信号安全函数: 可重入 / 不能被信号处理程序中断
-   ![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6ssqpltx58w0.webp)
+   ![](https://github.com/lzlcs/image-hosting/raw/master/image.6ssqpltx58w0.webp)
 2. 保存和回复 `errno`: 防止处理程序中有函数改变 `errno`
 1. 访问全局数据结构时阻塞所有的信号
 1. 用 `volatile` 声明全局变量
@@ -278,7 +278,7 @@ pid_t getppid(void);
 
 不同的系统可能有不同的信号处理语义
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.5r15fpjhp8w0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.5r15fpjhp8w0.webp)
 
 使用此函数指定信号处理语义
 
@@ -302,7 +302,7 @@ pid_t getppid(void);
 
 ## 8.7 操作进程的工具
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1nhlwypex6yo.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.1nhlwypex6yo.png)
 
 ## 8.8 小结
 
@@ -333,13 +333,13 @@ p2: x=0
 
 ## 8.3
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4xlz1xpgbu40.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.4xlz1xpgbu40.webp)
 
 `acbc`, `abcc`, `bacc` 都有拓扑序
 
 ## 8.4
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.6xop3ignvfc0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.6xop3ignvfc0.webp)
 
 6 行 \
 任何符合拓扑序的输出都可以

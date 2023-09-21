@@ -1,12 +1,12 @@
 ---
-title: OSTEP 章节 1~11
+title: 操作系统
 date: 2023-09-10 10:33:23
 mathjax: true
 tags:
 - C
-- OSTEP
+- OS
 categories: 
-- Book
+- Base
 ---
 
 # 操作系统介绍
@@ -73,7 +73,7 @@ categories:
 2. 就绪: 准备好运行, 但是操作系统选择先做别的事
 1. 阻塞: 直到发生一些其他事情时才会开始运行
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.1nblosu9jtxc.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.1nblosu9jtxc.webp)
 
 **数据结构**
 
@@ -92,6 +92,8 @@ categories:
 8. 随机问题
 
 # 插叙: 进程 `API`
+
+## 内容
 
 **`fork()`系统调用**
 
@@ -377,7 +379,7 @@ int main() {
 
 **基本技巧: 受限直接执行(LDE)**
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.8tk9ru1ygps.png)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.8tk9ru1ygps.png)
 
 **问题 1: 受限制的操作**
 
@@ -387,7 +389,7 @@ int main() {
 内核模式具有所有权限
 
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.66adso3ctbc0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.66adso3ctbc0.webp)
 
 LDE 协议的两个阶段
 1. 系统引导时初始化陷阱表
@@ -416,7 +418,7 @@ LDE 协议的两个阶段
 
 上下文切换: 为当前执行的进程保存一些寄存器的值, 为即将执行的进程恢复一些寄存器的值
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.4r6z6euckay0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.4r6z6euckay0.webp)
 
 此协议中有两种类型的寄存器 保存 / 恢复
 1. 时钟中断时: 硬件隐式保存用户寄存器
@@ -535,6 +537,8 @@ $$
 
 # 调度: 多级反馈队列
 
+## 内容
+
 `Multi-level Feedback Queue(MLFQ)` 多级反馈队列
 
 **`MLFQ` 的基本规则**
@@ -619,5 +623,50 @@ $$
 
 暂时搁置, 学完并发再回来读
 
+
+
+
+# 抽象: 地址空间
+
+**早期系统**
+
+![](https://github.com/lzlcs/image-hosting/raw/master/image.48xmqeb3hbc0.png)
+
+**多道程序和时分共享**
+
+一种粗糙的机器共享(慢): 一个程序使用全部内存, 上下文切换的时候把程序数据放到硬盘中 \
+加载其他程序的信息再继续运行
+
+**地址空间**
+
+地址空间包括运行程序的所有内存状态: 包括代码段, 栈段, 堆段等等
+
+**目标**
+
+1. 透明: 让运行的程序不知道内存被虚拟化了
+2. 效率: 追求更低的时间空间复杂度
+3. 保护: 保护进程之间相互隔离, 不受其他进程影响
+
+程序中打印的地址都是虚拟地址, 需要操作系统翻译成物理地址
+
+# 插叙: 内存操作 `API`
+
+**内存类型**
+
+栈内存: 申请和释放操作由编译器隐式管理, 也被称为自动内存 \
+堆内存: 申请和释放操作由程序员显式管理
+
+**`malloc()`调用**
+
+```c
+#include <stdlib.h>
+void *malloc(size_t size);
+```
+传入参数的时候使用 `sizeof()` 和 `strlen(s) + 1` \
+`malloc` 返回 `void *`, 所以最好是显式写出强制类型转换
+
+**`free()` 调用**
+
+释放不使用的堆内存: `free(x)`
 
 

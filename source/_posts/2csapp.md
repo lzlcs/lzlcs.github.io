@@ -124,9 +124,9 @@ C 中的字符串是以 00 为结尾的字符数组, 每个字符都由某个标
 
 ### 2.1.7 布尔代数和环
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.jcndpw581w8.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.jcndpw581w8.webp)
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.2rfa517i1ok0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.2rfa517i1ok0.webp)
 
 布尔 `and` 和 `xor` 分别表示模 2 的乘法和加法, 每个元素都是它自己的加法逆元 `a ^ a = 0`
 
@@ -162,7 +162,7 @@ C 中的字符串是以 00 为结尾的字符数组, 每个字符都由某个标
 
 ### 2.2.1 整数数据类型
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.77vyucib1bc0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.77vyucib1bc0.webp)
 
 ### 2.2.2 无符号和二进制补码编码
 
@@ -173,7 +173,7 @@ $B2S_w$ 表示符号数值, $B2S_w = (-1)^{x_{w-1}} \times \Sigma_{i = 0}^{w - 2
 
 二进制补码所能表示的值是不对称的 
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3sv21t52zx60.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.3sv21t52zx60.webp)
 
 ### 2.2.3 有符号和无符号数的转换
 
@@ -183,7 +183,7 @@ int x = -1;
 cout << (unsigned)x << endl;
 // 4294967295 = 2 ^ 32 - 1
 ```
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3ig3ten820c0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.3ig3ten820c0.webp)
 
 ### 2.2.4 C 中的有符号和无符号数
 
@@ -307,10 +307,10 @@ $b_mb_{m-1}\cdots b_0.b_{-1}b_{-2} \cdots b_n$ 表示 $d = \Sigma_{i = n}^{m} 2^
 
 非规格化值如此定义 $E$ 是为了和规格化值免费多出的一位相适配
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3x8snzo6zxq0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.3x8snzo6zxq0.webp)
 如此定义的非规格化值和规格化值是无缝衔接的
 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.3jvwbxeylxg0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.3jvwbxeylxg0.webp)
 
 ### 2.4.4 舍入
 
@@ -319,7 +319,7 @@ $b_mb_{m-1}\cdots b_0.b_{-1}b_{-2} \cdots b_n$ 表示 $d = \Sigma_{i = n}^{m} 2^
 
 
 一般有四种舍入方式: 
-![](https://cdn.staticaly.com/gh/lzlcs/image-hosting@master/image.44qais3bbvo0.webp)
+![](https://github.com/lzlcs/image-hosting/raw/master/image.44qais3bbvo0.webp)
 
 相似的, 这些舍入方法可以使用在二进制数上
 
