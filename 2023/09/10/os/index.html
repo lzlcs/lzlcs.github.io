@@ -506,6 +506,246 @@ $$</li>
 <code>malloc</code> 返回 <code>void *</code>, 所以最好是显式写出强制类型转换</p>
 <p><strong><code>free()</code> 调用</strong></p>
 <p>释放不使用的堆内存: <code>free(x)</code></p>
+<h1>操作系统概述</h1>
+<p><strong>特征</strong></p>
+<ol>
+<li>并发: 程序分时交替进行</li>
+<li>共享:
+<ol>
+<li>互斥共享方式: 目标资源称为临界资源</li>
+<li>同时访问方式: 程序分时交替访问文件</li>
+</ol>
+</li>
+<li>虚拟: 虚拟化 CPU, 虚拟化内存, 虚拟化设备 <br>
+包括时分共享和空分共享</li>
+<li>异步: 程序走走停停</li>
+</ol>
+<p><strong>功能</strong></p>
+<ol>
+<li>管理资源: 管理处理器, 存储器, 设备, 文件</li>
+<li>作为用户与系统间的接口:
+<ol>
+<li>命令接口:
+<ul>
+<li>联机命令接口: 交互式</li>
+<li>脱机命令接口: 批处理</li>
+</ul>
+</li>
+<li>程序接口: 一组系统调用</li>
+</ol>
+</li>
+</ol>
+<p><strong>体系结构</strong></p>
+<ol>
+<li>大内核: 难以维护, 性能高</li>
+<li>微内核: 易于维护, 性能低</li>
+</ol>
+<p><strong>中断</strong></p>
+<ol>
+<li>中断(异步): 时钟中断, IO 中断</li>
+<li>异常(同步):
+<ul>
+<li>陷阱: 如系统调用(主动)</li>
+<li>故障: 如缺页异常(可修复)</li>
+<li>终止: 如除零错误(不可修复)</li>
+</ul>
+</li>
+</ol>
+<p><strong>系统调用</strong></p>
+<p>切换到内核态, 获得操作系统的服务</p>
+<p>系统调用是操作系统的一部分, 在内核态运行 <br>
+库函数是语言或应用程序的一部分, 在用户态运行</p>
+<p>很多库函数会使用系统调用</p>
+<p><strong>分类</strong></p>
+<ol>
+<li>手工操作系统: 资源利用率低</li>
+<li>单道批处理操作系统: 顺序处理, 资源利用率低</li>
+<li>多道批处理操作系统: 不提供人机交互功能</li>
+<li>分时操作系统: 不能处理要求运行时间 比时间片还短的 请求</li>
+<li>实时操作系统: 及时性, 可靠性</li>
+<li>分布式操作系统: 分布性, 并行性</li>
+</ol>
+<h1>进程管理</h1>
+<h2 id="进程">进程</h2>
+<p>进程是操作系统进行资源分配和调度的基本单位</p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.1nblosu9jtxc.webp" alt=""></p>
+<p><strong>进程控制</strong></p>
+<ol>
+<li>创建原语:
+<ol>
+<li>分配 pid, 申请空白 PCB, 分配资源</li>
+<li>初始化 PCB</li>
+<li>插入就绪队列, 准备执行</li>
+</ol>
+</li>
+<li>撤销原语
+<ol>
+<li>根据终止标识符找出 PCB, 获取状态</li>
+<li>终止该进程以及子进程</li>
+<li>归还资源, 删除 PCB</li>
+</ol>
+</li>
+<li>阻塞原语
+<ol>
+<li>该进程为运行状态: 保护现场, 改状态, 插入等待队列</li>
+<li>该进程为就绪状态: 该状态, 移出就绪队列, 插入等待队列</li>
+</ol>
+</li>
+<li>唤醒原语: 找到 PCB, 加入就绪队列</li>
+</ol>
+<p><strong>进程组织</strong></p>
+<ol>
+<li>连接方式: 相同状态的进程组织成队列</li>
+<li>索引表: 相同状态的进程放到一张索引表里</li>
+</ol>
+<p><strong>进程通信</strong></p>
+<ol>
+<li>共享存储: 设置一个共享空间, 进程之间互斥访问</li>
+<li>消息传递:
+<ul>
+<li>直接传递: 发送到对方进程接收队列尾</li>
+<li>间接传递: 发送到内存中的信箱</li>
+</ul>
+</li>
+<li>管道通信: 从一边读, 从一边写</li>
+</ol>
+<h2 id="线程">线程</h2>
+<p>线程是 CPU 的最小执行单元</p>
+<p>优点: 提高并发度, 同一进程内的线程切换时不需要切换进程环境</p>
+<p><strong>线程分类</strong></p>
+<ol>
+<li>用户级线程: 由应用程序管理</li>
+<li>内核级线程: 由操作系统管理, 切换线程时要在内核态</li>
+</ol>
+<p><strong>多线程模型</strong></p>
+<ol>
+<li>多对一: 开销小, 一个线程被阻塞, 整个进程会被阻塞</li>
+<li>一对一: 开销大, 多线程可并行执行</li>
+<li>多对多: 开销小, 多线程可并行执行</li>
+</ol>
+<h2 id="调度">调度</h2>
+<p>三级调度</p>
+<ol>
+<li>作业调度: 从外存调进来</li>
+<li>内存调度: 从内存调出去(挂起)</li>
+<li>进程调度: 从就绪队列中选择进程执行</li>
+</ol>
+<p><strong>调度时机</strong></p>
+<ol>
+<li>需要调度:
+<ul>
+<li>主动放弃: 进程终止, 主动阻塞</li>
+<li>被动放弃: 分配的时间片用完, 有更高优先级的进程需要执行, 中断</li>
+</ul>
+</li>
+<li>不能调度
+<ul>
+<li>原语</li>
+<li>处理中断时</li>
+<li>进程在临界区(访问临界资源的代码)中</li>
+</ul>
+</li>
+</ol>
+<p><strong>调度指标</strong></p>
+<ol>
+<li>CPU 利用率</li>
+<li>系统吞吐量: 单位时间内完成作业的数量</li>
+<li>周转时间: 完成时间 - 提交时间</li>
+<li>等待时间: 进程处于等待的时间之和</li>
+<li>响应时间: 开始时间 - 提交时间</li>
+</ol>
+<p><strong>调度算法</strong></p>
+<ol>
+<li>FIFS: 先来先服务: 效率低, 有利于 CPU 繁忙性作业</li>
+<li>SJF: 短作业优先: 未考虑紧迫程度, 长作业可能产生饥饿 <br>
+SRTN: 最短剩余时间优先: 同上</li>
+<li>HRRN: 高响应比优先:<br>
+$$<br>
+响应比 = \frac{等待时间 + 运行时间}{运行时间}<br>
+$$</li>
+<li>RR: 时间片轮转: 公平, 进程切换开销大</li>
+<li>优先级调度算法: 优先级高的先调度 (优先级可动态或静态分配): 可能导致低优先级进程饥饿</li>
+<li>多级反馈队列: 优先级从高到低, 时间片从小到大 <br>
+当前时间片被用完, 放到下一层的队尾</li>
+</ol>
+<h2 id="同步与互斥">同步与互斥</h2>
+<ol>
+<li>同步: 进程之间要使用一定的先后顺序完成某项任务</li>
+<li>互斥: 对临界资源的访问需要进程互斥地访问</li>
+</ol>
+<p>临界资源的访问过程</p>
+<ol>
+<li>四个部分
+<ul>
+<li>进入区: 检查是否可进入临界区, 如可进入则需上锁</li>
+<li>临界区: 访问临界资源的代码</li>
+<li>退出区: 负责解锁</li>
+<li>剩余区: 其他代码部分</li>
+</ul>
+</li>
+<li>四个原则
+<ul>
+<li>空闲让进: 临界区空闲时允许一个进程访问</li>
+<li>忙则等待: 临界区正在被访问时, 其他进程需等待</li>
+<li>有限等待: 有限时间内进入临界区, 防止饥饿</li>
+<li>让权等待: 进不了临界区的进程要释放 CPU, 防止忙等</li>
+</ul>
+</li>
+</ol>
+<p><strong>实现互斥的硬件方法</strong></p>
+<ol>
+<li>中断屏蔽: 使用开/关中断指令
+<ul>
+<li>简单高效 | 只适用于单核CPU, 只适用于内核进程</li>
+</ul>
+</li>
+<li>TSL 指令:</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 硬件实现此函数, 相当于原语</span></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">TSL</span><span class="params">(<span class="type">bool</span> *lock)</span> </span>&#123;</span><br><span class="line">    <span class="type">bool</span> old = *lock;</span><br><span class="line">    *lock = <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">return</span> old;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 四区</span></span><br><span class="line"><span class="keyword">while</span> (<span class="built_in">TSL</span>(&amp;lock));</span><br><span class="line"><span class="comment">// 临界区</span></span><br><span class="line">lock = <span class="literal">false</span>;</span><br><span class="line"><span class="comment">// 剩余区</span></span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>XCHG(Swap) 指令:</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 原语</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">Swap</span><span class="params">(<span class="type">bool</span> *a, <span class="type">bool</span> *b)</span> </span>&#123;</span><br><span class="line">    <span class="type">bool</span> tmp = *a;</span><br><span class="line">    *a = *b, *b = tmp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">四区</span><br><span class="line"><span class="type">bool</span> old = <span class="literal">true</span>;</span><br><span class="line"><span class="keyword">while</span> (old == <span class="literal">true</span>) </span><br><span class="line">    <span class="built_in">Swap</span>(&amp;old, &amp;lock);</span><br><span class="line"><span class="comment">// 临界区</span></span><br><span class="line">lock = <span class="literal">false</span>;</span><br><span class="line"><span class="comment">// 剩余区</span></span><br></pre></td></tr></table></figure>
+<p>后两种方法不满足 让全等待 原则, 会导致忙等</p>
+<p><strong>实现互斥的软件方法</strong></p>
+<ol>
+<li>单标志法: 进程访问完临界区之后会赋予其他进程访问临界资源的权限 <br>
+违背空闲让进原则</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> turn = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">SingleSignal_1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (turn != <span class="number">0</span>);</span><br><span class="line">    <span class="comment">// </span></span><br><span class="line">    turn = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">SingleSignal_2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (turn != <span class="number">1</span>);</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    turn = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>双标志先检查法 <br>
+违反忙则等待原则, 检查和上锁是分开的</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> flag[<span class="number">2</span>] = &#123; <span class="literal">false</span>, <span class="literal">false</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (flag[<span class="number">1</span>]);</span><br><span class="line">flag[<span class="number">0</span>] = <span class="literal">true</span>;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line">flag[<span class="number">0</span>] = <span class="literal">false</span>;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (flag[<span class="number">0</span>]);</span><br><span class="line">flag[<span class="number">1</span>] = <span class="literal">true</span>;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line">flag[<span class="number">1</span>] = <span class="literal">false</span>;</span><br><span class="line"><span class="comment">//</span></span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>双标志后检查法 <br>
+违背空闲让进和忙则等待</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> flag[<span class="number">2</span>] = &#123; <span class="literal">false</span>, <span class="literal">false</span> &#125;;</span><br><span class="line"></span><br><span class="line">flag[<span class="number">0</span>] = <span class="literal">true</span>;</span><br><span class="line"><span class="keyword">while</span> (flag[<span class="number">1</span>]);</span><br><span class="line"><span class="comment">//</span></span><br><span class="line">flag[<span class="number">0</span>] = <span class="literal">false</span>;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line">flag[<span class="number">1</span>] = <span class="literal">true</span>;</span><br><span class="line"><span class="keyword">while</span> (flag[<span class="number">0</span>]);</span><br><span class="line"><span class="comment">//</span></span><br><span class="line">flag[<span class="number">1</span>] = <span class="literal">false</span>;</span><br><span class="line"><span class="comment">//</span></span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li><code>Peterson</code> 算法: 无法实现让权等待</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> flag[<span class="number">2</span>] = &#123; <span class="literal">false</span>, <span class="literal">false</span> &#125;; <span class="comment">// 表示进入临界区意愿</span></span><br><span class="line"><span class="type">int</span> turn = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">flag[<span class="number">0</span>] = <span class="literal">true</span>, turn = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">while</span> (flag[<span class="number">1</span>] &amp;&amp; turn == <span class="number">1</span>); <span class="comment">// 如果对方想用且自己让给了他</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line">flag[<span class="number">0</span>] = <span class="literal">false</span>;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line">flag[<span class="number">1</span>] = <span class="literal">true</span>, turn = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span> (flag[<span class="number">0</span>] &amp;&amp; turn == <span class="number">0</span>);</span><br><span class="line"><span class="comment">//</span></span><br><span class="line">flag[<span class="number">1</span>] = <span class="literal">false</span>;</span><br><span class="line"><span class="comment">//</span></span><br></pre></td></tr></table></figure>
+<p><strong>信号量机制</strong></p>
+<p>原语: <code>wait(S)</code>, <code>signal(S)</code></p>
+<ol>
+<li>整形信号量: 不满足让权等待原则</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">wait</span><span class="params">(<span class="type">int</span> S)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (S &lt;= <span class="number">0</span>);</span><br><span class="line">    S -= <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">signal</span><span class="params">(<span class="type">int</span> S)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    S += <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>记录型信号量, <code>block(P)</code>, <code>wakeup(P)</code> 阻塞和唤醒原语</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="type">int</span> value;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">process</span> *L;</span><br><span class="line">&#125; semaphore;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">wait</span><span class="params">(semaphore S)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    S.value--;</span><br><span class="line">    <span class="keyword">if</span> (S.value &lt; <span class="number">0</span>) </span><br><span class="line">        <span class="built_in">block</span>(S.L);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">signal</span><span class="params">(semaphore S)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    S.value++;</span><br><span class="line">    <span class="keyword">if</span> (S.value &lt;= <span class="number">0</span>)  <span class="comment">// &lt;= 0 说明有进程在等待该资源</span></span><br><span class="line">        <span class="built_in">wakeup</span>(S.L);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>信号量实现互斥, 同步, 前驱</strong></p>
+<ol>
+<li>互斥  <br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.1cyf9dr5p3uo.png" alt="image"></li>
+<li>同步 <br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.6xecwk0ng3s0.webp" alt="image"></li>
+<li>前驱 <br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.6vp0jxj1b400.png" alt="image"></li>
+</ol>
 
       </div>
       
@@ -572,7 +812,7 @@ $$</li>
     <div class="title">Contents</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">操作系统介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">抽象: 进程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">插叙: 进程 API</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-2"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-2"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">机制: 受限直接执行</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-3"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-3"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">进程调度: 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-4"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-4"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">调度: 多级反馈队列</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-5"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-%E7%95%A5"><span class="toc-text">作业(略)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">调度: 比例分额</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-5"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">多处理器调度</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">抽象: 地址空间</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">插叙: 内存操作 API</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">操作系统介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">抽象: 进程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">插叙: 进程 API</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-2"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-2"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">机制: 受限直接执行</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-3"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-3"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">进程调度: 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-4"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-4"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">调度: 多级反馈队列</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AE%B9-5"><span class="toc-text">内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-%E7%95%A5"><span class="toc-text">作业(略)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">调度: 比例分额</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E4%B8%9A-5"><span class="toc-text">作业</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">多处理器调度</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">抽象: 地址空间</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">插叙: 内存操作 API</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">操作系统概述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">进程管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B"><span class="toc-text">进程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B"><span class="toc-text">线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E5%BA%A6"><span class="toc-text">调度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8C%E6%AD%A5%E4%B8%8E%E4%BA%92%E6%96%A5"><span class="toc-text">同步与互斥</span></a></li></ol></li></ol>
       
     </div>
   </div>
