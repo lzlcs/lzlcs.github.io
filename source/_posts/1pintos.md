@@ -192,8 +192,6 @@ T* list_entry(struct list_elem*, struct T, list_elem_name);
 
 ### 实现思路
 
-在 `thread.c` 中搜索 `&ready_list`, 发现 `thread_unlock` 和 `thread_yield` 函数中有 `push_back`, 
-使用 `list_insert_ordered` 函数替换即可
 
 **测试点 `alarm-priority`**
 
@@ -213,20 +211,26 @@ bool thread_greater_priority (const struct list_elem *a,
   return x > y;
 }
 ```
-2. 在 `thread.c` 中 两个函数 函数中作如下修改
+2. 在 `thread.c` 中 `next_thread_to_run` 函数中先排序再选择
 
 ```c
-// thread_unblock 中 list_push_back 替换为
-list_insert_ordered(&ready_list, &t->elem, thread_greater_priority, NULL);
-
-// thread_yield 中 list_push_back 替换为
-list_insert_ordered(&ready_list, &cur->elem, thread_greater_priority, NULL);
+static struct thread *
+next_thread_to_run (void) 
+{
+  if (list_empty (&ready_list))
+    return idle_thread;
+  else
+  {
+    list_sort(&ready_list, thread_greater_priority, NULL);
+    return list_entry (list_pop_front(&ready_list), struct thread, elem);
+  }
+}
 ```
 
-> 此方法 插入 $O(n)$, 查询 $O(1)$ \
+> 方法1: 插入的时候选择合适位置插入 $O(n)$, 查询 $O(1)$ \
 > 方法2: 查询的时候遍历 `ready_list`, 其他地方不做修改 插入 $O(1)$, 查询 $O(n)$ \
 > 方法3: 每次查询的时候排序 `ready_list`, 其他地方不做修改, 插入 $O(1)$, 查询 $O(n^2)$ \
-> 此处为了和之后的 信号量部分保持风格一致, 选择第一种方法
+> 此处为了简便, 使用方法 3
 
 ## 优先级改变及抢占式调度
 
@@ -307,39 +311,39 @@ void cond_broadcast (struct condition *, struct lock *);
 
 **测试点 `priority_sema`**
 
-1. 在 `sema_down` 中更改插入链表的方式
-```c
-// sema_down 中 list_push_back 替换为
-list_insert_ordered(&sema->waiters, &thread_current ()->elem, 
-                    thread_greater_priority, NULL);
-```
-2. `sema_up` 调度的时候涉及优先级的问题, `thread_yield` 重新调度一下进程
+1. `sema_up` 调度的时候涉及优先级的问题, `thread_yield` 重新调度一下进程
 ```c
 void
 sema_up (struct semaphore *sema) 
 {
   //...
+  if (!list_empty (&sema->waiters)) 
+  {
+    list_sort (&sema->waiters, thread_greater_priority, NULL);
+    thread_unblock (list_entry (list_pop_front(&sema->waiters),
+                                struct thread, elem));
+  }
   sema->value++;
-  thread_yield();  // new
+  thread_yield();
   intr_set_level (old_level);
 }
 ```
 
 **测试点 `priority_condvar`**
 
-注意这个测试点不能使用上述 `list_insert_ordered` 的方式插入 \
+注意这个测试点不能使用 `list_insert_ordered` 的方式插入 \
 因为 `semaphore` 的链表中一开始没有进程, 优先级永远是 0 \
 所以要在 `cond_signal` 的时候排序再获取最大值
 
 1. 实现 `sema_less_priority` 函数, 方便取最大值 \
    注意这里可以直接取 `semaphore` 队列中的第一项作为优先级是因为之前 `list_insert_ordered` 保证了信号量等待链表的顺序
 ```c
-bool sema_less_priority(const struct list_elem* a, 
-                        const struct list_elem *b, void *aux UNUSED);
+bool sema_greater_priority(const struct list_elem* a, 
+                           const struct list_elem *b, void *aux UNUSED);
 ```
 ```c
-bool sema_less_priority(const struct list_elem* a, 
-                        const struct list_elem *b, void *aux UNUSED)
+bool sema_greater_priority(const struct list_elem* a, 
+                           const struct list_elem *b, void *aux UNUSED)
 {
   struct semaphore_elem* sx = list_entry(a, struct semaphore_elem, elem);
   struct semaphore_elem* sy = list_entry(b, struct semaphore_elem, elem);
@@ -349,7 +353,7 @@ bool sema_less_priority(const struct list_elem* a,
   int py = list_entry(list_begin(&sy->semaphore.waiters), 
                       struct thread, elem)->priority;
 
-  return px < py;
+  return px > py;
 }
 ```
 2. 修改 `cond_signal` 函数
@@ -361,17 +365,201 @@ cond_signal (struct condition *cond, struct lock *lock UNUSED)
 
   if (!list_empty (&cond->waiters)) 
   {
-    struct list_elem* t = list_max(&cond->waiters, sema_less_priority, NULL);
-    list_remove(t);
-    sema_up (&list_entry (t, struct semaphore_elem, elem)->semaphore);
+    list_sort(&cond->waiters, sema_greater_priority, NULL);
+    sema_up (&list_entry (list_pop_front(&cond->waiters),
+                          struct semaphore_elem, elem)->semaphore);
   }
 }
 ```
 
-**优先级捐赠**
+## 优先级捐赠
 
-分析测试用例
+**分析测试用例**
+
 1. `priority_donate_one` 表明: 线程在获取锁的时候, 发现比自己优先更低的进程持有锁
    那么就把优先级捐赠给持有锁的线程, 释放锁的时候把持有锁进程改回原来的优先级
 2. `priority_donate_multiple*` 表明: 在有多个进程向持有锁的进程捐赠优先级时
    持有锁进程的优先级应该设置为这些进程优先级的最大值
+3. `priority_donate_nest` 表明: 在提升持有锁的线程优先级之后, 如果这个线程在等待其他锁, 
+   那么就递归地把优先级捐赠给目标进程
+4. `priority_donate_sema` 是信号量和锁的混合使用
+5. `priority_donate_lower` 在被捐赠之后, 改变自身的优先级, 如果优先级变低, 不能影响捐赠
+   但是在恢复优先级的时候应该恢复到新的优先级
+6. `priority_donate_chain` 依旧是嵌套捐赠问题
+
+**模型分析**
+
+总体上是一个锁和进程的分层树形结构, 一层点表示进程, 一层点表示锁
+
+1. `lock_acquire` 
+    - 首先连上目标锁的节点, 然后一直向上捐赠优先级
+    - 锁被释放之后, 把锁节点转换为自己的子节点
+2. `lock_release`: 断开自己的目标锁的子节点
+
+**更改数据结构**
+
+
+1. 进程节点中存自己所有的子节点(锁), 存一个父节点(锁), 存一个本身优先级
+3. 锁节点中存 自己的父节点(进程), 存一个 所有子节点(进程)中最大的优先级捐赠 \
+   最大优先级在子节点(进程) 向自己连边的时候会更新, 所以不用存子节点(进程)
+
+```c
+struct thread
+{
+    // ...
+    int base_priority;                  /**< 进程原本的优先级*/
+    struct list locks;                  /**< 所有的 子节点(锁)*/ 
+    struct lock *locks_waiting;         /**< 父节点(锁)*/
+    // ...
+}
+
+static void init_thread (struct thread *t, const char *name, int priority)
+{
+  // ...
+  t->base_priority = priority;
+  list_init (&t->locks);
+  t->locks_waiting = NULL;
+  // ...
+}
+```
+```c
+struct lock 
+{
+    // ...
+    struct list_elem elem;      /**< 配合进程中的链表 */
+    int max_priority;           /**< 从子节点(进程)捐赠上来的最大优先级 */
+};
+
+void lock_init (struct lock *lock)
+{
+  // ...
+  lock->max_priority = 0;
+  // ...
+}
+```
+
+**更改函数**
+
+1. `thread_update` 函数, 在子节点(锁)中选一个最大的优先级更新
+```c
+void
+thread_update_priority (struct thread *t)
+{
+  enum intr_level old_level = intr_disable ();
+  int max_priority = t->base_priority;
+  int lock_priority;
+
+  if (!list_empty (&t->locks))
+  {
+    list_sort (&t->locks, lock_greater_priority, NULL);
+    lock_priority = list_entry (list_front (&t->locks), struct lock, elem)->max_priority;
+    if (lock_priority > max_priority)
+      max_priority = lock_priority;
+  }
+
+  t->priority = max_priority;
+  intr_set_level (old_level);
+}
+```
+2. 实现  `lock_greater_priority` 函数实现锁节点之间的比较
+```c
+bool
+lock_greater_priority (const struct list_elem *a, const struct list_elem *b, void *aux UNUSED)
+{
+  int x = list_entry (a, struct lock, elem)->max_priority;
+  int y = list_entry (b, struct lock, elem)->max_priority; 
+  return x > y;
+}
+```
+3. `lock_acquire` 连边的过程
+```c
+void
+lock_acquire (struct lock *lock)
+{
+
+  ASSERT (lock != NULL);
+  ASSERT (!intr_context ());
+  ASSERT (!lock_held_by_current_thread (lock));
+
+  set_lock_point(lock);
+  sema_down (&lock->semaphore);
+  change_lock_point(lock);
+}
+
+void set_lock_point(struct lock *lock)
+{
+  if (lock->holder == NULL || thread_mlfqs) return;
+
+  struct thread* cur = thread_current();
+  cur->locks_waiting = lock;
+
+  struct lock* tmp = lock;
+  while (tmp && cur->priority > tmp->max_priority)
+  {
+    tmp->max_priority = cur->priority;
+    thread_update_priority(tmp->holder);
+    tmp = tmp->holder->locks_waiting;
+  }
+}
+
+void change_lock_point(struct lock* lock)
+{
+  lock->holder = thread_current();
+
+  if (thread_mlfqs) return;
+  enum intr_level old_level = intr_disable ();
+
+  struct thread* cur = thread_current ();
+
+  cur->locks_waiting = NULL;
+  lock->max_priority = 0;
+
+  list_push_back(&cur->locks, &lock->elem);
+
+  intr_set_level (old_level);
+}
+```
+1. `lock_release` 函数, 断开子节点(锁)
+```c
+void
+lock_release (struct lock *lock) 
+{
+  ASSERT (lock != NULL);
+  ASSERT (lock_held_by_current_thread (lock));
+
+  if (!thread_mlfqs)
+  {
+    list_remove (&lock->elem);
+    // 此处 locks 链表可能为空, 所以 thread_update_priority 中要判断一下是否为空
+    thread_update_priority (thread_current ());
+  }
+
+  lock->holder = NULL;
+  sema_up (&lock->semaphore);
+}
+```
+1. 最后的 `thread_set_priority` 函数, 如果子节点(锁)为空或者新优先级更大, 则更改当前优先级
+```c
+void
+thread_set_priority (int new_priority)
+{
+  if (thread_mlfqs) return;
+
+  enum intr_level old_level = intr_disable ();
+
+  struct thread *cur = thread_current ();
+
+  cur->base_priority = new_priority;
+
+  if (list_empty (&cur->locks) || new_priority > cur->priority)
+  {
+    cur->priority = new_priority;
+  }
+
+  thread_yield ();
+  intr_set_level (old_level);
+}
+```
+
+
+
