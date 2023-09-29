@@ -68,24 +68,33 @@ int64_t timer_ticks (void)
 ## 实现思路
 
 在执行 `timer_sleep` 的时候, 把当前进程阻塞 \
+`wait_list` 链表记录所有等待中的进程 \
 在进程结构体中使用 `blocked_ticks` 变量记录剩余阻塞的 `ticks`
 
-每次处理时钟中断的时候, 使用 `thread_foreach` 函数遍历每个进程并检测 `blocked_ticks` 值
+每次处理时钟中断的时候, 使用 `thread_foreach` 函数遍历 `wait_list` 并检测 `blocked_ticks` 值
 
 1. `thread.h` 中
 ```c
+
  struct thread
   {
     // ...
+    struct list_elem waitelem;
     uint32_t blocked_ticks;
-    /* Owned by thread.c. */
-    unsigned magic;
+    // ...
   };
 ```
-2. `thread.c` 中, `blocked_ticks` 值初始化为 0
+2. `thread.c` 中, `blocked_ticks` 值初始化为 0, 定义 `wait_list` 并初始化
 ```c
-static void
-init_thread(struct thread *t, const char *name, int priority)
+struct list wait_list;
+void thread_init(void)
+{
+  // ...
+  list_init(&wait_list);
+  // ...
+}
+
+static void init_thread(struct thread *t, const char *name, int priority)
 {
   // ...
   t->blocked_ticks = 0;
@@ -108,8 +117,7 @@ void timer_sleep(int64_t ticks)
   enum intr_level old_level = intr_disable();
 
   struct thread* t = thread_current();
-  t->blocked_ticks = ticks;
-  thread_block();
+  thread_enable_wait(t, ticks);
 
   intr_set_level(old_level);
 }
@@ -117,23 +125,37 @@ void timer_sleep(int64_t ticks)
 static void
 timer_interrupt(struct intr_frame *args UNUSED)
 {
-  ticks++;
-  thread_tick();
-  thread_foreach(thread_check_blocked, NULL);
+  // ...
+  thread_disable_wait(); 
 }
 ```
 4. 在 `thread.h` 中声明,  `thread.c` 中实现 `thread_check_blocked` 
 ```c
-void thread_check_blocked(struct thread* t, void *aux);
+void thread_enable_wait(struct thread* t, int ticks);
+void thread_disable_wait();
 ```
 ```c
-void thread_check_blocked(struct thread*t, void *aux)
+void thread_enable_wait(struct thread* t, int ticks) 
 {
-  if (t->status == THREAD_BLOCKED && t->blocked_ticks > 0) 
+  list_push_back(&wait_list, &t->waitelem);
+  t->blocked_ticks = ticks;
+  thread_block();
+}
+
+void thread_disable_wait() 
+{
+  struct list_elem *e;
+
+  for (e = list_begin(&wait_list); e != list_end(&wait_list); e = list_next(e))
   {
+    struct thread *t = list_entry(e, struct thread, waitelem);
+
     t->blocked_ticks--;
-    if (t->blocked_ticks == 0) 
+    if (t->blocked_ticks == 0)
+    {
+      list_remove(e);        
       thread_unblock(t);
+    }
   }
 }
 ```
@@ -221,8 +243,11 @@ next_thread_to_run (void)
     return idle_thread;
   else
   {
-    list_sort(&ready_list, thread_greater_priority, NULL);
-    return list_entry (list_pop_front(&ready_list), struct thread, elem);
+    struct list_elem *t = list_min(&ready_list, thread_greater_priority, NULL);
+    list_remove(t);
+    return list_entry (t, struct thread, elem);
+    // list_sort(&ready_list, thread_greater_priority, NULL);
+    // return list_entry (list_pop_front(&ready_list), struct thread, elem);
   }
 }
 ```
@@ -230,7 +255,8 @@ next_thread_to_run (void)
 > 方法1: 插入的时候选择合适位置插入 $O(n)$, 查询 $O(1)$ \
 > 方法2: 查询的时候遍历 `ready_list`, 其他地方不做修改 插入 $O(1)$, 查询 $O(n)$ \
 > 方法3: 每次查询的时候排序 `ready_list`, 其他地方不做修改, 插入 $O(1)$, 查询 $O(n^2)$ \
-> 此处为了简便, 使用方法 3
+> 方法3 简便, 但是在之后的大数据测试点中会性能差一点点从而无法通过, 此处使用方法 2
+> 在之后的 `sema`, `cond` 和 `lock` 都使用方法 3
 
 ## 优先级改变及抢占式调度
 
@@ -339,7 +365,7 @@ sema_up (struct semaphore *sema)
    注意这里可以直接取 `semaphore` 队列中的第一项作为优先级是因为之前 `list_insert_ordered` 保证了信号量等待链表的顺序
 ```c
 bool sema_greater_priority(const struct list_elem* a, 
-                           const struct list_elem *b, void *aux UNUSED);
+                           const struct list_elem *b, void *aux);
 ```
 ```c
 bool sema_greater_priority(const struct list_elem* a, 
@@ -375,6 +401,8 @@ cond_signal (struct condition *cond, struct lock *lock UNUSED)
 ## 优先级捐赠
 
 **分析测试用例**
+
+注意在 任务三 中不会使用优先级捐赠, 所以要判断 `thread_mlfqs`
 
 1. `priority_donate_one` 表明: 线程在获取锁的时候, 发现比自己优先更低的进程持有锁
    那么就把优先级捐赠给持有锁的线程, 释放锁的时候把持有锁进程改回原来的优先级
@@ -439,6 +467,20 @@ void lock_init (struct lock *lock)
 ```
 
 **更改函数**
+
+0. 函数声明
+```c
+// thread.h
+void thread_update_priority (struct thread *t);
+```
+```c
+// synch.h
+
+bool lock_greater_priority (const struct list_elem *a, const struct list_elem *b, void *aux);
+
+void set_lock_point(struct lock *lock);
+void change_lock_point(struct lock* lock);
+```
 
 1. `thread_update` 函数, 在子节点(锁)中选一个最大的优先级更新
 ```c
@@ -561,5 +603,203 @@ thread_set_priority (int new_priority)
 }
 ```
 
+# Part III: 多级反馈队列
 
+**浮点数精度问题**
+
+根据文档, 具体的实现方式是通过移位运算 \
+选择一个目录, 然后实现 `fixed_point.h` (我选择放在 `lib` 目录下)
+```c
+#ifndef __THREAD_FIXED_POINT_H
+#define __THREAD_FIXED_POINT_H
+
+/* Basic definitions of fixed point. */
+typedef int fixed_t;
+/* 16 LSB used for fractional part. */
+#define FP_SHIFT_AMOUNT 16
+/* Convert a value to fixed-point value. */
+#define FP_CONST(A) ((fixed_t)(A << FP_SHIFT_AMOUNT))
+/* Add two fixed-point value. */
+#define FP_ADD(A, B) (A + B)
+/* Add a fixed-point value A and an int value B. */
+#define FP_ADD_MIX(A, B) (A + (B << FP_SHIFT_AMOUNT))
+/* Substract two fixed-point value. */
+#define FP_SUB(A, B) (A - B)
+/* Substract an int value B from a fixed-point value A */
+#define FP_SUB_MIX(A, B) (A - (B << FP_SHIFT_AMOUNT))
+/* Multiply a fixed-point value A by an int value B. */
+#define FP_MULT_MIX(A, B) (A * B)
+/* Divide a fixed-point value A by an int value B. */
+#define FP_DIV_MIX(A, B) (A / B)
+/* Multiply two fixed-point value. */
+#define FP_MULT(A, B) ((fixed_t)(((int64_t)A) * B >> FP_SHIFT_AMOUNT))
+/* Divide two fixed-point value. */
+#define FP_DIV(A, B) ((fixed_t)((((int64_t)A) << FP_SHIFT_AMOUNT) / B))
+/* Get integer part of a fixed-point value. */
+#define FP_INT_PART(A) (A >> FP_SHIFT_AMOUNT)
+/* Get rounded integer of a fixed-point value. */
+#define FP_ROUND(A) (A >= 0 ? ((A + (1 << (FP_SHIFT_AMOUNT - 1))) >> FP_SHIFT_AMOUNT) \
+                            : ((A - (1 << (FP_SHIFT_AMOUNT - 1))) >> FP_SHIFT_AMOUNT))
+
+#endif /* thread/fixed_point.h */
+```
+
+在 `timer.c` 和 `thread.h` 中加入 `#include <fixed_point.h>`
+
+**更改数据结构和设置全局变量**
+
+根据文档, 每个进程需要存一个 `nice` 和 `recent_cpu` 值 \
+还要在全局变量中存一个 `load_avg` 值 \
+`recent_cpu` 和 `load_avg` 都是 `fixed_point` 类型
+
+```c
+// thread.h
+struct thread
+  {
+    // ...
+    int nice;
+    fixed_t recent_cpu;
+    // ...
+  };
+```
+```c
+// thread.c
+fixed_t load_avg;
+
+void
+thread_init (void) 
+{
+  // ...
+  load_avg = FP_CONST(0);
+  // ...
+}
+
+static void
+init_thread (struct thread *t, const char *name, int priority)
+{
+  // ...
+  t->nice = 0;
+  t->recent_cpu = FP_CONST(0);
+  // ...
+}
+```
+
+**`Niceness` 部分**
+
+根据文档一步步实现
+
+1. `thread_get_nice` 
+2. `thread_set_nice` 设置 `nice` 值, 计算优先级, 再调度一下
+```c
+/** Sets the current thread's nice value to NICE. */
+void
+thread_set_nice (int nice UNUSED) 
+{
+  struct thread* cur = thread_current();
+  cur->nice = nice;
+  thread_mlfqs_update_priority(cur);
+  thread_yield();
+}
+
+/** Returns the current thread's nice value. */
+int
+thread_get_nice (void) 
+{
+  return thread_current()->nice;
+}
+```
+
+**`load_avg` `recent_cpu` 部分** 
+
+根据文档给的公式实现
+```c
+/** Returns 100 times the system load average. */
+int
+thread_get_load_avg (void) 
+{
+  return FP_ROUND (FP_MULT_MIX (load_avg, 100));
+}
+
+/** Returns 100 times the current thread's recent_cpu value. */
+int
+thread_get_recent_cpu (void) 
+{
+  return FP_ROUND (FP_MULT_MIX (thread_current ()->recent_cpu, 100));
+}
+```
+
+**`timer_interrupt` 部分**
+
+按照文档, 更新 `priority`, `nice`, `load_avg`, `recent_cpu`
+
+```c
+static void
+timer_interrupt(struct intr_frame *args UNUSED)
+{
+  ticks++;
+  thread_tick();
+
+  if (thread_mlfqs)
+  {
+    thread_mlfqs_increase_recent_cpu_by_one ();
+    if (ticks % TIMER_FREQ == 0)
+      thread_mlfqs_update_load_avg_and_recent_cpu ();
+    else if (ticks % 4 == 0)
+      thread_mlfqs_update_priority (thread_current ());
+  }
+  thread_disable_wait();
+}
+```
+
+声明辅助函数
+```c
+// thread.h
+void thread_mlfqs_update_priority(struct thread* t);
+void thread_mlfqs_increase_recent_cpu_by_one ();
+void thread_mlfqs_update_load_avg();
+void thread_mlfqs_update_recent_cpu();
+```
+实现辅助函数
+```c
+void thread_mlfqs_update_priority(struct thread *t)
+{
+  if (t == idle_thread) return;
+
+  t->priority = FP_INT_PART(FP_SUB_MIX(FP_SUB(FP_CONST(PRI_MAX),
+                                              FP_DIV_MIX(t->recent_cpu, 4)),
+                                       2 * t->nice));
+  t->priority = t->priority < PRI_MIN ? PRI_MIN : t->priority;
+  t->priority = t->priority > PRI_MAX ? PRI_MAX : t->priority;
+}
+
+void thread_mlfqs_increase_recent_cpu_by_one(void)
+{
+  struct thread *current_thread = thread_current();
+  if (current_thread == idle_thread) return;
+  current_thread->recent_cpu = FP_ADD_MIX(current_thread->recent_cpu, 1);
+}
+
+void thread_mlfqs_update_load_avg(void)
+{
+  size_t ready_threads = list_size(&ready_list);
+  if (thread_current() != idle_thread) ready_threads++;
+
+  load_avg = FP_ADD(FP_DIV_MIX(FP_MULT_MIX(load_avg, 59), 60), FP_DIV_MIX(FP_CONST(ready_threads), 60));
+}
+
+void thread_mlfqs_update_recent_cpu(void)
+{
+  struct list_elem *e;
+  for (e = list_begin(&all_list); e != list_end(&all_list); e = list_next(e))
+  {
+    struct thread *t = list_entry(e, struct thread, allelem);
+    if (t == idle_thread) continue;
+
+    t->recent_cpu = FP_ADD_MIX(FP_MULT(FP_DIV(FP_MULT_MIX(load_avg, 2), FP_ADD_MIX(FP_MULT_MIX(load_avg, 2), 1)), t->recent_cpu), t->nice);
+    thread_mlfqs_update_priority(t);
+  }
+}
+```
+
+`All 27 tests passed.`
 
