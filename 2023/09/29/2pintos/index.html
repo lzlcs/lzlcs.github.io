@@ -11,8 +11,8 @@
   
   <title>
     
-      Tag 
-       : Lab
+      Pintos Project 2 
+      
       
       |
     
@@ -102,39 +102,208 @@
 
 
       <div class="flex-container">
-        <!-- 标签详情页，展示某个标签下的文章列表，url形式：https://yoursite/tags/某个标签/ -->
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
 
-<div class="container tag-details">
-  <div class="content-title">
-    <h2>
-      <span>Lab</span>
-    </h2>
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Pintos Project 2</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-09-29 15:40:00
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="Categories"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/Labs/" title="Labs">
+                    <b>#</b> Labs
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/C/" title="C">
+                    #C
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/OS/" title="OS">
+                    #OS
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Lab/" title="Lab">
+                    #Lab
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>根据 <code>Pintos</code> 建议的顺序实现</p>
+<h1>参数分离</h1>
+<ol>
+<li>阅读文档中 <code>Program Startup Details</code> 了解如何把命令行参数压栈</li>
+<li>阅读 <code>string.c</code>, <code>process.h</code> 了解函数功能
+<ul>
+<li><code>strtok_r</code>: 第一次调用时, <code>s</code> 是要分离参数的字符串, 之后调用时 <code>s</code> 位置必须为空<br>
+每次返回值是字符串的下一个参数指针, 如果没有下一个参数, 返回 <code>NULL</code></li>
+</ul>
+</li>
+<li>阅读 <code>process.c</code>, <code>process.h</code> 了解函数功能
+<ul>
+<li><code>process_execute</code> 创建进程, 创建进程中的唯一线程, 线程执行 <code>start_process</code> 函数</li>
+<li><code>start_process</code> 设置中断, 调用 <code>load</code> 函数创建用户地址空间</li>
+<li><code>load</code> 函数执行完成之后, 调用 <code>setup_stack</code> 创建用户栈</li>
+</ul>
+</li>
+</ol>
+<p><code>start_process</code> 函数中 <code>load</code> 函数返回之后, 说明地址空间和栈都已经创建好, 此时要把各种参数压栈</p>
+<ol>
+<li>修改 <code>process_execute</code> 函数, 分离参数</li>
+</ol>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2023/09/25/1pintos/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-09-29 15:40:00
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="Categories"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/Labs/" title="Labs">
+                        <b>#</b> Labs
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/C/" title="C">
+                        #C
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/OS/" title="OS">
+                        #OS
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Lab/" title="Lab">
+                        #Lab
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
   </div>
-  
-    <div class="post-list">
-      <div class="post-item" title="Pintos Project 2">
-        <span class="time-m-d">2023-09-29</span>
-        <a href="/2023/09/29/2pintos/">
-          <span>Pintos Project 2</span>
-        </a>
-      </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">参数分离</span></a></li></ol>
+      
     </div>
+  </div>
+
   
-    <div class="post-list">
-      <div class="post-item" title="Pintos Project 1">
-        <span class="time-m-d">2023-09-25</span>
-        <a href="/2023/09/25/1pintos/">
-          <span>Pintos Project 1</span>
-        </a>
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
-    </div>
-  
-  <nav class="post-navigation">
     
-    <span class="page-num">1 / 1</span>
-    
-  </nav>
-</div>
+  </div>
+
 
         
 <div class="footer">
@@ -389,6 +558,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + Pintos%20Project%202 + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F09%2F29%2F2pintos%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/09/29/2pintos/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
