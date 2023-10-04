@@ -209,7 +209,7 @@
 <ol>
 <li><code>CallExample</code> 函数进行通信
 <ul>
-<li>此处因为要修改上述两个队列和两个映射, 并且只有此函数修改共享数据, 所以加锁</li>
+<li>此处因为要修改上述两个队列和两个映射, 所以加锁</li>
 <li>遍历两个映射, 检查是否超时, 如果超时就从映射中删除, 加入对应队列(注意不能在遍历的时候删)</li>
 <li>接收 <code>Worker</code> 传进来的 <code>ExampleArgs</code> 分析这个 <code>Worker</code> 之前做了什么任务
 <ul>
@@ -227,8 +227,10 @@
 </li>
 </ul>
 </li>
-<li><code>Done</code> 函数: 检查两个映射两个队列是否为空, 为空返回 <code>true</code></li>
-<li><code>MakeCoordinator</code> 函数, 初始化两个队列两个映射, 把任务塞到 <code>toBeMap</code> 和 <code>toBeReduced</code> 两个队列中</li>
+<li><code>Done</code> 函数: 检查两个映射两个队列是否为空, 为空返回 <code>true</code> <br>
+此处有读操作, 加锁</li>
+<li><code>MakeCoordinator</code> 函数, 初始化两个队列两个映射, 把任务塞到  <code>toBeMap</code> 和 <code>toBeReduced</code> 两个队列中 <br>
+此处有写操作, 加锁</li>
 </ol>
 <h1><code>RPC</code></h1>
 <p><code>ExampleArgs</code> 和 <code>ReplyArgs</code> 都存一个任务, 再存一个任务类型</p>
