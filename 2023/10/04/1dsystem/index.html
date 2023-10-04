@@ -11,7 +11,7 @@
   
   <title>
     
-      archive_a: 2023/1 
+      6.824 分布式系统 Lab1 简记 
       
       
       |
@@ -102,273 +102,271 @@
 
 
       <div class="flex-container">
-        <!-- 归档页，展示本站所有文章，按照年份降序归类，url形式：https://yoursite/archives/ -->
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
 
-<!-- last: 按年份把文章分组，当前遍历到的年份 -->
-<!-- now: 当前遍历到的文章的发布年份 -->
 
-<div class="container archives">
-  <div class="post-list">
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2023</span>
-          </h2>
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">6.824 分布式系统 Lab1 简记</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-10-04 12:15:00
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="Categories"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/Labs/" title="Labs">
+                    <b>#</b> Labs
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Lab/" title="Lab">
+                    #Lab
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Golang/" title="Golang">
+                    #Golang
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/MapReduce/" title="MapReduce">
+                    #MapReduce
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Distribute-System/" title="Distribute System">
+                    #Distribute System
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p>关于各种库函数调用的问题, 可以问 <code>gpt</code></p>
+<h1><code>Master</code></h1>
+<p><code>Master</code> 进程与 <code>Worker</code> 进程的通信</p>
+<ol>
+<li>接收 <code>Worker</code> 进程传来的任务完成的消息</li>
+<li>分配给 <code>Worker</code> 新的任务</li>
+</ol>
+<p>实现两个队列 <code>toBeMap</code>, <code>toBeReduce</code> 用来记录两种待分配的任务(使用切片)</p>
+<p>实现两个映射 <code>beingMapped</code>, <code>beingReduced</code> 用来记录哪些任务正在进行, 并记录各个任务被分配的起始时间</p>
+<p>任务的记录: 实现结构体 <code>Task</code> 记录任务编号, 任务名(文件名或 <code>Reduce</code> 编号) \</p>
+<ol>
+<li><code>CallExample</code> 函数进行通信
+<ul>
+<li>此处因为要修改上述两个队列和两个映射, 并且只有此函数修改共享数据, 所以加锁</li>
+<li>遍历两个映射, 检查是否超时, 如果超时就从映射中删除, 加入对应队列(注意不能在遍历的时候删)</li>
+<li>接收 <code>Worker</code> 传进来的 <code>ExampleArgs</code> 分析这个 <code>Worker</code> 之前做了什么任务
+<ul>
+<li>如果之前做了任务, 就要把这个任务从对应映射中删除, 表示做完了</li>
+</ul>
+</li>
+<li>开始分配任务, 具体分配方法是把任务存到 <code>ExampleReply</code> 中
+<ul>
+<li>检查 <code>toBeMap</code> 队列, 如果不为空就分配, 任务类型为 <code>1</code></li>
+<li>检查 <code>beingMapped</code> 映射, 如果不为空就让 <code>Worker</code> 等待, 任务类型为 <code>0</code></li>
+<li>检查 <code>toBeReduced</code> 队列, 如果不为空就分配, 任务类型为 <code>2</code></li>
+<li>检查 <code>beingReduced</code> 映射, 如果不为空就让 <code>Worker</code> 等待, 任务类型为 <code>0</code></li>
+<li>最后如果上述两个队列两个映射都空, 那么任务结束, 让 <code>Worker</code> 终止, 任务类型为 <code>-1</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>Done</code> 函数: 检查两个映射两个队列是否为空, 为空返回 <code>true</code></li>
+<li><code>MakeCoordinator</code> 函数, 初始化两个队列两个映射, 把任务塞到 <code>toBeMap</code> 和 <code>toBeReduced</code> 两个队列中</li>
+</ol>
+<h1><code>RPC</code></h1>
+<p><code>ExampleArgs</code> 和 <code>ReplyArgs</code> 都存一个任务, 再存一个任务类型</p>
+<h1><code>Worker</code></h1>
+<ol>
+<li><code>CallExample</code> 函数
+<ul>
+<li>首先初始化 <code>args</code> 上次执行的任务类型为 -1,  <code>reply</code> 初始化为空</li>
+<li>写一个死循环, 循环开头调用 <code>call</code>, 获得新的 <code>reply</code></li>
+<li>调用成功之后, 用 <code>reply</code> 更新 <code>args</code> 从而表明该 <code>Worker</code> 上次完成的任务</li>
+<li>接下来根据任务类型执行函数
+<ul>
+<li>如果任务类型为 0, 更新 <code>args</code> 为初始状态, 任务类型 <code>-1</code>, 等待一秒</li>
+<li>如果任务类型为 1, 调用 <code>mapProcess</code> 函数</li>
+<li>如果任务类型为 2, 调用 <code>reduceProcess</code> 函数</li>
+<li>如果任务类型为 -1, <code>break</code> 出死循环</li>
+</ul>
+</li>
+<li>最后记得把 <code>reply</code> 更新为初始状态, 准备下一次 <code>call</code></li>
+</ul>
+</li>
+<li><code>Worker</code> 函数: 调用 <code>CallExample</code> 即可</li>
+<li><code>mapProcess</code> 函数
+<ul>
+<li>读取目标文件, 调用 <code>mapf</code> 把文件内容拆成键值对</li>
+<li>根据 <code>map</code> 的任务编号, 创建 <code>nReduce</code> 个临时文件, 名字为 <code>tmpfile-X-Y</code></li>
+<li>遍历键值对, 解析为 <code>json</code>, 写入对应的 <code>ihash(key) % nReduce</code> 临时文件中</li>
+<li>最后改名 <code>mr-tmp-X-Y</code>, 关闭所有文件</li>
+</ul>
+</li>
+<li><code>reduceProcess</code> 函数
+<ul>
+<li>寻找 <code>map-tmp-X-Y</code> (<code>Y</code> 为 <code>reduce</code> 任务编号) 的所有文件</li>
+<li>打开所有文件, 把所有键值对从 <code>json</code> 格式解析出来</li>
+<li>抄 <code>mrsequencial.go</code> 文件的排序方式</li>
+<li>创建文件 <code>mr-out-Y</code></li>
+<li>抄 <code>mrsequencial.go</code> 中的键值对处理方式</li>
+</ul>
+</li>
+</ol>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2023/10/02/golang/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-10-04 12:15:00
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="Categories"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/Labs/" title="Labs">
+                        <b>#</b> Labs
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Lab/" title="Lab">
+                        #Lab
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Golang/" title="Golang">
+                        #Golang
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/MapReduce/" title="MapReduce">
+                        #MapReduce
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Distribute-System/" title="Distribute System">
+                        #Distribute System
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
       
-      <div class="post-item" title="6.824 分布式系统 Lab1 简记">
-        <div class="time-m-d">10-04</div>
-        <div class="title">
-          <a href="/2023/10/04/1dsystem/">
-            <span>6.824 分布式系统 Lab1 简记</span>
-          </a>
-        </div>
-      </div>
+    </div>
     
-      <div class="post-item" title="Golang 学习笔记">
-        <div class="time-m-d">10-02</div>
-        <div class="title">
-          <a href="/2023/10/02/golang/">
-            <span>Golang 学习笔记</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Pintos Project 2">
-        <div class="time-m-d">09-29</div>
-        <div class="title">
-          <a href="/2023/09/29/2pintos/">
-            <span>Pintos Project 2</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Pintos Project 1">
-        <div class="time-m-d">09-25</div>
-        <div class="title">
-          <a href="/2023/09/25/1pintos/">
-            <span>Pintos Project 1</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="计算机网络">
-        <div class="time-m-d">09-16</div>
-        <div class="title">
-          <a href="/2023/09/16/internet/">
-            <span>计算机网络</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="操作系统">
-        <div class="time-m-d">09-10</div>
-        <div class="title">
-          <a href="/2023/09/10/os/">
-            <span>操作系统</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP Labs 小结">
-        <div class="time-m-d">09-04</div>
-        <div class="title">
-          <a href="/2023/09/04/csapplabs/">
-            <span>CSAPP Labs 小结</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第八章)">
-        <div class="time-m-d">09-01</div>
-        <div class="title">
-          <a href="/2023/09/01/8csapp/">
-            <span>CSAPP 学习笔记 (第八章)</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第七章)">
-        <div class="time-m-d">08-29</div>
-        <div class="title">
-          <a href="/2023/08/29/7csapp/">
-            <span>CSAPP 学习笔记 (第七章)</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第五章)">
-        <div class="time-m-d">08-29</div>
-        <div class="title">
-          <a href="/2023/08/29/5csapp/">
-            <span>CSAPP 学习笔记 (第五章)</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第九章)">
-        <div class="time-m-d">08-26</div>
-        <div class="title">
-          <a href="/2023/08/26/9csapp/">
-            <span>CSAPP 学习笔记 (第九章)</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第六章)">
-        <div class="time-m-d">08-24</div>
-        <div class="title">
-          <a href="/2023/08/24/6csapp/">
-            <span>CSAPP 学习笔记 (第六章)</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第四章) (暂跳过流水线实现)">
-        <div class="time-m-d">08-21</div>
-        <div class="title">
-          <a href="/2023/08/21/4csapp/">
-            <span>CSAPP 学习笔记 (第四章) (暂跳过流水线实现)</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="GDB 学习笔记">
-        <div class="time-m-d">08-15</div>
-        <div class="title">
-          <a href="/2023/08/15/gdb/">
-            <span>GDB 学习笔记</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第三章)">
-        <div class="time-m-d">08-04</div>
-        <div class="title">
-          <a href="/2023/08/04/3csapp/">
-            <span>CSAPP 学习笔记 (第三章)</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第二章)">
-        <div class="time-m-d">08-01</div>
-        <div class="title">
-          <a href="/2023/08/01/2csapp/">
-            <span>CSAPP 学习笔记 (第二章)</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第一章)">
-        <div class="time-m-d">07-26</div>
-        <div class="title">
-          <a href="/2023/07/26/1csapp/">
-            <span>CSAPP 学习笔记 (第一章)</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="SICP 学习笔记 (第一章)">
-        <div class="time-m-d">07-02</div>
-        <div class="title">
-          <a href="/2023/07/02/1sicp/">
-            <span>SICP 学习笔记 (第一章)</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="SICP 学习笔记 (第二章)">
-        <div class="time-m-d">07-02</div>
-        <div class="title">
-          <a href="/2023/07/02/2sicp/">
-            <span>SICP 学习笔记 (第二章)</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="SICP 学习笔记 (第三章)">
-        <div class="time-m-d">07-02</div>
-        <div class="title">
-          <a href="/2023/07/02/3sicp/">
-            <span>SICP 学习笔记 (第三章)</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Scheme 学习笔记">
-        <div class="time-m-d">07-01</div>
-        <div class="title">
-          <a href="/2023/07/01/scheme/">
-            <span>Scheme 学习笔记</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="NewComputerConfig">
-        <div class="time-m-d">06-04</div>
-        <div class="title">
-          <a href="/2023/06/04/NewComputerConfig/">
-            <span>NewComputerConfig</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="编程入门:CS61A (Fall2022)">
-        <div class="time-m-d">05-08</div>
-        <div class="title">
-          <a href="/2023/05/08/CS61A/">
-            <span>编程入门:CS61A (Fall2022)</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Vim 学习笔记">
-        <div class="time-m-d">01-11</div>
-        <div class="title">
-          <a href="/2023/01/11/Learnvim/">
-            <span>Vim 学习笔记</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="Learn Git & GitHub">
-        <div class="time-m-d">01-07</div>
-        <div class="title">
-          <a href="/2023/01/07/LearnGitGithub/">
-            <span>Learn Git & GitHub</span>
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="UseFul Websites">
-        <div class="time-m-d">01-01</div>
-        <div class="title">
-          <a href="/2023/01/01/UseFullWebsites/">
-            <span>UseFul Websites</span>
-          </a>
-        </div>
-      </div>
-    
-        <!-- 后续文章的发布年份呈现 -->
-        <div class="content-title">
-          <h2>
-            <span>2022</span>
-          </h2>
-        </div>
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
       
-      <div class="post-item" title="Hello World">
-        <div class="time-m-d">10-25</div>
-        <div class="title">
-          <a href="/2022/10/25/hello-world/">
-            <span>Hello World</span>
-          </a>
-        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Master</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">RPC</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Worker</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
   </div>
-</div>
+
 
         
 <div class="footer">
@@ -623,6 +621,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + 6.824%20%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%20Lab1%20%E7%AE%80%E8%AE%B0 + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F10%2F04%2F1dsystem%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/10/04/1dsystem/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
