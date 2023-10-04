@@ -10,9 +10,47 @@ categories:
 - Labs
 ---
 
-# Part I: Alarm Clock
 
-## 源码分析
+# 源码分析
+
+**`Pintos` 中链表的实现**
+
+```c
+/* List element. */
+struct list_elem 
+{
+    struct list_elem *prev;     /* Previous list element. */
+    struct list_elem *next;     /* Next list element. */
+};
+
+/* List. */
+struct list 
+{
+    struct list_elem head;      /* List head. */
+    struct list_elem tail;      /* List tail. */
+};
+
+#define list_entry(LIST_ELEM, STRUCT, MEMBER)           \
+        ((STRUCT *) ((uint8_t *) &(LIST_ELEM)->next     \
+                     - offsetof (STRUCT, MEMBER.next)))
+```
+
+注意到并没有保存具体的数据, 因为 `C` 中没有模板 \
+所以 `Pintos` 使用了一种很难懂的 `list_entry` 的宏定义
+
+以 `C++` 的模板类重写:
+
+```cpp
+template <class T> 
+T* list_entry(struct list_elem*, struct T, list_elem_name);
+```
+
+由于 `C` 中没有面向对象 \
+所以对于每一个链表都需要结构体中有一个对应的 `list_elem`
+
+在 `struct thread` 中:
+1. `allelem` 对应链表 `all_list`
+2. `elem` 对应链表 `ready_list`, 和 `sych.c` 中共用 `elem`
 
 **开关中断来保证操作的原子性**
 
@@ -65,7 +103,54 @@ int64_t timer_ticks (void)
 
 实际的运行结果就是 在时间到达 `ticks` 的情况下, 该进程处在就绪状态即可
 
-## 实现思路
+
+**`Pintos` 朴素的调度算法**
+
+通过 `schedule` 函数可以看到, `Pintos` 把 CPU 交给 `ready_list` 中第一个进程
+
+
+**信号量的实现**
+
+同步问题的核心是信号量 `semaphore`
+
+```c
+struct semaphore 
+  {
+    unsigned value;             /**< Current value. */
+    struct list waiters;        /**< List of waiting threads. */
+  };
+
+void sema_init (struct semaphore *, unsigned value);
+void sema_down (struct semaphore *);
+void sema_up (struct semaphore *);
+```
+1. `sema_init` 函数设置信号量值, 初始化等待进程的链表
+2. `sema_down` 如果当前的信号量为0, 则原子性地把当前进程放到等待链表里
+3. `sema_up` 使当前等待链表中的第一个进程变成就绪态, 由于之前的 `sema_down`函数中
+   使用 `while` 来判断信号量是否为 0, 所以如果条件不满足, 进程仍然会被重新放到等待链表中
+
+**监视器的实现**
+
+```c
+struct condition 
+  {
+    struct list waiters;        /**< List of waiting threads. */
+  };
+
+void cond_init (struct condition *);
+void cond_wait (struct condition *, struct lock *);
+void cond_signal (struct condition *, struct lock *);
+void cond_broadcast (struct condition *, struct lock *);
+```
+1. `cond_init` 初始化等待链表(存放信号量结构体)
+2. `cond_wait` 先初始化信号量, 放入等待链表, 释放锁, 等待 `cond_signal`
+3. `cond_signal` 增加信号量, 唤醒等待中的 `cond_wait` 
+4. `cond_broadcast` 增加等待队列中的全部信号量
+
+
+# 实现思路
+
+## Part I: Alarm Clock
 
 在执行 `timer_sleep` 的时候, 把当前进程阻塞 \
 `wait_list` 链表记录所有等待中的进程 \
@@ -160,60 +245,9 @@ void thread_disable_wait()
 }
 ```
 
-# Part II: Priority Scheduling
+## Part II: Priority Scheduling
 
-## 实现优先级队列
-
-### 源码分析
-
-**`Pintos` 中链表的实现**
-
-```c
-/* List element. */
-struct list_elem 
-{
-    struct list_elem *prev;     /* Previous list element. */
-    struct list_elem *next;     /* Next list element. */
-};
-
-/* List. */
-struct list 
-{
-    struct list_elem head;      /* List head. */
-    struct list_elem tail;      /* List tail. */
-};
-
-#define list_entry(LIST_ELEM, STRUCT, MEMBER)           \
-        ((STRUCT *) ((uint8_t *) &(LIST_ELEM)->next     \
-                     - offsetof (STRUCT, MEMBER.next)))
-```
-
-注意到并没有保存具体的数据, 因为 `C` 中没有模板 \
-所以 `Pintos` 使用了一种很难懂的 `list_entry` 的宏定义
-
-以 `C++` 的模板类重写:
-
-```cpp
-template <class T> 
-T* list_entry(struct list_elem*, struct T, list_elem_name);
-```
-
-由于 `C` 中没有面向对象 \
-所以对于每一个链表都需要结构体中有一个对应的 `list_elem`
-
-在 `struct thread` 中:
-1. `allelem` 对应链表 `all_list`
-2. `elem` 对应链表 `ready_list`, 和 `sych.c` 中共用 `elem`
-
-使用 `list_insert_ordered` 函数实现 新进程 根据优先级插入 `ready_list`
-
-**`Pintos` 朴素的调度算法**
-
-通过 `schedule` 函数可以看到, `Pintos` 把 CPU 交给 `ready_list` 中第一个进程
-
-
-### 实现思路
-
+### 实现优先级队列
 
 **测试点 `alarm-priority`**
 
@@ -258,7 +292,7 @@ next_thread_to_run (void)
 > 方法3 简便, 但是在之后的大数据测试点中会性能差一点点从而无法通过, 此处使用方法 2
 > 在之后的 `sema`, `cond` 和 `lock` 都使用方法 3
 
-## 优先级改变及抢占式调度
+### 优先级改变及抢占式调度
 
 
 **测试点 `priority_change`, `priority_preempt`, `priority_fifo`**
@@ -291,49 +325,7 @@ thread_set_priority (int new_priority)
 }
 ```
 
-## 进程同步
-
-### 源码分析
-
-**信号量的实现**
-
-同步问题的核心是信号量 `semaphore`
-
-```c
-struct semaphore 
-  {
-    unsigned value;             /**< Current value. */
-    struct list waiters;        /**< List of waiting threads. */
-  };
-
-void sema_init (struct semaphore *, unsigned value);
-void sema_down (struct semaphore *);
-void sema_up (struct semaphore *);
-```
-1. `sema_init` 函数设置信号量值, 初始化等待进程的链表
-2. `sema_down` 如果当前的信号量为0, 则原子性地把当前进程放到等待链表里
-3. `sema_up` 使当前等待链表中的第一个进程变成就绪态, 由于之前的 `sema_down`函数中
-   使用 `while` 来判断信号量是否为 0, 所以如果条件不满足, 进程仍然会被重新放到等待链表中
-
-**监视器的实现**
-
-```c
-struct condition 
-  {
-    struct list waiters;        /**< List of waiting threads. */
-  };
-
-void cond_init (struct condition *);
-void cond_wait (struct condition *, struct lock *);
-void cond_signal (struct condition *, struct lock *);
-void cond_broadcast (struct condition *, struct lock *);
-```
-1. `cond_init` 初始化等待链表(存放信号量结构体)
-2. `cond_wait` 先初始化信号量, 放入等待链表, 释放锁, 等待 `cond_signal`
-3. `cond_signal` 增加信号量, 唤醒等待中的 `cond_wait` 
-4. `cond_broadcast` 增加等待队列中的全部信号量
-
-### 实现思路
+### 进程同步
 
 **测试点 `priority_sema`**
 
@@ -398,7 +390,7 @@ cond_signal (struct condition *cond, struct lock *lock UNUSED)
 }
 ```
 
-## 优先级捐赠
+### 优先级捐赠
 
 **分析测试用例**
 
@@ -603,7 +595,7 @@ thread_set_priority (int new_priority)
 }
 ```
 
-# Part III: 多级反馈队列
+## Part III: 多级反馈队列
 
 **浮点数精度问题**
 
@@ -743,7 +735,10 @@ timer_interrupt(struct intr_frame *args UNUSED)
   {
     thread_mlfqs_increase_recent_cpu_by_one ();
     if (ticks % TIMER_FREQ == 0)
-      thread_mlfqs_update_load_avg_and_recent_cpu ();
+    {
+      thread_mlfqs_update_load_avg();
+      thread_mlfqs_update_recent_cpu();
+    }
     else if (ticks % 4 == 0)
       thread_mlfqs_update_priority (thread_current ());
   }
@@ -801,5 +796,5 @@ void thread_mlfqs_update_recent_cpu(void)
 }
 ```
 
-`All 27 tests passed.`
+至此, 所有的测试点都已通过
 
