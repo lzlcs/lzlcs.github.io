@@ -11,7 +11,7 @@
   
   <title>
     
-      Tag 
+      6.824 分布式系统 MapReduce 
       
       
       |
@@ -138,19 +138,221 @@
 
 
   
-  <!-- 分类页 url形式：https://yoursite/categories/ -->
-  <div class="container category-index">
-    <div>
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Book/">Book</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Labs/">Labs</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Papers/">Papers</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Base/">Base</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Course/">Course</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo/">Hexo</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Language/">Language</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Languages/">Languages</a><span class="category-list-count">1</span></li></ul>
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">6.824 分布式系统 MapReduce</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-10-03 18:15:00
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="Categories"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/Papers/" title="Papers">
+                    <b>#</b> Papers
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/MapReduce/" title="MapReduce">
+                    #MapReduce
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Distribute-System/" title="Distribute System">
+                    #Distribute System
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1>总览</h1>
+<p><code>MapReduce</code> 是一个编程模型, 也是一个处理和生成超大数据集的算法模型的相关实现</p>
+<p>用户需要做的事情:</p>
+<ol>
+<li>用户指定 <code>Map</code> 函数处理一个键值对的集合, 输出基于键值对的中间数据</li>
+<li>用户指定 <code>Reduce</code> 函数把中间数据中具有相同 <code>Key</code> 的 <code>Value</code> 值整合起来</li>
+</ol>
+<p><code>MapReduce</code> 需要做的事情: 封装并行计算, 容错, 负载均衡, 数据分布的复杂细节</p>
+<h1>实现</h1>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.19pjp3hosgu8.png" alt="image"></p>
+<ol>
+<li>用户程序在主机群中 <code>fork</code> 出一个 <code>Master</code> 程序, 以及多个 <code>Worker</code> 程序<br>
+把原始数据划分成 <code>M</code> 个数据片段, 决定 <code>R</code> 个不同分区用来存储中间数据</li>
+<li><code>Master</code> 分配任务, <code>M</code> 个 <code>Map</code> 任务和 <code>N</code> 个 <code>Reduce</code> 任务</li>
+<li>被分配了 <code>Map</code> 任务的 <code>Worker</code> 程序读入相应的数据片段, 调用 <code>Map</code> 函数解析为键值对</li>
+<li>按照用户提供的分区函数 (比如 <code>hash(key) % R</code>) 把键值对放到对应的分区中 <br><br>
+把存储位置传回 <code>Master</code>, 让 <code>Master</code> 过后传递给 <code>Reduce</code> 任务的 <code>Worker</code> 中</li>
+<li>被分配了 <code>Reduce</code> 任务的 <code>Worker</code> 程序使用 <code>RPC</code> 从之前执行 <code>Map</code> 任务的 <code>Worker</code> 主机中 <br><br>
+对应分区读取数据并排序(可能用到外部排序)</li>
+<li>遍历键值对, 对于相同 <code>Key</code> 的键值对, 调用 <code>Reduce</code> 函数合并数据, 输出到对应分区的输出文件中</li>
+<li>所有任务完成之后, <code>Master</code> 唤醒用户程序, 调用结束</li>
+</ol>
+<p>在最后, 用户可能会把所有 <code>R</code> 个输出文件合并</p>
+<h1>数据结构</h1>
+<p><code>Master</code></p>
+<ol>
+<li>存储每个任务的状态(待完成, 完成中, 已完成)</li>
+<li>对于每个已完成的 <code>Map</code> 任务, 存储 <code>R</code> 个中间文件的大小和位置</li>
+</ol>
+<h1>容错</h1>
+<p><strong><code>Worker</code>错误</strong></p>
+<ol>
+<li><code>Master</code> 周期性地 <code>ping</code> 每个 <code>Worker</code> <br><br>
+如果在规定的时间内没有收到返回信息, <code>Master</code> 标记失效的 <code>Worker</code> <br><br>
+这个 <code>Worker</code> 的任务被重新设置为空闲状态
+<ul>
+<li>对于该 <code>Worker</code> 已完成的 <code>Map</code> 任务, 需要全部重新完成, 因为 <code>Map</code> 任务的结果存储在这台主机中.<br>
+并且重新执行的动作会被通知给所有的执行 <code>Reduce</code> 任务的 <code>Worker</code>, 从新主机中读取数据</li>
+<li>对于该 <code>Worker</code> 已完成的 <code>Reduce</code> 任务输出存储在全局文件系统上, 所以不需要重新执行</li>
+</ul>
+</li>
+</ol>
+<p><strong><code>Master</code>错误</strong></p>
+<p>一般有两种办法</p>
+<ol>
+<li>每隔一段时间把之前 <code>Master</code> 存储的所有东西写入硬盘作为一个检查点, 故障时从最近一个检查点恢复</li>
+<li>重新执行所有任务</li>
+</ol>
+<p><strong>故障时语义</strong></p>
+<p>当用户定义的 <code>Map</code> 和 <code>Reduce</code> 函数是输入确定性函数(相同输入产生相同输出)时, 那么不会产生语义问题</p>
+<ol>
+<li>每个 <code>Map</code> 任务创建 <code>R</code> 个临时文件, 完成时把这 <code>R</code> 个临时文件的信息传给 <code>Master</code> <br><br>
+如果 <code>Master</code> 发现这个任务之前被别的 <code>Worker</code> 完成了, 那么他忽略这条消息, 否则就记录在数据结构里</li>
+<li>每个 <code>Reduce</code> 任务创建一个临时文件(存放在全局文件系统中), 完成时把它重命名(原子的) <br><br>
+如果多个机器都在执行一个 <code>Reduce</code> 任务, 他们的重命名请求只在第一次的时候生效</li>
+</ol>
+<p>对于非输入确定性的函数 <code>MapReduce</code> 只有较弱的失效处理</p>
+<h1>存储位置</h1>
+<p><code>Master</code> 调度 <code>Map</code> 任务的时候会知道输入文件的位置, 所以尽量在输入文件存储的机器或者附近的机器执行<br>
+这样可以减少网络带宽的消耗从而提高整体的效率</p>
+<h1>任务粒度</h1>
+<p><code>Master</code> 执行 $O(M+R)$ 次调度, 内存存储 $O(M \times R)$ 个状态 <br><br>
+选择合适的 <code>M</code> 值从而让输入文件被分成 16M ~ 64M 的块被处理(配合存储系统) <br><br>
+选择合适的 <code>R</code> 值, 一般是想使用的 <code>Worker</code> 机器的倍数</p>
+<h1>任务备份</h1>
+<p>落伍者指的是对于一台主机, 可能有其他的故障或者任务让它执行 <code>Map</code> 或 <code>Reduce</code> 任务的效率极低, 这会拖延整个任务完成的时间</p>
+<p>针对可能出现落伍者的问题, <code>Master</code> 在所有的任务快执行完的时候, 调度备用的 <code>Worker</code> 来处理剩下来的任务 <br><br>
+这种策略比正常操作多几个百分点的计算资源, 却能显著减少超大 <code>MapReduce</code> 任务的运行时间</p>
+<h1>拓展功能</h1>
+<ol>
+<li>分区函数: 用户指定特殊的分区函数来满足特殊要求, 比如把来自同一个主机的 URLs 放在同一个输出文件中</li>
+<li>有序输出: 在给定的分区中按照 <code>Key</code> 值增量排序处理数据</li>
+<li>合并函数: 用户指定合并函数, <code>Map</code> 结束之后先合并一次再传递给 <code>Reduce</code> 任务, 可以显著提高一些 <code>MapReduce</code> 操作的效率</li>
+<li>输入输出: 用户可以指定输入输出格式</li>
+<li>跳过故障记录: 如果每次执行一个任务的时候都会出现错误, 在到达一定次数的时候就会忽略这次任务</li>
+<li>本地运行: 提供本地化运行的 <code>MapReduce</code>, 方便调试</li>
+<li>使用 HTTP 显示状态信息, 使用计数器统计不同事件发生次数</li>
+</ol>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2023/10/02/golang/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-10-03 18:15:00
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="Categories"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/Papers/" title="Papers">
+                        <b>#</b> Papers
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/MapReduce/" title="MapReduce">
+                        #MapReduce
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Distribute-System/" title="Distribute System">
+                        #Distribute System
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2023/10/04/1dsystem/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">总览</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">实现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">数据结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">容错</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">存储位置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">任务粒度</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">任务备份</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">拓展功能</span></a></li></ol>
+      
     </div>
   </div>
-  
 
   
+<script src="/js/catalog.js"></script>
 
-  
 
-  
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
 
         
 <div class="footer">
@@ -412,12 +614,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + tags + '&url=' + http%3A%2F%2Fexample.com%2Fcategories%2Findex.html + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + 6.824%20%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%20MapReduce + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F10%2F03%2Fmapreduce%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/categories/index.html" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/10/03/mapreduce/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
