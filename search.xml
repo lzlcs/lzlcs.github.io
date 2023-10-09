@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>6.824 分布式系统 Raft 共识算法</title>
+      <link href="/2023/10/07/raft/"/>
+      <url>/2023/10/07/raft/</url>
+      
+        <content type="html"><![CDATA[<h1>复制状态机</h1><p>复制状态机通常使用日志复制来解决分布式系统中容错问题</p><p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.5hxgfzm5f0g.png" alt="image"></p><p>共识算法的主要工作是保持日志复制的一致性, 每台服务器上的共识模块接收来自<br>客户端的命令, 并将其添加到日志中</p><p>共识算法的特征</p><ol><li>确保所有非拜占庭错误的安全性, 从不返回一个错误的结果 (即使是网络延时, 分区, 数据包丢失)</li><li>只要过半服务器是可运行的, 并且可以和客户端通信, 那么共识算法就可用 <br><br>服务器崩溃之后, 他们可能会已经存储的状态来进行恢复, 重新加入集群</li><li>它们在保证日志一致性上不依赖于时序</li><li>过半的服务器响应了单轮 RPC 命令就可视为完成</li></ol><blockquote><p>拜占庭错误: 伪造信息恶意响应的错误<br>非拜占庭错误: <code>fail-stop</code> 不响应, 但不会伪造信息</p></blockquote><h1><code>Paxos</code> 存在的问题</h1><ol><li>难以理解</li><li>难以实现</li></ol><blockquote><p>几乎所有一开始想实现 <code>Paxos</code> 的系统在实现的过程中为了解决一些难题然后慢慢修改成跟 <code>Paxos</code> 完全不一样的架构</p></blockquote><h1>为可理解性设计</h1><ol><li>问题分解: <code>leader</code> 选举, 日志复制, 安全性, 成员变更</li><li>减少状态的数量来简化状态空间: 比如使用随机化算法</li></ol><h1><code>Raft</code> 共识算法</h1><p><code>Raft</code> 是用来管理 复制日志 的算法</p><p><code>Raft</code> 首先选举一个 <code>leader</code> , 由该 <code>leader</code> 全权负责复制日志的一致性 <br><br><code>leader</code> 从客户端接收日志条目, 然后复制给其他服务器 <br><br>当 <code>leader</code> 失联的时候, <code>Raft</code> 就选择一个新的 <code>leader</code></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Papers </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Distribute System </tag>
+            
+            <tag> Raft </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>6.824 分布式系统 Fault-Tolerant Virtual Machines</title>
       <link href="/2023/10/05/ftvm/"/>
       <url>/2023/10/05/ftvm/</url>
@@ -50,33 +77,6 @@
             <tag> Distribute System </tag>
             
             <tag> The Google File System </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>6.824 分布式系统 Raft 共识算法</title>
-      <link href="/2023/10/05/raft/"/>
-      <url>/2023/10/05/raft/</url>
-      
-        <content type="html"><![CDATA[<h1>复制状态机</h1><p>复制状态机通常使用日志复制来解决分布式系统中容错问题</p><p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.5hxgfzm5f0g.png" alt="image"></p><p>共识算法的主要工作是保持日志复制的一致性, 每台服务器上的共识模块接收来自<br>客户端的命令, 并将其添加到日志中</p><p>共识算法的特征</p><ol><li>确保所有非拜占庭错误的安全性, 从不返回一个错误的结果 (即使是网络延时, 分区, 数据包丢失)</li><li>只要过半服务器是可运行的, 并且可以和客户端通信, 那么共识算法就可用 <br><br>服务器崩溃之后, 他们可能会已经存储的状态来进行恢复, 重新加入集群</li><li>它们在保证日志一致性上不依赖于时序</li><li>过半的服务器响应了单轮 RPC 命令就可视为完成</li></ol><blockquote><p>拜占庭错误: 伪造信息恶意响应的错误<br>非拜占庭错误: <code>fail-stop</code> 不响应, 但不会伪造信息</p></blockquote><h1><code>Paxos</code> 存在的问题</h1><ol><li>难以理解</li><li>难以实现</li></ol><blockquote><p>几乎所有一开始想实现 <code>Paxos</code> 的系统在实现的过程中为了解决一些难题然后慢慢修改成跟 <code>Paxos</code> 完全不一样的架构</p></blockquote><h1>为可理解性设计</h1><ol><li>问题分解: <code>leader</code> 选举, 日志复制, 安全性, 成员变更</li><li>减少状态的数量来简化状态空间: 比如使用随机化算法</li></ol><h1><code>Raft</code> 共识算法</h1><p><code>Raft</code> 是用来管理 复制日志 的算法</p><p><code>Raft</code> 首先选举一个 <code>leader</code> , 由该 <code>leader</code> 全权负责复制日志的一致性 <br><br><code>leader</code> 从客户端接收日志条目, 然后复制给其他服务器 <br><br>当 <code>leader</code> 失联的时候, <code>Raft</code> 就选择一个新的 <code>leader</code></p>]]></content>
-      
-      
-      <categories>
-          
-          <category> Papers </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Distribute System </tag>
-            
-            <tag> Raft </tag>
             
         </tags>
       
