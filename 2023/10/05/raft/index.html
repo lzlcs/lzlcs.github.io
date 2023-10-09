@@ -11,7 +11,7 @@
   
   <title>
     
-      6.824 分布式系统 Fault-Tolerant Virtual Machines 
+      6.824 分布式系统 Raft 共识算法 
       
       
       |
@@ -147,7 +147,7 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">6.824 分布式系统 Fault-Tolerant Virtual Machines</div>
+      <div class="post-title">6.824 分布式系统 Raft 共识算法</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
@@ -175,8 +175,8 @@
                 </span>
                 
                 <span class="span--tag mr-8">
-                  <a href="/tags/Fault-Tolerant-Virtual-Machines/" title="Fault-Tolerant Virtual Machines">
-                    #Fault-Tolerant Virtual Machines
+                  <a href="/tags/Raft/" title="Raft">
+                    #Raft
                   </a>
                 </span>
                 
@@ -184,123 +184,213 @@
           
       </div>
       <div class="markdown-body">
-        <h1>介绍</h1>
-<p>实现容错的方法</p>
+        <h1>复制状态机</h1>
+<p>复制状态机通常使用日志复制来解决分布式系统中容错问题</p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.5hxgfzm5f0g.png" alt="image"></p>
+<p>共识算法的主要工作是保持日志复制的一致性, 每台服务器上的共识模块接收来自<br>
+客户端的命令, 并将其添加到日志中</p>
+<p>共识算法的特征</p>
 <ol>
-<li>主从备份: 主服务器的所有状态都发送给备份, 这样非常消耗带宽</li>
-<li>状态机方法: 将服务器建模为确定性状态机, 通过按照相同初始化状态启动和以相同顺序接收相同的输入来保持同步 <br><br>
-但是大多数的服务器都有不确定的操作(比如读取时钟时间), 所以还需要一些额外的协作来保证同步, 这在物理机上非常困难</li>
+<li>确保所有非拜占庭错误的安全性, 从不返回一个错误的结果 (即使是网络延时, 分区, 数据包丢失)</li>
+<li>只要过半服务器是可运行的, 并且可以和客户端通信, 那么共识算法就可用 <br><br>
+服务器崩溃之后, 他们可能会已经存储的状态来进行恢复, 重新加入集群</li>
+<li>它们在保证日志一致性上不依赖于时序</li>
+<li>过半的服务器响应了单轮 RPC 命令就可视为完成</li>
 </ol>
-<p>运行在管理程序上的 VM 是实现额外协作的很好方法 <br><br>
-管理程序有 VM 的全权控制权, 所以它能知道 VM 上所有不确定的操作</p>
-<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.1bfvhtezl400.png" alt="image"></p>
-<h1>基本的 FT 设计</h1>
-<p>VMs 的虚拟磁盘是在共享存储中的, 可以接收主备服务器的输入输出</p>
-<p>只有主 VM 会说明它在网络中的存在, 所有的网络输入和其他设备输入都会来到主 VM 上 <br><br>
-所有主 VM 收到的输入都会通过名为 <code>logging channel</code> 的网络连接 <br><br>
-为了处理不确定操作的额外协作也会被发到备份 VM 中, 备份 VM 与主 VM 使用相同的方式执行非确定性操作 <br><br>
-备份 VM 的输出会被忽略, 之后主 VM 的输入会被返回到客户端</p>
-<p>通过相关服务器的心跳机制和监测 <code>logging channel</code> 的流量从而检测主备服务器是否失效</p>
-<h2 id="确定性重放实现">确定性重放实现</h2>
-<p>三个挑战</p>
+<blockquote>
+<p>拜占庭错误: 伪造信息恶意响应的错误<br>
+非拜占庭错误: <code>fail-stop</code> 不响应, 但不会伪造信息</p>
+</blockquote>
+<h1><code>Paxos</code> 存在的问题</h1>
 <ol>
-<li>正确得到所有输入和非确定性执行的操作</li>
-<li>正确地让输入和非确定性操作在备份 VM 上执行</li>
-<li>不引起性能退化</li>
+<li>难以理解</li>
+<li>难以实现</li>
 </ol>
-<p>非确定性操作</p>
+<blockquote>
+<p>几乎所有一开始想实现 <code>Paxos</code> 的系统在实现的过程中为了解决一些难题然后慢慢修改成跟 <code>Paxos</code> 完全不一样的架构</p>
+</blockquote>
+<h1>为可理解性设计</h1>
 <ol>
-<li>来自客户端的输入</li>
-<li>非确定性指令: 随机数, 获取时间</li>
-<li>多核并行引发的指令交错执行(本论文未解决这个问题)</li>
+<li>问题分解: <code>leader</code> 选举, 日志复制, 安全性, 成员变更</li>
+<li>减少状态的数量来简化状态空间: 比如使用随机化算法</li>
 </ol>
-<h2 id="FT-协议">FT 协议</h2>
-<p>输出要求: 备份 VM 接管主 VM 之后, 备份 VM 将继续以一种与主 VM 所有的输出相同</p>
-<p>特殊情况: 主 VM 在输出之后立即故障, 备份 VM 未执行到相同输出指令就被中断 <br><br>
-输出规则: 主 VM 延后输出(不会停止处理指令), 直到 备份VM 已经接收并确认产生了与输出相关的日志</p>
-<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.3m589bq0dja0.webp" alt="image"></p>
-<p>故障情况</p>
+<h1><code>Raft</code> 共识算法</h1>
+<p><code>Raft</code> 是用来管理 复制日志 的算法</p>
+<p><code>Raft</code> 首先选举一个 <code>leader</code> , 由该 <code>leader</code> 全权负责复制日志的一致性 <br><br>
+<code>leader</code> 从客户端接收日志条目, 然后复制给其他服务器 <br><br>
+当 <code>leader</code> 失联的时候, <code>Raft</code> 就选择一个新的 <code>leader</code></p>
+<h2 id="Raft-基础"><code>Raft</code> 基础</h2>
+<p>集群中的每一个节点都只能是以下三种身份之一</p>
 <ol>
-<li>主 VM 在收到 ACK 之前故障, 它不会返回结果给客户端</li>
-<li>主 VM 在收到 ACK 之后故障, 备份 VM 在接管后也发送, 客户端会收到两次输出 <br><br>
-但是 TCP 连接会处理重复的数据包, 磁盘会对同一块区域重复写入</li>
+<li><code>leader</code>: 处理来自客户端的请求(如果客户端跟 <code>follower</code> 通信, <code>follower</code> 会将请求重定向到 <code>leader</code> 上)</li>
+<li><code>follower</code>: 被动响应来自 <code>leader</code> 和 <code>candidate</code> 的请求</li>
+<li><code>candidate</code>: 选举时出现的临时状态</li>
 </ol>
-<h2 id="检测和故障响应">检测和故障响应</h2>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.7cwjtz1wgww0.png" alt="image"></p>
 <ol>
-<li>主 VM 故障: 备份 VM 重放日志, 重放结束之后上线成为 主 VM</li>
-<li>备份 VM 故障: 主 VM 停止在 <code>logging channel</code> 上发送日志, 主 VM 继续执行</li>
+<li><code>none -&gt; follower</code>: 集群启动</li>
+<li><code>follower -&gt; candidate</code>: 集群中没有 <code>leader</code> 或 <code>leader</code> 失联</li>
+<li><code>candidate -&gt; follower</code>: <code>candidate</code> 选举失败</li>
+<li><code>candidate -&gt; leader</code>: <code>candidate</code> 选举成功</li>
+<li><code>leader -&gt; follower</code>: <code>leader</code> 失联之后重新连接 或者 发现其他节点有更新的数据</li>
 </ol>
-<p>检测故障方式</p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.1nqynw289hsw.webp" alt="image"></p>
+<p><code>Raft</code> 将时间分为任意长度的任期, 任期从选举开始 <br><br>
+选举失败之后, <code>Raft</code> 会很快开始新一轮选举</p>
+<p>任期还包含时间戳的作用, 可以让集群发现过期的信息:</p>
 <ol>
-<li>UDP 心跳检测</li>
-<li>监控 <code>logging channel</code></li>
-<li>备份 VM 发送给 主 VM 的确认信息</li>
+<li>节点通信的时候会交换任期号, 如果比对方小就更新</li>
+<li><code>candidate</code> 或 <code>leader</code> 发现自己的任期号过期了, 那么就回到 <code>follower</code> 状态</li>
+<li>如果一个节点接收了带过期任期号的请求, 那么他会拒绝此次请求</li>
 </ol>
-<p>脑裂问题: 备份 VM 认为 主 VM 故障, 自己上位, 这样可能会出现两个主 VM</p>
-<p>解决问题: 磁盘服务器设置一个 <code>flag</code>, 第一个访问(原子操作)的 VM 会成为 主 VM</p>
-<h1>FT 的实际执行</h1>
-<p>启动一个备份 VM</p>
+<p><code>Raft</code> 算法中服务器节点使用 RPC 进行通信, 一般的共识算法只需要两种 RPC</p>
 <ol>
-<li><code>FT VMotion</code> 直接对 VM 克隆并简历 <code>logging channel</code></li>
-<li>实现监控并管理集群资源的服务, 可以选择一个宿主机来启动新 VM</li>
+<li><code>RequestVote RPCs</code>: 由 <code>candidate</code> 在选举过程中发出</li>
+<li><code>AppendEntries RPCs</code>: 由 <code>leader</code> 发出, 用来做日志复制和心跳机制</li>
 </ol>
-<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.udgjh5qi8g0.webp" alt="image"></p>
+<p>(<code>Raft</code> 的第三种 RPC: 在节点中传输快照)</p>
+<h2 id="leader-选举"><code>leader</code> 选举</h2>
+<p>一个服务器节点只要从 <code>candidate</code> 或 <code>leader</code> 接收到有效的 RPC 就一直保持 <code>follower</code> 的状态<br>
+<code>leader</code> 会周期性地向所有的 <code>follower</code> 发起心跳来维持自己的 <code>leader</code> 地位</p>
+<blockquote>
+<p>心跳是不包含日志条目的 <code>AppendEntries RPCs</code></p>
+</blockquote>
+<p>一段时间内 <code>follower</code> 没有接收到其他 <code>candidate</code> 或 <code>leader</code> 的信息 (选举超时) <br><br>
+那么开始选举, 自增选举号并给自己投票, 同时发送 <code>RequestVote RPCs</code> 给其他节点 <br><br>
+转换为 <code>candidate</code> 状态持续到如下事件发生</p>
 <ol>
-<li>主 VM 执行时, 会将 <code>log entry</code> 输出到 <code>log buffer</code> 中, 如果 <code>log buffer</code> 已满, 主VM 等待</li>
-<li>主 VM 的 <code>log buffer</code> 尽快将内容输送到 <code>logging channel</code></li>
-<li><code>log entry</code> 被读到 备份 VM 的 <code>log buffer</code> 中</li>
-<li>备份 VM 接收 <code>log buffer</code>, 如果为空则等待</li>
-<li>备份 VM 发送 ACK 给 主 VM</li>
+<li>它获得超过半数的选票成为 <code>leader</code></li>
 </ol>
-<p>此外在发送 <code>log entry</code> 的时候, 会发送附加信息来确定实时延迟 <br><br>
-根据 CPU 资源的调度来调整延迟</p>
-<p><strong>VM FT上的操作</strong></p>
+<blockquote>
+<p>当 <code>candidate</code> 获取集群中过半节点针对同一任期的投票, 他就赢得选举成为 <code>leader</code></p>
+</blockquote>
+<ol start="2">
+<li>其他节点赢得了选举</li>
+<li>一段时间内没有其他节点赢得选举</li>
+</ol>
+<p>对于同一个任期, 每个节点只给来求票的第一个 <code>candidate</code> 投票 <br><br>
+<code>candidate</code> 选举成功之后, 他会向其他的所有节点发送心跳信息停止其他选举行为</p>
+<p>一个 <code>candidate</code> 可能在等待投票的过程中, 收到其他自称 <code>leader</code> 的心跳</p>
 <ol>
-<li>关机, 主 VM 关机了 备份 VM 也要关机</li>
-<li>资源管理: 如 CPU 频率</li>
-<li>VMotion: 运行前暂停所有 IO 操作</li>
+<li>如果对方的任期号小, 那么忽略</li>
+<li>如果对方的任期号大于等于自己, 那么转换为 <code>follower</code> 状态</li>
 </ol>
-<p><strong>磁盘 IO</strong></p>
-<p>异步发生的磁盘读写操作给系统带来不确定性: 对于有竞争的磁盘操作, 强制为顺序执行</p>
-<p>内存在读取硬盘, CPU 在操作内存:</p>
+<p>如果 <code>candidate</code> 既没有赢也没有输, 比如所有的 <code>follower</code> 同时变成 <code>candidate</code> 都把票投给自己 <br><br>
+采用随机选举超时时间, 总会有一个 <code>candidate</code> 率先结束超时, 成为 <code>leader</code> 然后发送心跳给其他节点</p>
+<p><code>candidate</code> 在等待选票的时候, 也会设置一个随机的超时时间, 这样可以防止多次投票无果的情况</p>
+<h2 id="日志复制">日志复制</h2>
+<p>每个客户端请求都包含一条将被复制状态机执行的命令</p>
 <ol>
-<li>给那段内存加保护, VM 读取在硬盘读取之后, 在 MMU 中改变页的保护</li>
-<li><code>bounce buffer</code>: 硬盘读写要经过一块缓存</li>
+<li><code>leader</code> 以一个新条目的形式把该命令追加到自己的日志中</li>
+<li>以同步的形式向集群中的其他节点发送 <code>AppendEntries RPCs</code> <br></li>
+<li>当条目被安全的复制之后, <code>leader</code> 将条目应用到自己的状态机</li>
+<li>状态机执行该指令, 然后将结果返回客户端</li>
 </ol>
-<p>IO 进行时, 主 VM 故障, 备份 VM 不知道是否发出 IO 请求: <br><br>
-如果日志中没有 IO 造成的中断, 备份 VM 重做 IO 操作, 幂等操作不影响结果</p>
-<p><strong>网络 IO</strong></p>
-<p>VMware 对虚拟机的网络做了优化, 管理程序会异步更新 VM 的网络状态 <br><br>
-(异步: 在 VM 正在运行的时候也可以更新网络状态) <br><br>
-(同步: VM 需要暂停, 等待管理程序更新网络状态之后再运行) <br><br>
-但是我们要保证这些更新在 主 VM 和 副 VM 上更新的时间一致</p>
-<p>解决方法: 关闭异步更新, 管理程序记录网络变化, 并应用到备份 VM</p>
+<p>如果 <code>follower</code> 故障, <code>leader</code> 会不断进行 <code>AppendEntries RPCs</code> (即使已经对客户端有了响应)<br>
+直到所有 <code>follower</code> 都存储了所有的日志条目</p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.2pqmlr5z2we0.webp" alt="image"></p>
+<p>日志由有序编号的日志条目组成, 每个日志条目存储它被创建时的任期号和日志内容, 如果一个日志被复制到<br>
+大多数服务器上, 就被认为可以提交了</p>
 <ol>
-<li>减少 陷阱和中断: 一些包产生一个中断 而不是一个包产生一个中断</li>
-<li>减少传包的延时, TCP 数据一到就开始处理, 省去上下文切换的开销</li>
+<li>如果不同日志的的两个条目由相同的日志号和任期号, 则他们所存储的内容是相同的</li>
 </ol>
-<h1>替代设计</h1>
-<p><strong>共享和非共享磁盘</strong></p>
-<p>非共享磁盘: <br><br>
-优点</p>
+<blockquote>
+<p><code>leader</code> 在一个 <code>term</code> 内在给定的一个日志编号最多创建一条日志条目, 该条目在日志中的位置也从来不会被改变</p>
+</blockquote>
+<ol start="2">
+<li>如果不同日志的两个条目有着相同的日志号和任期号, 则他们之前的条目都是完全一样的</li>
+</ol>
+<blockquote>
+<p>当发送一个 <code>AppendEntries RPC</code> 时, <code>leader</code> 会把紧接着之前的日志条目的 日志编号和内容 都传过来, 如果 <code>follower</code> 没有在它的日志中找到相同的 日志编号和内容 的日志, 就会拒绝新的日志条目</p>
+</blockquote>
+<p><strong>不一致处理</strong></p>
+<p>会不断向前找 <code>follower</code> 直到找到和自己日志条目相同的位置, 然后复制直到最新的日志条目</p>
+<h2 id="安全">安全</h2>
+<p>完善算法, 使得算法在各种服务器故障中仍然可用</p>
+<p><strong><code>leader</code> 故障</strong></p>
 <ol>
-<li>主 VM 的磁盘写入不必被延迟</li>
-<li>非共享磁盘造价更低<br>
-缺点</li>
-<li>发生故障之后还要同步磁盘状态</li>
-<li>需要远程服务器决策来解决脑裂情况</li>
+<li>被选出来的 <code>leader</code> 一定包含所有被提交的日志条目: <br><br>
+如果投票者自己的日志(任期号和日志号)比 <code>candidate</code> 的还要新, 那么它就会拒绝投票</li>
+<li>只有 <code>leader</code> 当前任期内的日志条目才通过计算副本数目的方式来提交</li>
 </ol>
-<p><strong>备份 VM 执行磁盘读</strong></p>
-<p>备份 VM 正常不会在 磁盘上读取东西, 这被视作输入从 <code>logging channel</code> 读入 <br></p>
-<p>备份 VM 执行磁盘读可以降低 <code>logging channel</code> 上的流量 <br><br>
-但是会产生许多同步问题, 还要处理容错</p>
+<p><strong><code>follower</code> 和 <code>candidate</code> 故障</strong></p>
+<ol>
+<li><code>leader</code> 无限重试发送给他们的 RPC</li>
+<li>如果完成了 RPC 但是在回复之前宕机了, 恢复之后会收到同样的请求, 此时重新做一遍(RPC 是幂等的, 再做一遍不影响结果)</li>
+</ol>
+<p><strong>安全与可用性限制</strong></p>
+<p>$$<br>
+广播时间 &lt;&lt; 选举超时时间 &lt;&lt; 平均故障时间<br>
+$$</p>
+<h1>集群成员变更</h1>
+<p><code>Raft</code> 实现了自动变更集群成员, 难点是处理脑裂问题</p>
+<p><code>Raft</code> 使用一种两阶段的方法: 集群先切换到一个过渡的配置: 称为联合一致</p>
+<ol>
+<li><code>leader</code> 发起 $C_{old, new}$, 使整个集群进入这个状态 <br><br>
+所有 RPC 都要在新旧两个配置都达到大多数才算成功</li>
+<li><code>leader</code> 发起 $C_{new}$, RPC 在新配置中达到大多数才算成功</li>
+</ol>
+<p>这两个请求被包装成普通的 <code>AppendEntries RPC</code> <br><br>
+只要服务器收到了这种配置日志条目, 它就会用新配置来做出决策, 无论其是否被提交</p>
+<p><strong>故障处理</strong></p>
+<ol>
+<li>
+<p><code>leader</code> 在 $C_{old,new}$ 未提交前故障<br>
+<img src="https://github.com/lzlcs/image-hosting/raw/master/image.2jnu9s3xyds0.png" alt="image"><br>
+如果新 <code>leader</code> 没有 $C_{old,new}$, 那么变更失败 <br><br>
+如果新 <code>leader</code> 有 $C_{old, new}$ 那么继续变更</p>
+</li>
+<li>
+<p><code>leader</code> 在 $C_{old,new}$ 已提交但 $C_{new}$ 未发起时故障 <br><br>
+已提交之后, 根据安全性规则, 有 $C_{old,new}$ 的才有资格当选 <code>leader</code></p>
+</li>
+<li>
+<p><code>leader</code> 在 $C_{new}$ 已发起时故障 <br><br>
+此时 $C_{old,new}$ 已经复制到大多数节点, 不需要管老节点了 <br><br>
+$C_{old,new}$ 按照新老规则选举, $C_{new}$ 按照新规则选举 <br><br>
+如果 $C_{old,new}$ 当选, 那么它继续发出 $C_{new}$ <br><br>
+如果 $C_{new}$ 当选, 那么它继续发出 $C_{new}$</p>
+</li>
+</ol>
+<p>补充规则</p>
+<ol>
+<li>新增节点时, 需要等新增的节点完成日志同步再开始集群成员变更</li>
+<li>缩减节点时, <code>leader</code> 可能本身就是要缩减的节点, 完成 $C_{new}$ 提交之后自动退位</li>
+<li>如果在选举超时时间内, <code>follower</code> 收到 <code>candidate</code>的投票请求, 那么忽略此请求: 防止下线的服务器选举影响 <code>raft</code> 的正常运行</li>
+</ol>
+<h1>日志压缩</h1>
+<ol>
+<li>增量压缩如日志清洗 和 日志结构合并树 (LSM 树)</li>
+<li>快照技术: 某个时间点前整个系统的状态以快照的方式持久化</li>
+</ol>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.66zalv6td740.webp" alt="image"></p>
+<p>发送快照 <code>InstallSnap RPCs</code></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.6k0ko0xgtzk0.webp" alt="image"></p>
+<ol>
+<li>直接替换</li>
+<li>替换一部分前缀</li>
+</ol>
+<p><strong>性能问题</strong></p>
+<ol>
+<li>何时生成快照: 简单的策略是等到日志容量到达阈值的时候</li>
+<li>写时复制的功能: 操作系统天然支持这样的功能</li>
+</ol>
+<h1>客户端交互</h1>
+<ol>
+<li>客户端随机挑选一个节点, 如果该节点不是 <code>leader</code>, 就给客户端返回最近的一次 <code>leader</code> 的信息, 如果 <code>leader</code> 崩溃了(超时), 客户端就重新再随机选个节点, 重复以上动作</li>
+<li>防止同一条指令被执行两次: 客户端对每一条指令都</li>
+</ol>
+<p><strong>只读操作</strong></p>
+<p>只读操作可能会访问到老 <code>leader</code> 从而返回错误的信息 <br><br>
+每个 <code>leader</code> 上任的时候, 发送一个空日志 <br><br>
+<code>leader</code> 处理只读请求的时候, 必须检查自己是否被替代</p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2023/10/05/gfs/" target="_self">
+              <a href="/2023/10/04/1dsystem/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>Prev</span>
               </a>
@@ -333,8 +423,8 @@
                     </span>
                     
                     <span class="span--tag mr-8">
-                      <a href="/tags/Fault-Tolerant-Virtual-Machines/" title="Fault-Tolerant Virtual Machines">
-                        #Fault-Tolerant Virtual Machines
+                      <a href="/tags/Raft/" title="Raft">
+                        #Raft
                       </a>
                     </span>
                     
@@ -342,6 +432,11 @@
               
           </div>
           <div class="post-foot-prev">
+            
+              <a href="/2023/10/05/gfs/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
             
           </div>
         </div>
@@ -355,7 +450,7 @@
     <div class="title">Contents</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">基本的 FT 设计</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A1%AE%E5%AE%9A%E6%80%A7%E9%87%8D%E6%94%BE%E5%AE%9E%E7%8E%B0"><span class="toc-text">确定性重放实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FT-%E5%8D%8F%E8%AE%AE"><span class="toc-text">FT 协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A3%80%E6%B5%8B%E5%92%8C%E6%95%85%E9%9A%9C%E5%93%8D%E5%BA%94"><span class="toc-text">检测和故障响应</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">FT 的实际执行</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">替代设计</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">复制状态机</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Paxos 存在的问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">为可理解性设计</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Raft 共识算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Raft-%E5%9F%BA%E7%A1%80"><span class="toc-text">Raft 基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#leader-%E9%80%89%E4%B8%BE"><span class="toc-text">leader 选举</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E5%A4%8D%E5%88%B6"><span class="toc-text">日志复制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8"><span class="toc-text">安全</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">集群成员变更</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">日志压缩</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">客户端交互</span></a></li></ol>
       
     </div>
   </div>
@@ -641,12 +736,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + 6.824%20%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%20Fault-Tolerant%20Virtual%20Machines + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F10%2F05%2Fftvm%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + 6.824%20%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%20Raft%20%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95 + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F10%2F05%2Fraft%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/10/05/ftvm/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/10/05/raft/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
