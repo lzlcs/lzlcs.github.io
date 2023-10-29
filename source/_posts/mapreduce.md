@@ -6,7 +6,7 @@ categories:
 - Papers
 tags: 
 - MapReduce
-- Distribute System
+- Distributed System
 ---
 
 # 总览 

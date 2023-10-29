@@ -6,7 +6,7 @@ categories:
 - Papers
 tags: 
 - The Google File System
-- Distribute System
+- Distributed System
 ---
 
 # 设计

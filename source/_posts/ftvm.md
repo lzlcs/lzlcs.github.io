@@ -6,7 +6,7 @@ categories:
 - Papers
 tags: 
 - Fault-Tolerant Virtual Machines
-- Distribute System
+- Distributed System
 ---
 
 # 介绍

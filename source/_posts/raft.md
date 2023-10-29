@@ -1,12 +1,12 @@
 ---
 title: 6.824 分布式系统 Raft 共识算法
-date: 2023-10-5 18:15:00
+date: 2023-10-07 18:15:00
 mathjax: true
 categories:
 - Papers
 tags: 
 - Raft
-- Distribute System
+- Distributed System
 ---
 
 # 复制状态机
@@ -213,5 +213,3 @@ $C_{old,new}$ 按照新老规则选举, $C_{new}$ 按照新规则选举 <br>
 只读操作可能会访问到老 `leader` 从而返回错误的信息 <br>
 每个 `leader` 上任的时候, 发送一个空日志 <br>
 `leader` 处理只读请求的时候, 必须检查自己是否被替代
-
-

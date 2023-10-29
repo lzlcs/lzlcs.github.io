@@ -8,7 +8,7 @@ tags:
 - Golang
 - MapReduce
 - Lab
-- Distribute System
+- Distributed System
 ---
 
 关于各种库函数调用的问题, 可以问 `gpt`
