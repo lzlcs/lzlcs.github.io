@@ -11,7 +11,7 @@
   
   <title>
     
-      6.824 分布式系统 Lab1 简记 
+      6.824 分布式系统 Fault-Tolerant Virtual Machines 
       
       
       |
@@ -147,19 +147,19 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">6.824 分布式系统 Lab1 简记</div>
+      <div class="post-title">6.824 分布式系统 Fault-Tolerant Virtual Machines</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-          2023-10-04 12:15:00
+          2023-10-28 12:15:00
         </span>
         
               <span class="post-categories">
                 <i class="iconfont icon-bookmark" title="Categories"></i>
                 
                 <span class="span--category">
-                  <a href="/categories/Labs/" title="Labs">
-                    <b>#</b> Labs
+                  <a href="/categories/Papers/" title="Papers">
+                    <b>#</b> Papers
                   </a>
                 </span>
                 
@@ -169,26 +169,14 @@
                 <i class="iconfont icon-tags mr-10" title="Tags"></i>
                 
                 <span class="span--tag mr-8">
-                  <a href="/tags/Lab/" title="Lab">
-                    #Lab
-                  </a>
-                </span>
-                
-                <span class="span--tag mr-8">
-                  <a href="/tags/Golang/" title="Golang">
-                    #Golang
-                  </a>
-                </span>
-                
-                <span class="span--tag mr-8">
-                  <a href="/tags/MapReduce/" title="MapReduce">
-                    #MapReduce
-                  </a>
-                </span>
-                
-                <span class="span--tag mr-8">
                   <a href="/tags/Distributed-System/" title="Distributed System">
                     #Distributed System
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/ZooKeeper/" title="ZooKeeper">
+                    #ZooKeeper
                   </a>
                 </span>
                 
@@ -196,80 +184,105 @@
           
       </div>
       <div class="markdown-body">
-        <p>关于各种库函数调用的问题, 可以问 <code>gpt</code></p>
-<h1><code>Master</code></h1>
-<p><code>Master</code> 进程与 <code>Worker</code> 进程的通信</p>
+        <h1>一致性辨析</h1>
 <ol>
-<li>接收 <code>Worker</code> 进程传来的任务完成的消息</li>
-<li>分配给 <code>Worker</code> 新的任务</li>
+<li>顺序一致性:<br>
+各进程之间的操作合并成一个操作序列, 每个进程自己的操作序列顺序和大操作序列中的相对顺序相同(不一定相邻), 这样不一定满足全局时钟顺序</li>
+<li>线性一致性(强一致性):
+<ul>
+<li>任意时刻, 节点中的数据都是一样的</li>
+<li>集群内服务器数据都同步完成之后才能对外提供服务</li>
+</ul>
+</li>
+<li>弱一致性:
+<ul>
+<li>任意时刻, 节点中的数据不一定一样</li>
+</ul>
+</li>
+<li>最终一致性:
+<ul>
+<li>弱一致性的特殊形式</li>
+<li>在没有新的写入时, 不同节点上的同一份数据趋向于相同</li>
+</ul>
+</li>
 </ol>
-<p>实现两个队列 <code>toBeMap</code>, <code>toBeReduce</code> 用来记录两种待分配的任务(使用切片)</p>
-<p>实现两个映射 <code>beingMapped</code>, <code>beingReduced</code> 用来记录哪些任务正在进行, 并记录各个任务被分配的起始时间</p>
-<p>任务的记录: 实现结构体 <code>Task</code> 记录任务编号, 任务名(文件名或 <code>Reduce</code> 编号) \</p>
+<p><code>ZooKeeper</code> 实现的一致性是 写入操作的线性一致性和 读操作的顺序一致性</p>
+<h1>服务</h1>
 <ol>
-<li><code>CallExample</code> 函数进行通信
-<ul>
-<li>此处因为要修改上述两个队列和两个映射, 所以加锁</li>
-<li>遍历两个映射, 检查是否超时, 如果超时就从映射中删除, 加入对应队列(注意不能在遍历的时候删)</li>
-<li>接收 <code>Worker</code> 传进来的 <code>ExampleArgs</code> 分析这个 <code>Worker</code> 之前做了什么任务
-<ul>
-<li>如果之前做了任务, 就要把这个任务从对应映射中删除, 表示做完了</li>
-</ul>
-</li>
-<li>开始分配任务, 具体分配方法是把任务存到 <code>ExampleReply</code> 中
-<ul>
-<li>检查 <code>toBeMap</code> 队列, 如果不为空就分配, 任务类型为 <code>1</code></li>
-<li>检查 <code>beingMapped</code> 映射, 如果不为空就让 <code>Worker</code> 等待, 任务类型为 <code>0</code></li>
-<li>检查 <code>toBeReduced</code> 队列, 如果不为空就分配, 任务类型为 <code>2</code></li>
-<li>检查 <code>beingReduced</code> 映射, 如果不为空就让 <code>Worker</code> 等待, 任务类型为 <code>0</code></li>
-<li>最后如果上述两个队列两个映射都空, 那么任务结束, 让 <code>Worker</code> 终止, 任务类型为 <code>-1</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><code>Done</code> 函数: 检查两个映射两个队列是否为空, 为空返回 <code>true</code> <br>
-此处有读操作, 加锁</li>
-<li><code>MakeCoordinator</code> 函数, 初始化两个队列两个映射, 把任务塞到  <code>toBeMap</code> 和 <code>toBeReduced</code> 两个队列中 <br>
-此处有写操作, 加锁</li>
+<li>客户端: 使用 <code>ZooKeeper</code> 服务的用户</li>
+<li>服务器: 提供服务的进程</li>
+<li><code>znode</code>: <code>Zookeeper</code> 数据的内存数据节点</li>
+<li>数据树: 以层次命名空间组织起来的 <code>znode</code></li>
+<li>会话: 客户端连接到 <code>ZooKeeper</code> 时建立一个会话, 通过会话句柄提交请求</li>
 </ol>
-<h1><code>RPC</code></h1>
-<p><code>ExampleArgs</code> 和 <code>ReplyArgs</code> 都存一个任务, 再存一个任务类型</p>
-<h1><code>Worker</code></h1>
+<h2 id="服务概述">服务概述</h2>
+<p>客户端可以创建两种 <code>znode</code></p>
 <ol>
-<li><code>CallExample</code> 函数
-<ul>
-<li>首先初始化 <code>args</code> 上次执行的任务类型为 -1,  <code>reply</code> 初始化为空</li>
-<li>写一个死循环, 循环开头调用 <code>call</code>, 获得新的 <code>reply</code></li>
-<li>调用成功之后, 用 <code>reply</code> 更新 <code>args</code> 从而表明该 <code>Worker</code> 上次完成的任务</li>
-<li>接下来根据任务类型执行函数
-<ul>
-<li>如果任务类型为 0, 更新 <code>args</code> 为初始状态, 任务类型 <code>-1</code>, 等待一秒</li>
-<li>如果任务类型为 1, 调用 <code>mapProcess</code> 函数</li>
-<li>如果任务类型为 2, 调用 <code>reduceProcess</code> 函数</li>
-<li>如果任务类型为 -1, <code>break</code> 出死循环</li>
-</ul>
-</li>
-<li>最后记得把 <code>reply</code> 更新为初始状态, 准备下一次 <code>call</code></li>
-</ul>
-</li>
-<li><code>Worker</code> 函数: 调用 <code>CallExample</code> 即可</li>
-<li><code>mapProcess</code> 函数
-<ul>
-<li>读取目标文件, 调用 <code>mapf</code> 把文件内容拆成键值对</li>
-<li>根据 <code>map</code> 的任务编号, 创建 <code>nReduce</code> 个临时文件, 名字为 <code>tmpfile-X-Y</code></li>
-<li>遍历键值对, 解析为 <code>json</code>, 写入对应的 <code>ihash(key) % nReduce</code> 临时文件中</li>
-<li>最后改名 <code>mr-tmp-X-Y</code>, 关闭所有文件</li>
-</ul>
-</li>
-<li><code>reduceProcess</code> 函数
-<ul>
-<li>寻找 <code>map-tmp-X-Y</code> (<code>Y</code> 为 <code>reduce</code> 任务编号) 的所有文件</li>
-<li>打开所有文件, 把所有键值对从 <code>json</code> 格式解析出来</li>
-<li>抄 <code>mrsequencial.go</code> 文件的排序方式</li>
-<li>创建文件 <code>mr-out-Y</code></li>
-<li>抄 <code>mrsequencial.go</code> 中的键值对处理方式</li>
-</ul>
-</li>
+<li>普通: 通过创建和删除来操作普通节点</li>
+<li>临时: 客户端创建这类节点, 显式删除或者会话结束时自动删除</li>
+</ol>
+<p>创建新的 <code>znode</code> 节点时, 可以指定 <code>sequential</code> 标识, 这样该节点名字后面会附加序号 <br><br>
+生成的序号不会比父节点之前创建的所有子节点小</p>
+<p><code>Zookeeper</code> 实现了 <code>watch</code>, 客户端无需轮询, 而是由服务器在状态变化时通知客户端</p>
+<p><strong>数据模型</strong></p>
+<p>每个 <code>znode</code> 默认 1M 大小, 通常用来存储某种元数据</p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.46574wv6jza0.webp" alt="image"></p>
+<p><strong>会话</strong></p>
+<p>有类似心跳的机制让客户端和服务器之间确认对方是否正常工作</p>
+<p>会话持续期间, 客户端可以持续观察到状态变化</p>
+<p><strong>客户端 <code>API</code></strong></p>
+<p>所有的方法都有同步和异步两个版本, 当没有并发情况的时候使用同步</p>
+<p><code>Zookeeper</code> 使用绝对路径访问 <code>znode</code>, 这样可以简化 <code>API</code> 和服务器需要维护的状态</p>
+<p>每次更新都是对特定版本的更新, 如果版本号与期望的版本号不一致, 那么更新就会失败</p>
+<h2 id="原语例子">原语例子</h2>
+<p><strong>配置管理</strong></p>
+<p>配置信息保存在节点 <code>Zc</code> 中 (<code>watch</code>), 配置被更新的时候, 客户端会读取到更新信息</p>
+<p><strong>信息汇合</strong></p>
+<p>客户端创建一个 <code>Zr</code> 节点, 并把绝对路径传给主进程和工作进程</p>
+<p>主进程把 IP 地址和端口号写入 <code>Zr</code><br>
+工作进程监视 <code>Zr</code> 节点, 更新的时候才能和主进程通信</p>
+<p>如果 <code>Zr</code> 节点是临时节点, 那么主进程和工作进程可以监视 <code>Zr</code> 的存活情况(客户端是否退出)从而决定是否退出进程</p>
+<p><strong>群组关系</strong></p>
+<p>设置一个 <code>Zg</code> 节点表示组, 这个组的成员进程启动时, 在 <code>Zg</code> 下面创建一个临时节点, 进程启动</p>
+<p>进程故障或者终止的时候, 相关的 <code>znode</code> 自动删除</p>
+<p><strong>简单锁</strong></p>
+<p>客户端尝试创建一个 <code>znode</code> 创建成功就表示持有锁, 删除表示释放锁 <br><br>
+创建失败就 <code>watch</code> 这个节点, 被删除了再尝试创建</p>
+<p>这样会有群体效应问题, 很多客户端竞争一个锁 <br><br>
+其次这样只实现了互斥锁</p>
+<p><strong>无群体效应的简单锁</strong></p>
+<p>定义一个 <code>znode</code> 名称为 <code>l</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// lock</span></span><br><span class="line">n = create(l + <span class="string">&quot;/lock-&quot;</span>, EPHEMERAL|SEQUENTIAL)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>) </span><br><span class="line">&#123;</span><br><span class="line">    C = getChildren(l, <span class="literal">false</span>)</span><br><span class="line">    <span class="keyword">if</span> n 是 l 子节点中编号最小的 </span><br><span class="line">    &#123;</span><br><span class="line">        持有锁; <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    p = 比 n 编号小的 最大的节点</span><br><span class="line">    <span class="keyword">if</span> exists(p, <span class="literal">true</span>) 等待</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// unlock</span></span><br><span class="line">delete(n)</span><br></pre></td></tr></table></figure>
+<p>优点:</p>
+<ol>
+<li>移除一个锁只会释放一个客户端</li>
+<li>没有轮询或超时</li>
+<li>方便观察和调试</li>
+</ol>
+<p><strong>读写锁</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// write lock</span></span><br><span class="line">n = create(l + <span class="string">&quot;/write-&quot;</span>, EPHEMERAL|SEQUENTIAL)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">&#123;</span><br><span class="line">    C = getChildren(l, <span class="literal">false</span>)</span><br><span class="line">    <span class="keyword">if</span> n 是 l 子节点中编号最小的 </span><br><span class="line">    &#123;</span><br><span class="line">        持有锁; <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    p = 比 n 编号小的 最大的节点</span><br><span class="line">    <span class="keyword">if</span> exists(p, <span class="literal">true</span>) 等待</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// read lock</span></span><br><span class="line">n = create(l + <span class="string">&quot;/read-&quot;</span>, EPHEMERAL|SEQUENTIAL)</span><br><span class="line">C = getChildren(l, <span class="literal">false</span>)</span><br><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> 如果没有 write 节点的编号比 n 小</span><br><span class="line">    &#123;</span><br><span class="line">        持有锁; <span class="keyword">return</span>; </span><br><span class="line">    &#125;</span><br><span class="line">    p = 比 n 编号小的 最大的 write 节点</span><br><span class="line">    <span class="keyword">if</span> exists(p, <span class="literal">true</span>) 等待</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1><code>ZooKeeper</code> 实现</h1>
+<p>对于读请求, 服务器读取本地数据库并返回 <br><br>
+对于写请求, 使用 <code>zab</code> 一致性协议实现同步</p>
+<p>写请求被发送给 <code>Leader</code></p>
+<p><code>ZooKeeper</code> 在将修改应用到数据库的时候会写入磁盘, 方便故障之后通过本地磁盘类似快照的方式恢复</p>
+<p><strong>请求处理器</strong></p>
+<p>请求处理器在收到写入请求的时候, 根据请求内容计算出新的状态, 版本号和时间戳, 等待应用到数据库中</p>
+<p><strong>原子广播</strong></p>
+<p>使用 <code>Zab</code> 一致性协议, 使用多数认同来达成一致性</p>
+<p>领导节点广播之前要收到前一个领导的广播</p>
+<p><strong>复制数据库</strong></p>
+<p>模糊快照: 不需要锁定状态而生成快照</p>
+<p>因为写入的状态变更消息是幂等的 <br><br>
+如果服务器从快照恢复, <code>Zab</code> 会重新发送状态变更, 最终保证与宕机前 的状态一致</p>
+<p><strong><code>C/S</code> 交互</strong></p>
+<ol>
+<li>串行写: 所有更新操作都是串行的, 数据更新时, <code>server</code> 会通知 观测它的所有 <code>client</code>, 注意这些事件会随会话的销毁而消亡</li>
+<li>本地读: 可以选择在本地读, 但是可能会读取旧数据, 可以选择使用 <code>sync</code> 得到最新数据, 但是效率降低</li>
+<li>一致性视图: 维护一个 <code>zxid</code>, <code>client</code> 在故障重启时连接到一个新的 <code>server</code>, 如果该 <code>server</code> 的 <code>zxid</code> 小于 <code>client</code> 的 <code>zxid</code>, 那么就换一个 <code>server</code> 连接</li>
+<li>会话过期: 心跳未响应的时候过期</li>
 </ol>
 
       </div>
@@ -277,7 +290,7 @@
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2023/10/03/mapreduce/" target="_self">
+              <a href="/2023/10/08/2dsystem/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>Prev</span>
               </a>
@@ -286,15 +299,15 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-              2023-10-04 12:15:00
+              2023-10-28 12:15:00
             </span>
             
                   <span class="post-categories">
                     <i class="iconfont icon-bookmark" title="Categories"></i>
                     
                     <span class="span--category">
-                      <a href="/categories/Labs/" title="Labs">
-                        <b>#</b> Labs
+                      <a href="/categories/Papers/" title="Papers">
+                        <b>#</b> Papers
                       </a>
                     </span>
                     
@@ -304,26 +317,14 @@
                     <i class="iconfont icon-tags mr-10" title="Tags"></i>
                     
                     <span class="span--tag mr-8">
-                      <a href="/tags/Lab/" title="Lab">
-                        #Lab
-                      </a>
-                    </span>
-                    
-                    <span class="span--tag mr-8">
-                      <a href="/tags/Golang/" title="Golang">
-                        #Golang
-                      </a>
-                    </span>
-                    
-                    <span class="span--tag mr-8">
-                      <a href="/tags/MapReduce/" title="MapReduce">
-                        #MapReduce
-                      </a>
-                    </span>
-                    
-                    <span class="span--tag mr-8">
                       <a href="/tags/Distributed-System/" title="Distributed System">
                         #Distributed System
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/ZooKeeper/" title="ZooKeeper">
+                        #ZooKeeper
                       </a>
                     </span>
                     
@@ -331,11 +332,6 @@
               
           </div>
           <div class="post-foot-prev">
-            
-              <a href="/2023/10/05/gfs/" target="_self">
-                <span>Next</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
             
           </div>
         </div>
@@ -349,7 +345,7 @@
     <div class="title">Contents</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Master</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">RPC</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Worker</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">一致性辨析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">服务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E6%A6%82%E8%BF%B0"><span class="toc-text">服务概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E8%AF%AD%E4%BE%8B%E5%AD%90"><span class="toc-text">原语例子</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">ZooKeeper 实现</span></a></li></ol>
       
     </div>
   </div>
@@ -635,12 +631,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + 6.824%20%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%20Lab1%20%E7%AE%80%E8%AE%B0 + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F10%2F04%2F1dsystem%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + 6.824%20%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%20Fault-Tolerant%20Virtual%20Machines + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F10%2F28%2Fzookeeper%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/10/04/1dsystem/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/10/28/zookeeper/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
