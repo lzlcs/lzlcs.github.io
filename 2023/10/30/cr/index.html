@@ -11,7 +11,7 @@
   
   <title>
     
-      6.824 分布式系统 Fault-Tolerant Virtual Machines 
+      6.824 分布式系统 Chain Replication &amp;&amp; CRAQ 
       
       
       |
@@ -147,11 +147,11 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">6.824 分布式系统 Fault-Tolerant Virtual Machines</div>
+      <div class="post-title">6.824 分布式系统 Chain Replication && CRAQ</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-          2023-10-05 18:15:00
+          2023-10-30 18:00:00
         </span>
         
               <span class="post-categories">
@@ -169,14 +169,14 @@
                 <i class="iconfont icon-tags mr-10" title="Tags"></i>
                 
                 <span class="span--tag mr-8">
-                  <a href="/tags/Fault-Tolerant-Virtual-Machines/" title="Fault-Tolerant Virtual Machines">
-                    #Fault-Tolerant Virtual Machines
+                  <a href="/tags/Distributed-System/" title="Distributed System">
+                    #Distributed System
                   </a>
                 </span>
                 
                 <span class="span--tag mr-8">
-                  <a href="/tags/Distributed-System/" title="Distributed System">
-                    #Distributed System
+                  <a href="/tags/Chain-Replication/" title="Chain Replication">
+                    #Chain Replication
                   </a>
                 </span>
                 
@@ -184,123 +184,71 @@
           
       </div>
       <div class="markdown-body">
-        <h1>介绍</h1>
-<p>实现容错的方法</p>
+        <h1>朴素 <code>Chain Replication</code></h1>
+<h2 id="背景">背景</h2>
+<p>在诸如 <code>Primary/Backup</code>, <code>Raft</code>, <code>Paxos</code> 这类的备份模型中, <code>Leader</code> 这类的节点需要向所有节点进行广播从而实现同步, 但是在服务器不断增加的情况下主节点承受的压力越来越大, 所以就出现了性能瓶颈</p>
+<p>链式复制 (<code>Chain Replication</code>) 被提出 <br><br>
+主要思路是每个节点只向一个节点发送同步请求</p>
+<h2 id="架构">架构</h2>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.k8ui2y7x9ww.png" alt="image"></p>
+<p><strong>以 <code>Fail-Stop</code> 为基础</strong></p>
 <ol>
-<li>主从备份: 主服务器的所有状态都发送给备份, 这样非常消耗带宽</li>
-<li>状态机方法: 将服务器建模为确定性状态机, 通过按照相同初始化状态启动和以相同顺序接收相同的输入来保持同步 <br><br>
-但是大多数的服务器都有不确定的操作(比如读取时钟时间), 所以还需要一些额外的协作来保证同步, 这在物理机上非常困难</li>
+<li>服务器失效了就停止服务</li>
+<li>环境有能力知道哪个服务器故障了</li>
 </ol>
-<p>运行在管理程序上的 VM 是实现额外协作的很好方法 <br><br>
-管理程序有 VM 的全权控制权, 所以它能知道 VM 上所有不确定的操作</p>
-<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.1bfvhtezl400.png" alt="image"></p>
-<h1>基本的 FT 设计</h1>
-<p>VMs 的虚拟磁盘是在共享存储中的, 可以接收主备服务器的输入输出</p>
-<p>只有主 VM 会说明它在网络中的存在, 所有的网络输入和其他设备输入都会来到主 VM 上 <br><br>
-所有主 VM 收到的输入都会通过名为 <code>logging channel</code> 的网络连接 <br><br>
-为了处理不确定操作的额外协作也会被发到备份 VM 中, 备份 VM 与主 VM 使用相同的方式执行非确定性操作 <br><br>
-备份 VM 的输出会被忽略, 之后主 VM 的输入会被返回到客户端</p>
-<p>通过相关服务器的心跳机制和监测 <code>logging channel</code> 的流量从而检测主备服务器是否失效</p>
-<h2 id="确定性重放实现">确定性重放实现</h2>
-<p>三个挑战</p>
+<p><strong>永不失败的 <code>Master</code></strong></p>
+<p>假设有一个永不失败的 <code>Master</code> (可以理解为 <code>Paxos/Raft/Zab</code>集群)</p>
 <ol>
-<li>正确得到所有输入和非确定性执行的操作</li>
-<li>正确地让输入和非确定性操作在备份 VM 上执行</li>
-<li>不引起性能退化</li>
+<li>实现心跳</li>
+<li>通知链上服务器它的前后节点</li>
+<li>通知客户端链的头尾节点</li>
 </ol>
-<p>非确定性操作</p>
+<h2 id="实现">实现</h2>
+<p>每个节点: <br><br>
+维护 <code>Pending</code> 表示未处理完成的请求 <br><br>
+维护 <code>Hist</code> 存储 <code>Tail</code> 已经 <code>update</code> 完成的请求</p>
+<p>写请求从 <code>Master</code> 到 <code>Head</code>, 之后依次传递到每个节点</p>
+<p>读请求访问 <code>Tail</code> 节点, 返回 <code>Tail</code> 节点本地的数据</p>
+<h2 id="容错">容错</h2>
+<p><strong>头节点故障</strong></p>
+<p>头节点存储的 <code>Pending</code> 请求全部丢失</p>
+<p><strong>尾节点故障</strong></p>
+<p>倒数第二个节点的 <code>Pending</code> 全变成 <code>Hist</code>, 它成为新的尾节点</p>
+<p><strong>中间节点故障</strong></p>
+<p>每个服务器存储一个 <code>send</code>, 表示往后续节点发送了请求, 但是尾节点没有处理过的请求</p>
+<p>尾节点处理之后, 向前置节点发送 <code>ACK</code> 让其删除 <code>send</code></p>
+<p><code>Master</code> 通知它的前置后继节点让其更新</p>
+<h1><code>CRAQ</code></h1>
+<h2 id="主要思想">主要思想</h2>
+<p>主要思想是均摊 <code>Tail</code> 节点处理读请求的压力</p>
 <ol>
-<li>来自客户端的输入</li>
-<li>非确定性指令: 随机数, 获取时间</li>
-<li>多核并行引发的指令交错执行(本论文未解决这个问题)</li>
+<li>每个节点存储多个版本</li>
+<li>当节点接收到新版本时附加到版本库中</li>
+<li>如果该节点不是 <code>Tail</code> 节点, 那么设置为 <code>dirty</code> 状态</li>
+<li>如果该节点是 <code>Tail</code>, 那么标记为 <code>clean</code>, 向回传 <code>ACK</code></li>
+<li>当节点收到后继节点传来的 <code>ACK</code> 消息时, 删除版本库中所有的内容, 然后标记为 <code>clean</code></li>
 </ol>
-<h2 id="FT-协议">FT 协议</h2>
-<p>输出要求: 备份 VM 接管主 VM 之后, 备份 VM 将与主 VM 所有的输出相同</p>
-<p>特殊情况: 主 VM 在输出之后立即故障, 备份 VM 未执行到相同输出指令就被中断 <br><br>
-输出规则: 主 VM 延后输出(不会停止处理指令), 直到 备份VM 已经接收并确认产生了与输出相关的日志</p>
-<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.3m589bq0dja0.webp" alt="image"></p>
-<p>故障情况</p>
+<p><strong>处理读请求</strong></p>
+<ul>
+<li>如果 <code>object</code> 的最新版本状态为 <code>clean</code>, 那么直接返回</li>
+<li>如果 <code>object</code> 的最新版本状态为 <code>dirty</code>, 向 <code>Tail</code> 请求最新版本号, 并返回该版本的值</li>
+</ul>
+<p><strong>隐式 <code>clean/dirty</code></strong></p>
+<p>如果只有一个版本, 那么就是 <code>clean</code>, 否则就是 <code>dirty</code></p>
+<h2 id="一致性模型">一致性模型</h2>
+<p><code>CRAQ</code> 提供三种强一致性模型</p>
 <ol>
-<li>主 VM 在收到 ACK 之前故障, 它不会返回结果给客户端</li>
-<li>主 VM 在收到 ACK 之后故障, 备份 VM 在接管后也发送, 客户端会收到两次输出 <br><br>
-但是 TCP 连接会处理重复的数据包, 磁盘会对同一块区域重复写入</li>
+<li>强一致性模型: 从任意节点读取到最新版本的数据</li>
+<li>最终一致性模型: 返回节点已知的最新版本数据(<code>clean</code>)</li>
+<li>具有最大不一致边界的最终一致性: 返回最新版本数据 (<code>dirty</code>)</li>
 </ol>
-<h2 id="检测和故障响应">检测和故障响应</h2>
-<ol>
-<li>主 VM 故障: 备份 VM 重放日志, 重放结束之后上线成为 主 VM</li>
-<li>备份 VM 故障: 主 VM 停止在 <code>logging channel</code> 上发送日志, 主 VM 继续执行</li>
-</ol>
-<p>检测故障方式</p>
-<ol>
-<li>UDP 心跳检测</li>
-<li>监控 <code>logging channel</code></li>
-<li>备份 VM 发送给 主 VM 的确认信息</li>
-</ol>
-<p>脑裂问题: 备份 VM 认为 主 VM 故障, 自己上位, 这样可能会出现两个主 VM</p>
-<p>解决问题: 磁盘服务器设置一个 <code>flag</code>, 第一个访问(原子操作)的 VM 会成为 主 VM</p>
-<h1>FT 的实际执行</h1>
-<p>启动一个备份 VM</p>
-<ol>
-<li><code>FT VMotion</code> 直接对 VM 克隆并简历 <code>logging channel</code></li>
-<li>实现监控并管理集群资源的服务, 可以选择一个宿主机来启动新 VM</li>
-</ol>
-<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.udgjh5qi8g0.webp" alt="image"></p>
-<ol>
-<li>主 VM 执行时, 会将 <code>log entry</code> 输出到 <code>log buffer</code> 中, 如果 <code>log buffer</code> 已满, 主VM 等待</li>
-<li>主 VM 的 <code>log buffer</code> 尽快将内容输送到 <code>logging channel</code></li>
-<li><code>log entry</code> 被读到 备份 VM 的 <code>log buffer</code> 中</li>
-<li>备份 VM 接收 <code>log buffer</code>, 如果为空则等待</li>
-<li>备份 VM 发送 ACK 给 主 VM</li>
-</ol>
-<p>此外在发送 <code>log entry</code> 的时候, 会发送附加信息来确定实时延迟 <br><br>
-根据 CPU 资源的调度来调整延迟</p>
-<p><strong>VM FT上的操作</strong></p>
-<ol>
-<li>关机, 主 VM 关机了 备份 VM 也要关机</li>
-<li>资源管理: 如 CPU 频率</li>
-<li>VMotion: 运行前暂停所有 IO 操作</li>
-</ol>
-<p><strong>磁盘 IO</strong></p>
-<p>异步发生的磁盘读写操作给系统带来不确定性: 对于有竞争的磁盘操作, 强制为顺序执行</p>
-<p>内存在读取硬盘, CPU 在操作内存:</p>
-<ol>
-<li>给那段内存加保护, VM 读取在硬盘读取之后, 在 MMU 中改变页的保护</li>
-<li><code>bounce buffer</code>: 硬盘读写要经过一块缓存</li>
-</ol>
-<p>IO 进行时, 主 VM 故障, 备份 VM 不知道是否发出 IO 请求: <br><br>
-如果日志中没有 IO 造成的中断, 备份 VM 重做 IO 操作, 幂等操作不影响结果</p>
-<p><strong>网络 IO</strong></p>
-<p>VMware 对虚拟机的网络做了优化, 管理程序会异步更新 VM 的网络状态 <br><br>
-(异步: 在 VM 正在运行的时候也可以更新网络状态) <br><br>
-(同步: VM 需要暂停, 等待管理程序更新网络状态之后再运行) <br><br>
-但是我们要保证这些更新在 主 VM 和 副 VM 上更新的时间一致</p>
-<p>解决方法: 关闭异步更新, 管理程序记录网络变化, 并应用到备份 VM</p>
-<ol>
-<li>减少 陷阱和中断: 一些包产生一个中断 而不是一个包产生一个中断</li>
-<li>减少传包的延时, TCP 数据一到就开始处理, 省去上下文切换的开销</li>
-</ol>
-<h1>替代设计</h1>
-<p><strong>共享和非共享磁盘</strong></p>
-<p>非共享磁盘: <br><br>
-优点</p>
-<ol>
-<li>主 VM 的磁盘写入不必被延迟</li>
-<li>非共享磁盘造价更低<br>
-缺点</li>
-<li>发生故障之后还要同步磁盘状态</li>
-<li>需要远程服务器决策来解决脑裂情况</li>
-</ol>
-<p><strong>备份 VM 执行磁盘读</strong></p>
-<p>备份 VM 正常不会在 磁盘上读取东西, 这被视作输入从 <code>logging channel</code> 读入 <br></p>
-<p>备份 VM 执行磁盘读可以降低 <code>logging channel</code> 上的流量 <br><br>
-但是会产生许多同步问题, 还要处理容错</p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2023/10/05/gfs/" target="_self">
+              <a href="/2023/10/28/zookeeper/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>Prev</span>
               </a>
@@ -309,7 +257,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-              2023-10-05 18:15:00
+              2023-10-30 18:00:00
             </span>
             
                   <span class="post-categories">
@@ -327,14 +275,14 @@
                     <i class="iconfont icon-tags mr-10" title="Tags"></i>
                     
                     <span class="span--tag mr-8">
-                      <a href="/tags/Fault-Tolerant-Virtual-Machines/" title="Fault-Tolerant Virtual Machines">
-                        #Fault-Tolerant Virtual Machines
+                      <a href="/tags/Distributed-System/" title="Distributed System">
+                        #Distributed System
                       </a>
                     </span>
                     
                     <span class="span--tag mr-8">
-                      <a href="/tags/Distributed-System/" title="Distributed System">
-                        #Distributed System
+                      <a href="/tags/Chain-Replication/" title="Chain Replication">
+                        #Chain Replication
                       </a>
                     </span>
                     
@@ -342,11 +290,6 @@
               
           </div>
           <div class="post-foot-prev">
-            
-              <a href="/2023/10/07/raft/" target="_self">
-                <span>Next</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
             
           </div>
         </div>
@@ -360,7 +303,7 @@
     <div class="title">Contents</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">基本的 FT 设计</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A1%AE%E5%AE%9A%E6%80%A7%E9%87%8D%E6%94%BE%E5%AE%9E%E7%8E%B0"><span class="toc-text">确定性重放实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FT-%E5%8D%8F%E8%AE%AE"><span class="toc-text">FT 协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A3%80%E6%B5%8B%E5%92%8C%E6%95%85%E9%9A%9C%E5%93%8D%E5%BA%94"><span class="toc-text">检测和故障响应</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">FT 的实际执行</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">替代设计</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">朴素 Chain Replication</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84"><span class="toc-text">架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0"><span class="toc-text">实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%B9%E9%94%99"><span class="toc-text">容错</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">CRAQ</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E6%80%9D%E6%83%B3"><span class="toc-text">主要思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E6%A8%A1%E5%9E%8B"><span class="toc-text">一致性模型</span></a></li></ol></li></ol>
       
     </div>
   </div>
@@ -646,12 +589,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + 6.824%20%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%20Fault-Tolerant%20Virtual%20Machines + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F10%2F05%2Fftvm%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + 6.824%20%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%20Chain%20Replication%20%26%26%20CRAQ + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F10%2F30%2Fcr%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/10/05/ftvm/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/10/30/cr/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
