@@ -1,5 +1,5 @@
 ---
-title: 6.824 分布式系统 Fault-Tolerant Virtual Machines
+title: 6.824 分布式系统 ZooKeeper
 date: 2023-10-28 12:15:00
 mathjax: true
 categories:

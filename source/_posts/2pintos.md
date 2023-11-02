@@ -10,6 +10,7 @@ categories:
 - Labs
 ---
 
+[`Github`](https://github.com/lzlcs/Courses)
 Project 2 请在 `Linux` 环境下测试, 因为 `Windows` 下换行是 `\r\n`, `Linux` 环境下是 `\n`
 
 # 预先准备
