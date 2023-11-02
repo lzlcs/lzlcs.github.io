@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>6.824 分布式系统 Frangipani</title>
+      <link href="/2023/11/01/frangipani/"/>
+      <url>/2023/11/01/frangipani/</url>
+      
+        <content type="html"><![CDATA[<h1>简介</h1><p><code>Frangipani</code> 有着关于 缓存一致性, 分布式事务和分布式故障恢复的有趣设计</p><p>整体架构: 网络文件系统 (<code>Network File System, NFS</code>)</p><p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.1pkfw4vr1kv4.png" alt="image"></p><p><code>Frangipani</code> 模块运行在工作站内核中, 实现文件系统</p><p>文件系统的所有数据结构都存储在一个叫做 <code>Petal</code> 的虚拟磁盘中</p><h1>锁服务</h1><p>锁服务器里面有一个 锁表单, 每个锁是一个文件 <br><br>存储文件名字和持有锁的工作站</p><p>此处以互斥锁来举例, 实际上 <code>Frangipani</code> 是读写锁</p><p>工作站的  <code>Frangipani</code> 模块中也要存储锁表单 <br><br>锁表单里面记录文件名, 锁的状态, 文件缓存的内容</p><p><strong>规则</strong></p><ol><li>当未持有锁的时候, 不允许缓存数据</li><li>释放锁之前的修改必须被写入 <code>Petal</code> 中</li></ol><p><strong>流程</strong></p><p>工作站向锁服务器请求对应的锁, 之后向 <code>Petal</code> 服务器请求具体的数据</p><p>锁状态一般有两种 <code>Busy</code> 和 <code>Idle</code> 状态</p><p>当工作站进行各种系统调用(创建删除文件之类)时, 锁处于 <code>Busy</code> 状态 <br><br>当工作站处理完文件之后, 锁状态被置为 <code>Idle</code> <br><br>(每隔 30s 将缓存写入 <code>Petal</code>)</p><p>当有其他工作站请求这个锁时, 且锁状态是 <code>Idle</code> <br><br>本工作站把缓存的数据写入 <code>Petal</code>, 删除对应锁表项</p><p><strong>原子性保证</strong></p><p>工作站在修改文件的时候持有持有锁, 实现了原子性保证</p><h1>故障恢复</h1><p>通过预写式日志(<code>Write-Ahead Log, WAL</code>) 来实现故障恢复</p><p>每个工作站的 <code>Log</code> 保存在 <code>Petal</code> 中, 每个 <code>Log</code> 条目包含 <code>Log</code> 序列号, 只包含元数据的修改</p><p><strong>流程</strong></p><ol><li>把工作站内存中未写入的 <code>Log</code> 写入 <code>Petal</code> 中</li><li>把缓存的数据写入 <code>Petal</code></li><li>回复 锁服务器, 释放锁</li></ol><h2 id="故障分析">故障分析</h2><p><strong>写入 <code>Log</code> 时崩溃</strong></p><p>锁服务器有一种租约机制, 如果工作站长时间未响应, 那么锁服务器会通知<br>另外一个还活着的工作站让他读取 <code>Log</code> 然后进行恢复, 恢复完成之后释放锁</p><p><strong>写入数据的时候崩溃</strong></p><p>同上, 读取 <code>Log</code> 进行更新, 写入操作是幂等的, 可以重复写入</p><p><strong>释放锁之后崩溃</strong></p><p>文件增加一个版本号, 恢复的时候先确认版本号是否正确再恢复</p><h1>目标环境</h1><p>小的工作组, 不是大型分布式系统的主要应用场景</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Papers </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Distributed System </tag>
+            
+            <tag> Frangipani </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>6.824 分布式系统 Chain Replication &amp;&amp; CRAQ</title>
       <link href="/2023/10/30/cr/"/>
       <url>/2023/10/30/cr/</url>
