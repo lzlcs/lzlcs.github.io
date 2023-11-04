@@ -11,7 +11,7 @@
   
   <title>
     
-      Tag 
+      6.824 分布式系统 Spanner 
       
       
       |
@@ -136,21 +136,191 @@
 
 
 
-  <!-- 标签页 url形式：https://yoursite/tags/ -->
-  <div class="container tag-index">
-    <div>
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSAPP/" rel="tag">CSAPP</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Chain-Replication/" rel="tag">Chain Replication</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Course/" rel="tag">Course</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Distributed-System/" rel="tag">Distributed System</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fault-Tolerant-Virtual-Machines/" rel="tag">Fault-Tolerant Virtual Machines</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Frangipani/" rel="tag">Frangipani</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GDB/" rel="tag">GDB</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Internet/" rel="tag">Internet</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lab/" rel="tag">Lab</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Languages/" rel="tag">Languages</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MapReduce/" rel="tag">MapReduce</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS/" rel="tag">OS</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Raft/" rel="tag">Raft</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SICP/" rel="tag">SICP</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL/" rel="tag">SQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Scheme/" rel="tag">Scheme</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spanner/" rel="tag">Spanner</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/The-Google-File-System/" rel="tag">The Google File System</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tools/" rel="tag">Tools</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vim/" rel="tag">Vim</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a><span class="tag-list-count">1</span></li></ul>
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">6.824 分布式系统 Spanner</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-11-02 17:00:00
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="Categories"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/Papers/" title="Papers">
+                    <b>#</b> Papers
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Distributed-System/" title="Distributed System">
+                    #Distributed System
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Spanner/" title="Spanner">
+                    #Spanner
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1>实现</h1>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.q77bmz33y4w.png" alt="image"></p>
+<p><code>Spanner</code> 是 <code>Zone</code> 的集合, 一个 <code>Zone</code> 有</p>
+<ol>
+<li>一个 <code>zoneMaster</code>: 为 <code>spanserver</code> 分配数据</li>
+<li>几百到几千个 <code>spanserver</code>: 为客户端提供数据服务</li>
+<li><code>location proxy</code> 给客户端定位分配好的 <code>spanserver</code></li>
+</ol>
+<p><code>universemaster</code> 是一个控制台, 显示所有 <code>zone</code> 的状态信息 <br><br>
+<code>placement dirver</code> 分钟级处理 <code>zone</code> 间的自动化迁移, 定期与 <code>spanserver</code> 交互从而进行副本约束或负载均衡</p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.46c39kldbhw0.webp" alt="image"></p>
+<p>每个 <code>spanserver</code> 负责 100~1000 个 <code>tablet</code> <br><br>
+其状态被保存在一系列类 B 树的文件和一个预写日志中 (<code>WAH</code>) <br><br>
+他们都在一个叫做 <code>Colossus</code> 的分布式文件系统中(<code>GFS</code> 的后继)</p>
+<p>每个键值对都会按照 <code>key</code> 哈希从而被分区, 所有数据中心的对应分区组成一个 <code>Paxos</code></p>
+<p>其中一个 <code>Paxos</code> 组的 <code>Leader</code> 成为跨组事务的 <code>Leader</code> 协调者, 即 <code>coordinator leader</code>, 其他的是 <code>paticipant leader</code></p>
+<h1><code>TrueTime</code></h1>
+<p>为了实现一致性, 事务被分配了全局的唯一 <code>ID</code>, 使用全球时钟同步机制 (基于 <code>GPS</code> 和 原子钟)</p>
+<p><code>TrueTime API</code> 提供如下三个接口</p>
+<ol>
+<li><code>TT.now()</code>, 返回一个范围区间 <code>[earliest, latest]</code></li>
+<li><code>TT.before(t)</code>, 如果确保真实事件不到 <code>t</code>, 返回 <code>true</code></li>
+<li><code>TT.after(t)</code>, 如果确保真实事件超过 <code>t</code>, 返回 <code>true</code></li>
+</ol>
+<h1>事务</h1>
+<p>支持如下几种事务</p>
+<ol>
+<li>读写事务</li>
+<li>只读事务</li>
+<li>快照读, 客户端提供时间戳</li>
+<li>快照读, 客户端提供时间范围</li>
+</ol>
+<p>考虑原子钟数据传输导致的误差, <code>Spanner</code> 使用延时提交的方式 <br><br>
+假设原子钟的误差是 <code>x</code>, 事务 B 要在 事务 A 提交之后再过 <code>x</code> 的时间提交, 所以写事务的时延至少是 <code>2x</code></p>
+<p><strong>单个 <code>Paxos</code> 组</strong></p>
+<ol>
+<li>读写: 获取当前时间戳, 执行读写操作并提交时间戳</li>
+<li>只读: 获取当前时间戳, 获取当前应该读取的版本</li>
+<li>快照读: 自带时间戳, 获取当前应该读取的版本</li>
+</ol>
+<p><strong>多个 <code>Paxos</code> 组</strong></p>
+<ol>
+<li>读写需要两阶段提交
+<ul>
+<li><code>Prepare</code>: 客户端将数据发送给多个 <code>Paxos</code> 组的 <code>Leader</code>, <code>Leader</code> 发起 <code>Prepare</code>, 其他 <code>Follower</code> 需要锁住对应的资源</li>
+<li><code>Commit</code>: 协调者发起 <code>commit</code>, 使用协调者本地的时间戳</li>
+</ul>
+</li>
+<li>读: 同上单个 <code>Paxos</code> 组</li>
+</ol>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/2035097-20200806224202777-988561656.2ppu8wqi02w0.webp" alt="2035097-20200806224202777-988561656"></p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2023/11/01/frangipani/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-11-02 17:00:00
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="Categories"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/Papers/" title="Papers">
+                        <b>#</b> Papers
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Distributed-System/" title="Distributed System">
+                        #Distributed System
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Spanner/" title="Spanner">
+                        #Spanner
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">实现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">TrueTime</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">事务</span></a></li></ol>
+      
     </div>
   </div>
-  
 
   
+<script src="/js/catalog.js"></script>
 
-  
 
-  
 
-  
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
 
         
 <div class="footer">
@@ -412,12 +582,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + tags + '&url=' + http%3A%2F%2Fexample.com%2Ftags%2Findex.html + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + 6.824%20%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%20Spanner + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F11%2F02%2Fspanner%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/tags/index.html" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/11/02/spanner/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         

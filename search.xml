@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>6.824 分布式系统 Spanner</title>
+      <link href="/2023/11/02/spanner/"/>
+      <url>/2023/11/02/spanner/</url>
+      
+        <content type="html"><![CDATA[<h1>实现</h1><p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.q77bmz33y4w.png" alt="image"></p><p><code>Spanner</code> 是 <code>Zone</code> 的集合, 一个 <code>Zone</code> 有</p><ol><li>一个 <code>zoneMaster</code>: 为 <code>spanserver</code> 分配数据</li><li>几百到几千个 <code>spanserver</code>: 为客户端提供数据服务</li><li><code>location proxy</code> 给客户端定位分配好的 <code>spanserver</code></li></ol><p><code>universemaster</code> 是一个控制台, 显示所有 <code>zone</code> 的状态信息 <br><br><code>placement dirver</code> 分钟级处理 <code>zone</code> 间的自动化迁移, 定期与 <code>spanserver</code> 交互从而进行副本约束或负载均衡</p><p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.46c39kldbhw0.webp" alt="image"></p><p>每个 <code>spanserver</code> 负责 100~1000 个 <code>tablet</code> <br><br>其状态被保存在一系列类 B 树的文件和一个预写日志中 (<code>WAH</code>) <br><br>他们都在一个叫做 <code>Colossus</code> 的分布式文件系统中(<code>GFS</code> 的后继)</p><p>每个键值对都会按照 <code>key</code> 哈希从而被分区, 所有数据中心的对应分区组成一个 <code>Paxos</code></p><p>其中一个 <code>Paxos</code> 组的 <code>Leader</code> 成为跨组事务的 <code>Leader</code> 协调者, 即 <code>coordinator leader</code>, 其他的是 <code>paticipant leader</code></p><h1><code>TrueTime</code></h1><p>为了实现一致性, 事务被分配了全局的唯一 <code>ID</code>, 使用全球时钟同步机制 (基于 <code>GPS</code> 和 原子钟)</p><p><code>TrueTime API</code> 提供如下三个接口</p><ol><li><code>TT.now()</code>, 返回一个范围区间 <code>[earliest, latest]</code></li><li><code>TT.before(t)</code>, 如果确保真实事件不到 <code>t</code>, 返回 <code>true</code></li><li><code>TT.after(t)</code>, 如果确保真实事件超过 <code>t</code>, 返回 <code>true</code></li></ol><h1>事务</h1><p>支持如下几种事务</p><ol><li>读写事务</li><li>只读事务</li><li>快照读, 客户端提供时间戳</li><li>快照读, 客户端提供时间范围</li></ol><p>考虑原子钟数据传输导致的误差, <code>Spanner</code> 使用延时提交的方式 <br><br>假设原子钟的误差是 <code>x</code>, 事务 B 要在 事务 A 提交之后再过 <code>x</code> 的时间提交, 所以写事务的时延至少是 <code>2x</code></p><p><strong>单个 <code>Paxos</code> 组</strong></p><ol><li>读写: 获取当前时间戳, 执行读写操作并提交时间戳</li><li>只读: 获取当前时间戳, 获取当前应该读取的版本</li><li>快照读: 自带时间戳, 获取当前应该读取的版本</li></ol><p><strong>多个 <code>Paxos</code> 组</strong></p><ol><li>读写需要两阶段提交<ul><li><code>Prepare</code>: 客户端将数据发送给多个 <code>Paxos</code> 组的 <code>Leader</code>, <code>Leader</code> 发起 <code>Prepare</code>, 其他 <code>Follower</code> 需要锁住对应的资源</li><li><code>Commit</code>: 协调者发起 <code>commit</code>, 使用协调者本地的时间戳</li></ul></li><li>读: 同上单个 <code>Paxos</code> 组</li></ol><p><img src="https://github.com/lzlcs/image-hosting/raw/master/2035097-20200806224202777-988561656.2ppu8wqi02w0.webp" alt="2035097-20200806224202777-988561656"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Papers </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Distributed System </tag>
+            
+            <tag> Spanner </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>6.824 分布式系统 Frangipani</title>
       <link href="/2023/11/01/frangipani/"/>
       <url>/2023/11/01/frangipani/</url>
