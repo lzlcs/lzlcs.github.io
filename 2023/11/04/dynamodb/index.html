@@ -11,7 +11,7 @@
   
   <title>
     
-      6.824 分布式系统 Spanner 
+      6.824 分布式系统 DynamoDB 
       
       
       |
@@ -147,11 +147,11 @@
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">6.824 分布式系统 Spanner</div>
+      <div class="post-title">6.824 分布式系统 DynamoDB</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-          2023-11-02 17:00:00
+          2023-11-04 12:00:00
         </span>
         
               <span class="post-categories">
@@ -175,8 +175,8 @@
                 </span>
                 
                 <span class="span--tag mr-8">
-                  <a href="/tags/Spanner/" title="Spanner">
-                    #Spanner
+                  <a href="/tags/DynamoDB/" title="DynamoDB">
+                    #DynamoDB
                   </a>
                 </span>
                 
@@ -184,64 +184,95 @@
           
       </div>
       <div class="markdown-body">
-        <h1>实现</h1>
-<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.q77bmz33y4w.png" alt="image"></p>
-<p><code>Spanner</code> 是 <code>Zone</code> 的集合, 一个 <code>Zone</code> 有</p>
-<ol>
-<li>一个 <code>zoneMaster</code>: 为 <code>spanserver</code> 分配数据</li>
-<li>几百到几千个 <code>spanserver</code>: 为客户端提供数据服务</li>
-<li><code>location proxy</code> 给客户端定位分配好的 <code>spanserver</code></li>
-</ol>
-<p><code>universemaster</code> 是一个控制台, 显示所有 <code>zone</code> 的状态信息 <br><br>
-<code>placement dirver</code> 分钟级处理 <code>zone</code> 间的自动化迁移, 定期与 <code>spanserver</code> 交互从而进行副本约束或负载均衡</p>
-<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.46c39kldbhw0.webp" alt="image"></p>
-<p>每个 <code>spanserver</code> 负责 100~1000 个 <code>tablet</code> <br><br>
-其状态被保存在一系列类 B 树的文件和一个预写日志中 (<code>WAH</code>) <br><br>
-他们都在一个叫做 <code>Colossus</code> 的分布式文件系统中(<code>GFS</code> 的后继)</p>
-<p>每个键值对都会按照 <code>key</code> 哈希从而被分区, 所有数据中心的对应分区组成一个 <code>Paxos</code></p>
-<p>其中一个 <code>Paxos</code> 组的 <code>Leader</code> 成为跨组事务的 <code>Leader</code> 协调者, 即 <code>coordinator leader</code>, 其他的是 <code>paticipant leader</code></p>
-<h1><code>TrueTime</code></h1>
-<p>为了实现一致性, 事务被分配了全局的唯一 <code>ID</code>, 使用全球时钟同步机制 (基于 <code>GPS</code> 和 原子钟)</p>
-<p><code>TrueTime API</code> 提供如下三个接口</p>
-<ol>
-<li><code>TT.now()</code>, 返回一个范围区间 <code>[earliest, latest]</code></li>
-<li><code>TT.before(t)</code>, 如果确保真实事件不到 <code>t</code>, 返回 <code>true</code></li>
-<li><code>TT.after(t)</code>, 如果确保真实事件超过 <code>t</code>, 返回 <code>true</code></li>
-</ol>
-<h1>事务</h1>
-<p>支持如下几种事务</p>
-<ol>
-<li>读写事务</li>
-<li>只读事务</li>
-<li>快照读, 客户端提供时间戳</li>
-<li>快照读, 客户端提供时间范围</li>
-</ol>
-<p>考虑原子钟数据传输导致的误差, <code>Spanner</code> 使用延时提交的方式 <br><br>
-假设原子钟的误差是 <code>x</code>, 事务 B 要在 事务 A 提交之后再过 <code>x</code> 的时间提交, 所以写事务的时延至少是 <code>2x</code></p>
-<p><strong>单个 <code>Paxos</code> 组</strong></p>
-<ol>
-<li>读写: 获取当前时间戳, 执行读写操作并提交时间戳</li>
-<li>只读: 获取当前时间戳, 获取当前应该读取的版本</li>
-<li>快照读: 自带时间戳, 获取当前应该读取的版本</li>
-</ol>
-<p><strong>多个 <code>Paxos</code> 组</strong></p>
-<ol>
-<li>读写需要两阶段提交
+        <h1>架构</h1>
+<p>$DynamoDB$ 表是 条目 ($Item$) 的集合, 每个条目是属性 ($Attribute$) 的集合</p>
+<p>每个条目有一个主键 ($Primary Key$), 主键的模式 ($Schema$) 在表创建时指定</p>
 <ul>
-<li><code>Prepare</code>: 客户端将数据发送给多个 <code>Paxos</code> 组的 <code>Leader</code>, <code>Leader</code> 发起 <code>Prepare</code>, 其他 <code>Follower</code> 需要锁住对应的资源</li>
-<li><code>Commit</code>: 协调者发起 <code>commit</code>, 使用协调者本地的时间戳</li>
+<li>模式 1: 分区键 $Partition \ Key$</li>
+<li>模式 2: 分区键 + 排序键 $Sort \ Key$</li>
+</ul>
+<p><code>Hash(Partition_Key)</code> 和 $Sort \ Key$ 决定条目的存储位置, 但是排序键必须不同</p>
+<p>支持辅助索引 $Secondary Index$, 一个表可以有一个或多个辅助索引, 使用辅助索引加速非主键属性的查询</p>
+<p>支持 $ACID$ 事务, 保证条目之间的一致性, 原子性, 隔离性, 持久性 且不影响 可伸缩性, 可用性, 性能特征</p>
+<h1>可预测性</h1>
+<p>读容量单位 $RCUs$ 和写容量单位 $WCUs$ 显式指定表所需的吞吐量</p>
+<ul>
+<li>对于大小不超过 $4kb$ 的条目, 一个 $RCU$ 每秒执行一个强一致的读请求</li>
+<li>对于大小不超过 $1kb$ 的条目, 一个 $WCU$ 每秒执行一个标准写请求</li>
+</ul>
+<h2 id="准入控制">准入控制</h2>
+<p><strong>初步准入控制</strong></p>
+<p>根据大小划分分区</p>
+<ol>
+<li>热分区: 当应用程序的访问并不均匀时, 会出现类似热点的热分区问题</li>
+<li>吞吐量稀释: 当对一个分区进行操作时, 对其他分区的吞吐量分配会减少</li>
+</ol>
+<p><strong>初步改进</strong></p>
+<ol>
+<li>突发: 每个分区存两个令牌桶: 分配桶和突发桶, 每个节点存一个令牌桶 <br><br>
+请求到达当前分区: 优先扣除分配桶和节点的桶, 如果不够的话在突发桶和节点桶仍然有剩余的情况下才能进行突发, 写请求还要检查其他分区和副本的令牌桶</li>
+<li>自适应容量: 监控每个分区的流量, 使用比例控制算法调整该分区的吞吐量</li>
+</ol>
+<blockquote>
+<p>突发只能处理短时峰值: 依赖节点冗余的吞吐量实现突发 <br><br>
+自适应容量是被动的: 已经造成了不可用才知道去调整吞吐量</p>
+</blockquote>
+<p><strong>全局准入控制 $GAC$</strong></p>
+<p>每个请求路由器维护一个本地令牌桶, 定期与 $GAC$ 通信来补充令牌</p>
+<p>$GAC$ 实例负责估算全局令牌消耗, 动态分配令牌</p>
+<p>另外, 分区级令牌桶也被保留下来, 防止每个应用程序或客户端垄断一个节点的全部资源</p>
+<h2 id="消耗均衡">消耗均衡</h2>
+<p><strong>容量消耗均衡</strong></p>
+<p>节点的吞吐量超过最大吞吐量的一定比例, 就会向自动管理服务报告 <br><br>
+自动管理服务会找到一个没有该分区副本的新存储节点</p>
+<p><strong>消耗划分</strong></p>
+<p>分区消耗的吞吐量超过某些阈值, 就会对该分区进行分割</p>
+<ol>
+<li>在单条目频繁访问的分区</li>
+<li>按顺序访问键范围的分区: 可能会破坏有序性从而增加复杂度</li>
+</ol>
+<p><strong>按需分配</strong></p>
+<p>收集读写信号, 根据消耗的容量进行分配</p>
+<h1>持久性和正确性</h1>
+<ol>
+<li>硬件故障: 多副本保证可用性</li>
+<li>静默数据错误: 使用大量的校验和来保证数据正确</li>
+<li>软件错误: 使用大量的故障注入和压力测试来防止出现软件错误</li>
+</ol>
+<p>$DynamoDB$ 还会持续验证静态数据防止出现意料之外的错误</p>
+<p>备份和恢复: 通过预写日志构建, 还支持时间点恢复</p>
+<h1>可用性</h1>
+<ol>
+<li>写和一致性读可用性: 使用 $Paxos$ 管理</li>
+<li>故障检测: 当 $Follower$ 无法与 $Leader$ 通信时, 询问副本确认 $Leader$ 确实挂掉再开始选举</li>
+<li>测量可用性: 全局表 99.99% 可用性和区域表 99.99% 可用性
+<ul>
+<li>持续监控, 并尝试自动修复</li>
+<li>从客户端观测: 有两组客户端可用于观测</li>
 </ul>
 </li>
-<li>读: 同上单个 <code>Paxos</code> 组</li>
 </ol>
-<p><img src="https://github.com/lzlcs/image-hosting/raw/master/2035097-20200806224202777-988561656.2ppu8wqi02w0.webp" alt="2035097-20200806224202777-988561656"></p>
+<p><strong>部署</strong></p>
+<p>每次部署之前都会进行组件级别的升级和降级测试</p>
+<p>通过读写部署来处理 旧代码理解不了新代码增加的部分 的问题</p>
+<ol>
+<li>部署软件来处理新的部分</li>
+<li>所有节点都能处理新部分之后再部署</li>
+</ol>
+<p>所有部署都是从点到面的</p>
+<p><strong>外部服务依赖</strong></p>
+<p>$DynamoDB$ 使用一个稳定的静态设计, 一个依赖挂掉, 整个系统仍然能正常工作</p>
+<p>$DynamoDB$ 定期异步刷新缓存, 在预设的一段时间内继续使用缓存的结果, 此时不依赖外部服务, 缓存还可以消除对下层的调用从而改善响应时间</p>
+<p><strong>元数据可用性</strong></p>
+<p>请求路由器中最重要的数据是 表的主键到存储节点之间的映射</p>
+<p>$DynamoDB$ 构建了一个名为 $MemDS$ 的内存分布式数据存储以低成本的方式降低元数据扩张和可用性风险</p>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/2023/11/01/frangipani/" target="_self">
+              <a href="/2023/11/02/spanner/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>Prev</span>
               </a>
@@ -250,7 +281,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-              2023-11-02 17:00:00
+              2023-11-04 12:00:00
             </span>
             
                   <span class="post-categories">
@@ -274,8 +305,8 @@
                     </span>
                     
                     <span class="span--tag mr-8">
-                      <a href="/tags/Spanner/" title="Spanner">
-                        #Spanner
+                      <a href="/tags/DynamoDB/" title="DynamoDB">
+                        #DynamoDB
                       </a>
                     </span>
                     
@@ -284,7 +315,7 @@
           </div>
           <div class="post-foot-prev">
             
-              <a href="/2023/11/04/dynamodb/" target="_self">
+              <a href="/2023/11/04/farm/" target="_self">
                 <span>Next</span>
                 <i class="iconfont icon-chevronright"></i>
               </a>
@@ -301,7 +332,7 @@
     <div class="title">Contents</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">实现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">TrueTime</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">事务</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">架构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">可预测性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%85%A5%E6%8E%A7%E5%88%B6"><span class="toc-text">准入控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B6%88%E8%80%97%E5%9D%87%E8%A1%A1"><span class="toc-text">消耗均衡</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">持久性和正确性</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">可用性</span></a></li></ol>
       
     </div>
   </div>
@@ -587,12 +618,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + 6.824%20%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%20Spanner + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F11%2F02%2Fspanner%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + 6.824%20%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%20DynamoDB + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F11%2F04%2Fdynamodb%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/11/02/spanner/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/11/04/dynamodb/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
