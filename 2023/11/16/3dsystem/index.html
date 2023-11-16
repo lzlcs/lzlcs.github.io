@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="" />
+  <meta name="author" content="lzl" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      6.824 分布式系统 Lab2 简记 
+      
+      
+      |
+    
+     lzl&#39;s blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">lzl</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          <a href="/categories/">Categories</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">6.824 分布式系统 Lab2 简记</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-11-16 19:00:00
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="Categories"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/Labs/" title="Labs">
+                    <b>#</b> Labs
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Lab/" title="Lab">
+                    #Lab
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Golang/" title="Golang">
+                    #Golang
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Raft/" title="Raft">
+                    #Raft
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Distributed-System/" title="Distributed System">
+                    #Distributed System
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p><a target="_blank" rel="noopener" href="https://github.com/lzlcs/Courses"><code>Github</code></a><br>
+调库可比造轮子简单多了</p>
+<h1>结构体设计</h1>
+<h2 id="RPC-设计">RPC 设计</h2>
+<p>首先考虑四种 <code>RPC</code> 结构体的设计</p>
+<p>因为要容错, 所以根据建议, 为每个客户端分配一个 64 位的大整数</p>
+<p>每个客户端还要配备一个 <code>SeqId</code> 从而给命令编号</p>
+<ol>
+<li><code>PutAppendArgs</code>
+<ul>
+<li><code>Op</code> 表示当前操作是 <code>Put</code> 还是 <code>Append</code></li>
+<li><code>Value</code>, <code>Key</code></li>
+<li><code>ClientId</code> 和 <code>SeqId</code> 表示客户端 Id 和命令 Id</li>
+</ul>
+</li>
+<li><code>PutAppendReply</code>: <code>Err</code></li>
+<li><code>GetArgs</code>: <code>Key</code>, <code>ClientId</code>, <code>SeqId</code> 同上</li>
+<li><code>GetReply</code>:
+<ul>
+<li><code>Err</code></li>
+<li><code>Value</code> 表示查询结果</li>
+</ul>
+</li>
+</ol>
+<h2 id="Server-设计"><code>Server</code> 设计</h2>
+<ol>
+<li><code>chans</code> 记录每个日志下标 对应的 <code>channel</code></li>
+<li><code>client2seq</code> 记录每个客户端对应的, 已经应用的 <code>SeqId</code></li>
+<li><code>keyValue</code> 存储键值对</li>
+<li><code>lastApplied</code>: 记录上次快照的日志下标</li>
+</ol>
+<h2 id="Client-设计"><code>Client</code> 设计</h2>
+<p>加入 <code>ClientId</code> 和 <code>SeqId</code> 即可</p>
+<h1>核心代码</h1>
+<h2 id="客户端发送-RPC">客户端发送 RPC</h2>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">n := <span class="built_in">len</span>(ck.servers)</span><br><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> si := <span class="number">0</span>; si &lt; n; si++ &#123;</span><br><span class="line">        srv := ck.servers[si]</span><br><span class="line">        <span class="keyword">var</span> reply GetReply</span><br><span class="line">        ok := srv.Call(<span class="string">&quot;KVServer.Get&quot;</span>, &amp;args, &amp;reply)</span><br><span class="line">        <span class="keyword">if</span> ok &amp;&amp; (reply.Err == OK || reply.Err == ErrNoKey) &#123;</span><br><span class="line">            <span class="comment">// ErrNoKey 返回空字符串</span></span><br><span class="line">            <span class="keyword">return</span> reply.Value</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    time.Sleep(<span class="number">50</span> * time.Millisecond)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="客户端处理-RPC">客户端处理 RPC</h2>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kv *KVServer)</span></span> Get(args *GetArgs, reply *GetReply) &#123;</span><br><span class="line"></span><br><span class="line">	oldOp := Op&#123;<span class="string">&quot;GET&quot;</span>, args.ClientId, args.SeqId, args.Key, <span class="string">&quot;&quot;</span>&#125;</span><br><span class="line">    <span class="comment">// 尝试加入日志</span></span><br><span class="line">	index, _, isLeader := kv.rf.Start(oldOp)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> !isLeader || kv.killed() &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// fmt.Println(&quot;SERVER GET: &quot;, args.Key)</span></span><br><span class="line">    <span class="comment">// 得到对应 channel</span></span><br><span class="line">	ch := kv.getCh(index)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 等待被处理</span></span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> newOp := &lt;-ch:</span><br><span class="line">		<span class="keyword">if</span> newOp.ClientId != oldOp.ClientId || newOp.SeqId != oldOp.SeqId &#123;</span><br><span class="line">			reply.Err = ErrWrongLeader</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			reply.Err = OK</span><br><span class="line">			kv.mu.Lock()</span><br><span class="line">			reply.Value = kv.keyvalue[args.Key]</span><br><span class="line">			kv.mu.Unlock()</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="keyword">case</span> &lt;-time.After(<span class="number">100</span> * time.Millisecond):</span><br><span class="line">        <span class="comment">// 超时重传</span></span><br><span class="line">		reply.Err = ErrWrongLeader</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 删除 channel</span></span><br><span class="line">	kv.mu.Lock()</span><br><span class="line">	<span class="built_in">delete</span>(kv.chans, index)</span><br><span class="line">	kv.mu.Unlock()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同时在 <code>StartKVServer</code> 中 <code>go</code> 一个协程</p>
+<p>至于快照就只需要保存 <code>client2seq</code> 和 <code>keyValue</code> 就可以</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kv *KVServer)</span></span> getLog() &#123;</span><br><span class="line">	<span class="keyword">for</span> !kv.killed() &#123;</span><br><span class="line">		entry := &lt;-kv.applyCh</span><br><span class="line">		<span class="comment">// fmt.Println(&quot;APPLYCH: &quot;, entry.CommandIndex)</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> entry.CommandValid &#123;</span><br><span class="line"></span><br><span class="line">			op := entry.Command.(Op)</span><br><span class="line">            <span class="comment">// 如果 SeqId 合法</span></span><br><span class="line">			<span class="keyword">if</span> kv.exist(op.ClientId, op.SeqId) &#123;</span><br><span class="line">				kv.mu.Lock()</span><br><span class="line">				<span class="keyword">if</span> op.Name == <span class="string">&quot;Put&quot;</span> &#123;</span><br><span class="line">					kv.keyvalue[op.Key] = op.Value</span><br><span class="line">				&#125; <span class="keyword">else</span> <span class="keyword">if</span> op.Name == <span class="string">&quot;Append&quot;</span> &#123;</span><br><span class="line">					kv.keyvalue[op.Key] += op.Value</span><br><span class="line">				&#125;</span><br><span class="line">                <span class="comment">// 操作并记录 SeqId</span></span><br><span class="line">				kv.client2seq[op.ClientId] = op.SeqId</span><br><span class="line">				kv.mu.Unlock()</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 判断是否需要生成快照</span></span><br><span class="line">			<span class="keyword">if</span> kv.maxraftstate != <span class="number">-1</span> &amp;&amp; kv.rf.Persister.RaftStateSize() &gt; kv.maxraftstate &#123;</span><br><span class="line">				kv.rf.Snapshot(entry.CommandIndex, kv.makeSnapshot())</span><br><span class="line">			&#125;</span><br><span class="line">            <span class="comment">// 处理成功, 加入对应 channel</span></span><br><span class="line">			kv.getCh(entry.CommandIndex) &lt;- op</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> entry.SnapshotValid &#123;</span><br><span class="line">			kv.mu.Lock()</span><br><span class="line">            <span class="comment">// 如果快照比较新, 就更新</span></span><br><span class="line">			<span class="keyword">if</span> entry.SnapshotIndex &gt; kv.lastApplied &#123;</span><br><span class="line">				kv.decodeSnapshot(entry.Snapshot)</span><br><span class="line">				kv.lastApplied = entry.SnapshotIndex</span><br><span class="line">			&#125;</span><br><span class="line">			kv.mu.Unlock()</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2023/11/04/farm/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-11-16 19:00:00
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="Categories"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/Labs/" title="Labs">
+                        <b>#</b> Labs
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Lab/" title="Lab">
+                        #Lab
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Golang/" title="Golang">
+                        #Golang
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Raft/" title="Raft">
+                        #Raft
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Distributed-System/" title="Distributed System">
+                        #Distributed System
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">结构体设计</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#RPC-%E8%AE%BE%E8%AE%A1"><span class="toc-text">RPC 设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Server-%E8%AE%BE%E8%AE%A1"><span class="toc-text">Server 设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Client-%E8%AE%BE%E8%AE%A1"><span class="toc-text">Client 设计</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">核心代码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%8F%91%E9%80%81-RPC"><span class="toc-text">客户端发送 RPC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%A4%84%E7%90%86-RPC"><span class="toc-text">客户端处理 RPC</span></a></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2023 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + 6.824%20%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%20Lab2%20%E7%AE%80%E8%AE%B0 + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F11%2F16%2F3dsystem%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/11/16/3dsystem/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
