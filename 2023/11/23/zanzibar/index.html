@@ -8,10 +8,13 @@
   <meta name="author" content="lzl" />
   <meta name="description" content="" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
+    
+      6.824 分布式系统 SUNDR 
+      
+      
+      |
     
      lzl&#39;s blog
   </title>
@@ -99,151 +102,197 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="操作系统">
-        <div class="time-m-d">2023-09-10</div>
-        <div class="title">
-          <a href="/2023/09/10/os/">
-            
-              
-                <span>操作系统</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">6.824 分布式系统 SUNDR</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-11-23 14:00:00
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="Categories"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/Papers/" title="Papers">
+                    <b>#</b> Papers
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Distributed-System/" title="Distributed System">
+                    #Distributed System
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/SUNDR/" title="SUNDR">
+                    #SUNDR
+                  </a>
+                </span>
+                
+              </span>
+          
       </div>
-    
-      <div class="post-item" title="CSAPP Labs 小结">
-        <div class="time-m-d">2023-09-04</div>
-        <div class="title">
-          <a href="/2023/09/04/csapplabs/">
-            
-              
-                <span>CSAPP Labs 小结</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <h1>基本架构</h1>
+<p>包括 client 和 server</p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.4g2ti3ldq900.webp" alt="image"></p>
+<p>client 可以远程挂载 SUNDR 文件系统, 通过 SUNDR 获取文件和修改文件</p>
+<p>具体的方式是 把 client 对于文件系统的系统调用转换为到 server的 RPCs, 同时给 SUNDR 一个独立的磁盘分区</p>
+<p>每个文件系统有唯一的超管可以写入</p>
+<p>用户有一对密钥, 通过私钥操作文件系统, 通过交换公钥来验证身份</p>
+<h1>SUNDR 协议</h1>
+<p>获取-修改一致性: 获取操作准确反映之前所有的修改操作 <br><br>
+分叉一致性: 类似字典树的 log 组织形式, 从而保持一致性</p>
+<h1>设计思想</h1>
+<ol>
+<li>client 校验所有 log 的签名</li>
+<li>检查最后一个日志条目, 防止被恶意回滚</li>
+<li>在 client 构建文件系统树</li>
+<li>新增 log 并签名, 上传</li>
+</ol>
+<h1>快照和版本向量</h1>
+<p>server 维护 log, client 维护 snapshot</p>
+<p>i-handle 唯一标识 snapshot <br><br>
+每个 i-handle 对应一个哈希表, 记录所有 inode 的哈希值 <br><br>
+文件被修改时, inode 的哈希值被更新, i-handle 也被更新</p>
+<p>版本向量: 每个 client 对 i-handle 的修改次数组成向量</p>
+
       </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第八章)">
-        <div class="time-m-d">2023-09-01</div>
-        <div class="title">
-          <a href="/2023/09/01/8csapp/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>CSAPP 学习笔记 (第八章)</span>
-              
+              <a href="/2023/11/21/memcache/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-11-23 14:00:00
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="Categories"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/Papers/" title="Papers">
+                        <b>#</b> Papers
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Distributed-System/" title="Distributed System">
+                        #Distributed System
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/SUNDR/" title="SUNDR">
+                        #SUNDR
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="CSAPP 学习笔记 (第七章)">
-        <div class="time-m-d">2023-08-29</div>
-        <div class="title">
-          <a href="/2023/08/29/7csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第七章)</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">基本架构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">SUNDR 协议</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">设计思想</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">快照和版本向量</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
-      <div class="post-item" title="CSAPP 学习笔记 (第五章)">
-        <div class="time-m-d">2023-08-29</div>
-        <div class="title">
-          <a href="/2023/08/29/5csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第五章)</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第九章)">
-        <div class="time-m-d">2023-08-26</div>
-        <div class="title">
-          <a href="/2023/08/26/9csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第九章)</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第六章)">
-        <div class="time-m-d">2023-08-24</div>
-        <div class="title">
-          <a href="/2023/08/24/6csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第六章)</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第四章) (暂跳过流水线实现)">
-        <div class="time-m-d">2023-08-21</div>
-        <div class="title">
-          <a href="/2023/08/21/4csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第四章) (暂跳过流水线实现)</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="GDB 学习笔记">
-        <div class="time-m-d">2023-08-15</div>
-        <div class="title">
-          <a href="/2023/08/15/gdb/">
-            
-              
-                <span>GDB 学习笔记</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第三章)">
-        <div class="time-m-d">2023-08-04</div>
-        <div class="title">
-          <a href="/2023/08/04/3csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第三章)</span>
-              
-            
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/page/2/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">3 / 5</span>
-    
-      <a href="/page/4/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         
 <div class="footer">
@@ -498,6 +547,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + 6.824%20%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%20SUNDR + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F11%2F23%2Fzanzibar%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/11/23/zanzibar/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>

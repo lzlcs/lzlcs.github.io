@@ -11,7 +11,7 @@
   
   <title>
     
-      Tag 
+      6.824 分布式系统 Scaling Memcache at Facebook 
       
       
       |
@@ -138,19 +138,243 @@
 
 
   
-  <!-- 分类页 url形式：https://yoursite/categories/ -->
-  <div class="container category-index">
-    <div>
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Book/">Book</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Papers/">Papers</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Labs/">Labs</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Base/">Base</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Course/">Course</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo/">Hexo</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Language/">Language</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Languages/">Languages</a><span class="category-list-count">1</span></li></ul>
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">6.824 分布式系统 Scaling Memcache at Facebook</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2023-11-21 15:00:00
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="Categories"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/Papers/" title="Papers">
+                    <b>#</b> Papers
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Distributed-System/" title="Distributed System">
+                    #Distributed System
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Memcache/" title="Memcache">
+                    #Memcache
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <h1>背景</h1>
+<p>社交网络的基本要求</p>
+<ol>
+<li>允许近距离即时交流</li>
+<li>从不同源即时聚合内容</li>
+<li>可以访问和更新热点的共享内容</li>
+<li>扩展到处理每秒数百万个用户需求</li>
+</ol>
+<h1>概览</h1>
+<p><code>memcached</code> -&gt; 一个开源的存放在内存的哈希表实现 <br><br>
+提供 <code>set</code>, <code>get</code>, <code>delete</code> 操作</p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.3vdqq5c7thw0.png" alt="image"></p>
+<ol>
+<li>用户操作的特点是浏览的信息量远大于他们创造的信息量 <br><br>
+因此获取数据是主要负载, 缓存可能获得很大的收益</li>
+<li>读取操作可能发生在不同的源, 比如 MySQL 或者 HDFS</li>
+</ol>
+<p><strong>查询操作描述</strong></p>
+<ol>
+<li>读操作: 先看 memcache 中缓存是否命中, 否则就去数据库查询</li>
+<li>写操作: 先在数据库里更新, 然后再把对应的 kv 从 memcache 中删除</li>
+</ol>
+<blockquote>
+<p>为什么要删除而不是更新: 因为删除操作是幂等的, 并且 memcache 不是数据的权威来源, 在分布式系统中可能出现错误</p>
+</blockquote>
+<blockquote>
+<p>为什么选择 memcache 来解决读取数据库的热点问题: 隔离缓存层和持久化层, 这样在工作负载变更的的时候可以分别进行适配</p>
+</blockquote>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.7caaqb4yyjk0.webp" alt="image"></p>
+<h1>集群中的延迟和加载</h1>
+<ol>
+<li>减少获取缓存数据的延迟</li>
+<li>减少缓存未命中后从数据库加载的延迟</li>
+</ol>
+<h2 id="减少延迟">减少延迟</h2>
+<p>一个集群中有数以百计的 memcache 服务器, kv 键值对通过一致性哈希从而均匀地分布在这些服务器中 <br><br>
+因此每个 web server 都会访问很多 memcache server, 这就形成了一种多对多的结构</p>
+<ol>
+<li>可能造成数据拥塞</li>
+<li>单个服务器的性能可能会成为瓶颈</li>
+</ol>
+<p>每个 web server 上会有 memcache client, 包含一系列功能 <br><br>
+每个 memcache client 维护当前可用的 memcache server 集合 (配置通过辅助配置系统更新(如 zookeeper))</p>
+<p><strong>并行请求和批处理</strong></p>
+<p>写 web app 的时候, 试图最小化网络来回的次数 <br><br>
+通过建造一个数据依赖的有向无环图, 可以并行获取深度相同的节点</p>
+<p><strong>c-s 交互</strong></p>
+<p>客户端有一个库, 这个库可以被嵌入到应用程序或者作为一个名为 mcrouter 的独立代理 <br><br>
+这个代理提供对 server 的接口并负责将 请求/回复 从其他 server 路由</p>
+<p>对于 <code>get</code> 操作</p>
+<ol>
+<li>客户端使用 UDP 连接, 跳过 mcrouter 直接与 server 连接来提高性能</li>
+<li>客户端将丢包等错误视作缓存为命中, 不过在查询数据库之后不会将其插入 memcache, 从而防止网络过载</li>
+</ol>
+<p>对于 <code>delete</code> 和 <code>set</code> 操作</p>
+<ol>
+<li>客户端使用 TCP 连接, 通过本机的 mcrouter 执行这两种操作</li>
+<li>mcouter 把多个 TCP 连接合并成一个 TCP 连接从而减少内存消耗</li>
+</ol>
+<p><strong>拥塞</strong></p>
+<p>client 使用在请求队列上使用滑动窗口机制 <br><br>
+请求被回复时, 适当增加窗口大小, 否则适当减少窗口大小</p>
+<h2 id="减少加载">减少加载</h2>
+<h3 id="租赁">租赁</h3>
+<ol>
+<li>stale sets: memcache 中的数据被更新, 变成陈旧数据</li>
+<li>thundering herds: 特定键发生大量读写活动, 反复写入让 cache 无效, 许多读取操作都转到数据库那边</li>
+</ol>
+<p><strong>租约机制</strong></p>
+<ol>
+<li>触发租约: 缓存未命中, 向 server 获取租约</li>
+<li>分配租约: 租约与 key 唯一绑定</li>
+<li>写入缓存: 写入缓存时需要验证令牌</li>
+<li>失效处理: 实现方式很多, 此处略过</li>
+</ol>
+<p>对于第一种: 租约协调并发的写入可以解决 <br><br>
+对于第二种: 限制写入速率(10秒发放一个租约), 通知客户端延迟写入</p>
+<p><strong>旧数据</strong></p>
+<p>应用可以自主决定等待新数据还是继续使用旧数据</p>
+<p><strong>Memcache 池</strong></p>
+<ol>
+<li>默认池: 大多数数据</li>
+<li>small pool: 存储访问频率高, 未命中成本不高的数据</li>
+<li>large pool: 存储访问频率低, 未命中成本高的数据</li>
+</ol>
+<h2 id="故障处理">故障处理</h2>
+<p><strong>小规模失效</strong></p>
+<p>一小组机器成为 glutter, 用于故障处理 <br><br>
+client 未收到 server 的回复时, 把 glutter 当作 server</p>
+<p><strong>大规模失效</strong></p>
+<p>将 client 的请求重定向到其他集群</p>
+<h1>在一个区域复制</h1>
+<p>需求增加的时候, 简单地增加服务器数量可能会造成拥塞</p>
+<h1>分区</h1>
+<p>server 被分为多个前端集群和一个包含数据库的存储集群 <br><br>
+所有的前端集群都使用相同的 memcache server, 形成区域性池</p>
+<ol>
+<li>数据复制: 存储集群存储准确的数据, 可能会把数据复制到前端集群</li>
+<li>失效处理: 存储集群修改数据的时候会向前端集群发送失效通知(批处理)</li>
+</ol>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2023/11/17/spark/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2023-11-21 15:00:00
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="Categories"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/Papers/" title="Papers">
+                        <b>#</b> Papers
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Distributed-System/" title="Distributed System">
+                        #Distributed System
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Memcache/" title="Memcache">
+                        #Memcache
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2023/11/23/zanzibar/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">概览</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">集群中的延迟和加载</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%8F%E5%B0%91%E5%BB%B6%E8%BF%9F"><span class="toc-text">减少延迟</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%8F%E5%B0%91%E5%8A%A0%E8%BD%BD"><span class="toc-text">减少加载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A7%9F%E8%B5%81"><span class="toc-text">租赁</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%85%E9%9A%9C%E5%A4%84%E7%90%86"><span class="toc-text">故障处理</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">在一个区域复制</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">分区</span></a></li></ol>
+      
     </div>
   </div>
-  
 
   
+<script src="/js/catalog.js"></script>
 
-  
 
-  
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
 
         
 <div class="footer">
@@ -412,12 +636,12 @@
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + tags + '&url=' + http%3A%2F%2Fexample.com%2Fcategories%2Findex.html + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + 6.824%20%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%20Scaling%20Memcache%20at%20Facebook + '&url=' + http%3A%2F%2Fexample.com%2F2023%2F11%2F21%2Fmemcache%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/categories/index.html" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2023/11/21/memcache/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         
