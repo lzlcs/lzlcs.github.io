@@ -1,5 +1,5 @@
 ---
-title: 6.824 分布式系统 Lab2 简记
+title: 6.824 分布式系统 Lab3 简记
 date: 2023-11-16 19:00:00
 mathjax: true
 categories:
