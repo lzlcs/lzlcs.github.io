@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="" />
+  <meta name="author" content="lzl" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      StanFord CS149 Assignment2 简记 
+      
+      
+      |
+    
+     lzl&#39;s blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">lzl</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          <a href="/categories/">Categories</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">StanFord CS149 Assignment2 简记</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2024-02-04 14:20:10
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="Categories"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/Labs/" title="Labs">
+                    <b>#</b> Labs
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Lab/" title="Lab">
+                    #Lab
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/C/" title="C++">
+                    #C++
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Parallel/" title="Parallel">
+                    #Parallel
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/CUDA/" title="CUDA">
+                    #CUDA
+                  </a>
+                </span>
+                
+              </span>
+          
+      </div>
+      <div class="markdown-body">
+        <p><a href="">Github</a><br>
+<s>失去了优化性能的梦想</s></p>
+<h1>Part_A</h1>
+<h2 id="任务-1-TaskSystemParallelSpawn">任务 1: TaskSystemParallelSpawn</h2>
+<p>首先不能对于每个任务创建一个线程, 那样不仅不符合线程数要求, 还效率低下</p>
+<p>第一个任务不要求实现线程池, 所以类中只需要记录一个 <code>num_threads</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tasksys.h</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TaskSystemParallelSpawn</span>: <span class="keyword">public</span> ITaskSystem &#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="type">int</span> num_threads; <span class="comment">// new</span></span><br><span class="line">        <span class="built_in">TaskSystemParallelSpawn</span>(<span class="type">int</span> num_threads);</span><br><span class="line">        ~<span class="built_in">TaskSystemParallelSpawn</span>();</span><br><span class="line">        <span class="function"><span class="type">const</span> <span class="type">char</span>* <span class="title">name</span><span class="params">()</span></span>;</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">run</span><span class="params">(IRunnable* runnable, <span class="type">int</span> num_total_tasks)</span></span>;</span><br><span class="line">        <span class="function">TaskID <span class="title">runAsyncWithDeps</span><span class="params">(IRunnable* runnable, <span class="type">int</span> num_total_tasks,</span></span></span><br><span class="line"><span class="params"><span class="function">                                <span class="type">const</span> std::vector&lt;TaskID&gt;&amp; deps)</span></span>;</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">sync</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;   </span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tasksys.cpp</span></span><br><span class="line">TaskSystemParallelSpawn::<span class="built_in">TaskSystemParallelSpawn</span>(<span class="type">int</span> num_threads) : <span class="built_in">ITaskSystem</span>(num_threads)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">this</span>-&gt;num_threads = num_threads;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>分配任务: 可以用一个共享变量表示当前已经处理完的任务数量, 用 <code>mutex</code> 锁住即可</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">TaskSystemParallelSpawn::run</span><span class="params">(IRunnable *runnable, <span class="type">int</span> num_total_tasks)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::shared_ptr&lt;std::mutex&gt; mu = std::<span class="built_in">make_shared</span>&lt;std::mutex&gt;();</span><br><span class="line">    <span class="type">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> func = [&amp;count, mu, num_total_tasks, runnable]()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 取出共享变量</span></span><br><span class="line">            mu-&gt;<span class="built_in">lock</span>();</span><br><span class="line">            <span class="type">int</span> tmp = count++;</span><br><span class="line">            mu-&gt;<span class="built_in">unlock</span>();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (tmp &gt;= num_total_tasks) <span class="keyword">break</span>;</span><br><span class="line">            runnable-&gt;<span class="built_in">runTask</span>(tmp, num_total_tasks);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function">std::vector&lt;std::thread&gt; <span class="title">threadId</span><span class="params">(num_threads)</span></span>;</span><br><span class="line">    <span class="comment">// 子线程</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; num_threads; ++i)</span><br><span class="line">        threadId[i] = std::<span class="built_in">thread</span>(func);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 主线程</span></span><br><span class="line">    <span class="built_in">func</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 等待子线程</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; num_threads; ++i)</span><br><span class="line">        threadId[i].<span class="built_in">join</span>();</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1>任务 2</h1>
+<p><strong>任务的状态表示</strong></p>
+<p>正常线程池使用任务队列, 这里可以直接记录 <code>runnable</code></p>
+<p>任务有三种状态: 已完成, 完成中, 未完成</p>
+<ol>
+<li>已完成: <code>0 ~ num_finished</code></li>
+<li>完成中: <code>num_finished ~ num_toBeDone - 1</code></li>
+<li>未完成: <code>num_toBeDone ~ num_total_tasks</code></li>
+</ol>
+<p>这里使用了两个锁分别锁住 <code>num_finished</code> 和 <code>num_toBeDone</code> <br><br>
+目的是为了提高性能, 只用一把锁可以保证正确, 但是性能不够</p>
+<p><code>num_total_tasks</code> 不用专门锁的原因是他只会在主线程被写入一次 <br></p>
+<p>还需要一个 <code>killed</code> 表示任务是否已经全部执行完毕</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">TaskSystemParallelThreadPoolSpinning</span>: <span class="keyword">public</span> ITaskSystem &#123;</span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        <span class="type">int</span> num_threads;</span><br><span class="line">        std::vector&lt;threadPtr&gt; threads;</span><br><span class="line"></span><br><span class="line">        IRunnable* runnable;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> num_total_tasks;</span><br><span class="line">        <span class="type">int</span> num_finished;</span><br><span class="line">        <span class="type">int</span> num_toBeDone;</span><br><span class="line">        </span><br><span class="line">        <span class="type">bool</span> killed;</span><br><span class="line"></span><br><span class="line">        std::shared_ptr&lt;std::mutex&gt; mu;</span><br><span class="line">        std::shared_ptr&lt;std::mutex&gt; mu_finished;</span><br><span class="line">        std::shared_ptr&lt;std::condition_variable&gt; se;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>线程工作流程</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 主线程</span></span><br><span class="line"><span class="comment">// 构造函数中</span></span><br><span class="line">初始化</span><br><span class="line"><span class="comment">// run 函数中</span></span><br><span class="line">持有两把锁, 修改各种变量</span><br><span class="line"></span><br><span class="line">只持有锁<span class="number">2</span>, 判断任务是否结束, 不结束就 wait</span><br><span class="line"><span class="comment">// 析构函数中</span></span><br><span class="line">killed 设置为 <span class="literal">true</span></span><br><span class="line">关闭所有线程</span><br></pre></td></tr></table></figure>
+<ol>
+<li>子线程忙等的时候不要修改共享变量</li>
+<li>(锁1中)确定有任务可做的时候才修改 <code>num_toBeDone</code></li>
+<li>(锁外)判断有无任务被取出, 取出就做</li>
+<li>(锁2中)判断是否完成了所有任务, 完成了就通知主线程</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 子线程</span></span><br><span class="line"><span class="keyword">while</span> (!killed)</span><br><span class="line">&#123;</span><br><span class="line">    获取当前任务</span><br><span class="line">    执行任务</span><br><span class="line">    更新任务状态</span><br><span class="line">    任务结束唤醒主线程</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="任务-3">任务 3</h2>
+<p>与任务 2 类似, 不过优化不足, 不能通过测试</p>
+<p><strong>新增部分</strong></p>
+<p>子线程循环开始之后要判断当前是否有任务, 否则等待</p>
+<p>主线程 <code>run</code> 函数初始值设定完毕之后要通知所有子线程</p>
+<p>析构函数 <code>killed</code> 设置完之后要通知一下子线程从而关闭</p>
+<h1>Part_b</h1>
+<ol>
+<li>任务的表示: 包括上述三个变量, 新增一个 <code>id</code></li>
+<li>依赖关系的表示: 一个邻接表 <code>G</code>, 一个入度 <code>in_degree</code></li>
+<li>任务队列: 存储 <code>TaskID</code>, 另用一个 <code>vector</code> 存储 <code>TaskInfo</code></li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">TaskInfo</span></span><br><span class="line">    &#123;</span><br><span class="line">        TaskID id;</span><br><span class="line">        IRunnable *runnable;</span><br><span class="line">        <span class="type">int</span> num_toBeDone;</span><br><span class="line">        <span class="type">int</span> num_finished;</span><br><span class="line">        <span class="type">int</span> num_total_task;</span><br><span class="line">        <span class="built_in">TaskInfo</span>(TaskID id, IRunnable *runnable, <span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">this</span>-&gt;id = id;</span><br><span class="line">            <span class="keyword">this</span>-&gt;runnable = runnable;</span><br><span class="line">            num_toBeDone = a;</span><br><span class="line">            num_finished = b;</span><br><span class="line">            num_total_task = c;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="type">bool</span> killed;</span><br><span class="line"></span><br><span class="line">    std::mutex mu;</span><br><span class="line">    std::condition_variable S, T;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> num_all_undone_task;</span><br><span class="line"></span><br><span class="line">    std::vector&lt;std::thread&gt; threads;</span><br><span class="line">    std::vector&lt;std::vector&lt;<span class="type">int</span>&gt;&gt; G;</span><br><span class="line">    std::vector&lt;<span class="type">int</span>&gt; in_degree;</span><br><span class="line">    std::queue&lt;TaskID&gt; tasks;</span><br><span class="line">    std::vector&lt;TaskInfo&gt; tasks_info;</span><br><span class="line">    <span class="type">static</span> <span class="keyword">constexpr</span> <span class="type">int</span> N = <span class="number">1e5</span> + <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+<p><strong>子线程函数</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">&#123;</span><br><span class="line">    等待唤醒</span><br><span class="line"></span><br><span class="line">    找到当前任务队列的队头, 取出 task</span><br><span class="line">    接收子任务, 并判断子任务是否全部进入 </span><br><span class="line">        正在执行和执行完毕这两个状态, 是就出队</span><br><span class="line"></span><br><span class="line">    runTask</span><br><span class="line"></span><br><span class="line">    标记子任务已完成, 判断 task 是否全部完成</span><br><span class="line"></span><br><span class="line">    全部完成之后沿着图减少一下入度, 如果发现某个后继 task 入度为 <span class="number">0</span></span><br><span class="line">        那么入队, 通知一下其他线程可以开始了</span><br><span class="line"></span><br><span class="line">    如果未完成的 task 数量为 <span class="number">0</span>, 通知主线程可以结束任务</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>析构函数</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">设置 `killed` 标志位</span><br><span class="line">sync() 等待任务全部完成</span><br><span class="line">通知子线程退出</span><br><span class="line">等待所有子线程退出</span><br></pre></td></tr></table></figure>
+<p><strong><code>run</code> 和 <code>runAsyncWithDeps</code> 函数</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">TaskSystemParallelThreadPoolSleeping::run</span><span class="params">(IRunnable *runnable, <span class="type">int</span> num_total_tasks)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">runAsyncWithDeps</span>(runnable, num_total_tasks, &#123;&#125;);</span><br><span class="line">    <span class="built_in">sync</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">TaskID <span class="title">TaskSystemParallelThreadPoolSleeping::runAsyncWithDeps</span><span class="params">(IRunnable *runnable, <span class="type">int</span> num_total_tasks,</span></span></span><br><span class="line"><span class="params"><span class="function">                                                              <span class="type">const</span> std::vector&lt;TaskID&gt; &amp;deps)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    设置 TaskID</span><br><span class="line">    加入图中, 更新入度</span><br><span class="line">    如果入度为 <span class="number">0</span>, 那么进入 task 队列, 通知子线程</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong><code>sync</code> 函数</strong></p>
+<p>等待任务全部完成即可</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2024/02/01/1cs149/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2024-02-04 14:20:10
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="Categories"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/Labs/" title="Labs">
+                        <b>#</b> Labs
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Lab/" title="Lab">
+                        #Lab
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/C/" title="C++">
+                        #C++
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Parallel/" title="Parallel">
+                        #Parallel
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/CUDA/" title="CUDA">
+                        #CUDA
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+              <a href="/2024/02/12/3cs149/" target="_self">
+                <span>Next</span>
+                <i class="iconfont icon-chevronright"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Part_A</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1-1-TaskSystemParallelSpawn"><span class="toc-text">任务 1: TaskSystemParallelSpawn</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">任务 2</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1-3"><span class="toc-text">任务 3</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Part_b</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + StanFord%20CS149%20Assignment2%20%E7%AE%80%E8%AE%B0 + '&url=' + http%3A%2F%2Fexample.com%2F2024%2F02%2F04%2F2cs149%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2024/02/04/2cs149/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
+</html>
