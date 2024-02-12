@@ -196,7 +196,42 @@
           
       </div>
       <div class="markdown-body">
-        
+        <p><a target="_blank" rel="noopener" href="https://github.com/lzlcs/Courses"><code>Github</code></a></p>
+<h1>Part 1</h1>
+<p>实现简单, 见代码</p>
+<h2 id="问题-1">问题 1</h2>
+<p><strong>CUDA</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Running <span class="number">3</span> timing tests:</span><br><span class="line">Effective BW by CUDA saxpy:  <span class="number">125.259</span> ms         [<span class="number">8.922</span> GB/s]</span><br><span class="line">saxpy without data transfer: <span class="number">6.136</span> ms</span><br><span class="line">Effective BW by CUDA saxpy:  <span class="number">126.499</span> ms         [<span class="number">8.835</span> GB/s]</span><br><span class="line">saxpy without data transfer: <span class="number">6.198</span> ms</span><br><span class="line">Effective BW by CUDA saxpy:  <span class="number">119.858</span> ms         [<span class="number">9.324</span> GB/s]</span><br><span class="line">saxpy without data transfer: <span class="number">6.047</span> ms</span><br></pre></td></tr></table></figure>
+<p><strong>CPU</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[saxpy ispc]:           [<span class="number">8.482</span>] ms      [<span class="number">35.134</span>] GB/s   [<span class="number">4.716</span>] GFLOPS</span><br><span class="line">[saxpy task ispc]:      [<span class="number">8.202</span>] ms      [<span class="number">36.335</span>] GB/s   [<span class="number">4.877</span>] GFLOPS</span><br></pre></td></tr></table></figure>
+<p>可见 <code>saxpy</code> 的 <code>CUDA</code> 版本显著慢于 <code>CPU(ispc)</code> 版本</p>
+<h2 id="问题-2">问题 2</h2>
+<p>可见计算的部分非常迅速, 瓶颈是数据传输</p>
+<h1>Part 2</h1>
+<h2 id="任务-1">任务 1</h2>
+<p>首先要确定 线程块的数量和每个线程块中的线程数量</p>
+<ol>
+<li>常规设定线程数量为 256</li>
+<li>计算所需线程数量
+<ul>
+<li>超过 256, <code>&lt;&lt;&lt;threads_num / 256, 256&gt;&gt;&gt;</code>(此处必然可以整除)</li>
+<li>不超过 256 <code>&lt;&lt;&lt;1, threads_num&gt;&gt;&gt;</code></li>
+</ul>
+</li>
+</ol>
+<p>之后就按照 <code>README</code> 文件上的代码翻译即可, 剩余见代码</p>
+<h2 id="任务-2">任务 2</h2>
+<p>首先 <code>output[idx] = (input[idx] == input[idx + 1])</code> 再求前缀和</p>
+<ul>
+<li>此时 <code>output</code> 数组的和就是要返回的值</li>
+</ul>
+<p>由于 <code>explicit</code> 的特性</p>
+<ul>
+<li><code>output[idx] + 1 == output[idx + 1]</code> 的位置就是要找的下标之一</li>
+<li><code>output[idx]</code> 的值还是答案数组的下标</li>
+</ul>
+<p>所以更新答案 <code>result[output[idx]] = idx</code></p>
+
       </div>
       
         <div class="prev-or-next">
@@ -262,6 +297,23 @@
       
     </div>
     
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Part 1</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98-1"><span class="toc-text">问题 1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98-2"><span class="toc-text">问题 2</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Part 2</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1-1"><span class="toc-text">任务 1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1-2"><span class="toc-text">任务 2</span></a></li></ol></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
 
     
       <div class="comments-container">
