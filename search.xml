@@ -8,7 +8,7 @@
       <link href="/2024/02/12/3cs149/"/>
       <url>/2024/02/12/3cs149/</url>
       
-        <content type="html"><![CDATA[<p><a href="https://github.com/lzlcs/Courses"><code>Github</code></a></p><h1>Part 1</h1><p>实现简单, 见代码</p><h2 id="问题-1">问题 1</h2><p><strong>CUDA</strong></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Running <span class="number">3</span> timing tests:</span><br><span class="line">Effective BW by CUDA saxpy:  <span class="number">125.259</span> ms         [<span class="number">8.922</span> GB/s]</span><br><span class="line">saxpy without data transfer: <span class="number">6.136</span> ms</span><br><span class="line">Effective BW by CUDA saxpy:  <span class="number">126.499</span> ms         [<span class="number">8.835</span> GB/s]</span><br><span class="line">saxpy without data transfer: <span class="number">6.198</span> ms</span><br><span class="line">Effective BW by CUDA saxpy:  <span class="number">119.858</span> ms         [<span class="number">9.324</span> GB/s]</span><br><span class="line">saxpy without data transfer: <span class="number">6.047</span> ms</span><br></pre></td></tr></table></figure><p><strong>CPU</strong></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[saxpy ispc]:           [<span class="number">8.482</span>] ms      [<span class="number">35.134</span>] GB/s   [<span class="number">4.716</span>] GFLOPS</span><br><span class="line">[saxpy task ispc]:      [<span class="number">8.202</span>] ms      [<span class="number">36.335</span>] GB/s   [<span class="number">4.877</span>] GFLOPS</span><br></pre></td></tr></table></figure><p>可见 <code>saxpy</code> 的 <code>CUDA</code> 版本显著慢于 <code>CPU(ispc)</code> 版本</p><h2 id="问题-2">问题 2</h2><p>可见计算的部分非常迅速, 瓶颈是数据传输</p><h1>Part 2</h1><h2 id="任务-1">任务 1</h2><p>首先要确定 线程块的数量和每个线程块中的线程数量</p><ol><li>常规设定线程数量为 256</li><li>计算所需线程数量<ul><li>超过 256, <code>&lt;&lt;&lt;threads_num / 256, 256&gt;&gt;&gt;</code>(此处必然可以整除)</li><li>不超过 256 <code>&lt;&lt;&lt;1, threads_num&gt;&gt;&gt;</code></li></ul></li></ol><p>之后就按照 <code>README</code> 文件上的代码翻译即可, 剩余见代码</p><h2 id="任务-2">任务 2</h2><p>首先 <code>output[idx] = (input[idx] == input[idx + 1])</code> 再求前缀和</p><ul><li>此时 <code>output</code> 数组的和就是要返回的值</li></ul><p>由于 <code>explicit</code> 的特性</p><ul><li><code>output[idx] + 1 == output[idx + 1]</code> 的位置就是要找的下标之一</li><li><code>output[idx]</code> 的值还是答案数组的下标</li></ul><p>所以更新答案 <code>result[output[idx]] = idx</code></p>]]></content>
+        <content type="html"><![CDATA[<p><a href="https://github.com/lzlcs/Courses"><code>Github</code></a></p><h1>Part 1</h1><p>实现简单, 见代码</p><h2 id="问题-1">问题 1</h2><p><strong>CUDA</strong></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Running <span class="number">3</span> timing tests:</span><br><span class="line">Effective BW by CUDA saxpy:  <span class="number">125.259</span> ms         [<span class="number">8.922</span> GB/s]</span><br><span class="line">saxpy without data transfer: <span class="number">6.136</span> ms</span><br><span class="line">Effective BW by CUDA saxpy:  <span class="number">126.499</span> ms         [<span class="number">8.835</span> GB/s]</span><br><span class="line">saxpy without data transfer: <span class="number">6.198</span> ms</span><br><span class="line">Effective BW by CUDA saxpy:  <span class="number">119.858</span> ms         [<span class="number">9.324</span> GB/s]</span><br><span class="line">saxpy without data transfer: <span class="number">6.047</span> ms</span><br></pre></td></tr></table></figure><p><strong>CPU</strong></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[saxpy ispc]:           [<span class="number">8.482</span>] ms      [<span class="number">35.134</span>] GB/s   [<span class="number">4.716</span>] GFLOPS</span><br><span class="line">[saxpy task ispc]:      [<span class="number">8.202</span>] ms      [<span class="number">36.335</span>] GB/s   [<span class="number">4.877</span>] GFLOPS</span><br></pre></td></tr></table></figure><p>可见 <code>saxpy</code> 的 <code>CUDA</code> 版本显著慢于 <code>CPU(ispc)</code> 版本</p><h2 id="问题-2">问题 2</h2><p>可见计算的部分非常迅速, 瓶颈是数据传输</p><h1>Part 2</h1><h2 id="任务-1">任务 1</h2><p>首先要确定 线程块的数量和每个线程块中的线程数量</p><ol><li>常规设定线程数量为 256</li><li>计算所需线程数量<ul><li>超过 256, <code>&lt;&lt;&lt;threads_num / 256, 256&gt;&gt;&gt;</code>(此处必然可以整除)</li><li>不超过 256 <code>&lt;&lt;&lt;1, threads_num&gt;&gt;&gt;</code></li></ul></li></ol><p>之后就按照 <code>README</code> 文件上的代码翻译即可, 剩余见代码</p><h2 id="任务-2">任务 2</h2><p>首先 <code>output[idx] = (input[idx] == input[idx + 1])</code> 再求前缀和</p><ul><li>此时 <code>output</code> 数组的和就是要返回的值</li></ul><p>由于 <code>explicit</code> 的特性</p><ul><li><code>output[idx] + 1 == output[idx + 1]</code> 的位置就是要找的下标之一</li><li><code>output[idx]</code> 的值还是答案数组的下标</li></ul><p>所以更新答案 <code>result[output[idx]] = idx</code></p><h1>Part 3</h1><blockquote><p>参考 <code>@kykim0</code> 的 <a href="https://github.com/kykim0/asst3"><code>Tile-based</code></a> 实现</p></blockquote><p><strong>朴素实现</strong></p><p>两种并行: 圆 和 像素</p><p>渲染顺序的问题可以通过逐像素 遍历每个圆来计算</p><p>每帧图像可以拆解为 16 * 16 个 <code>tile</code>, 每个 <code>tile</code> 负责 64 * 64 个像素</p><p>每个 <code>tile</code> 可以作为一个线程块, 每个线程块中 1024 个线程负责 1024 个像素</p><p>计算的过程可以照抄原本的代码, 只需要看代码处理一下 <code>tile</code> 的细节</p><p><strong>优化实现</strong></p><p>朴素实现效率很低, 考虑优化遍历圆的过程, 只遍历经过这个 <code>tile</code> 的圆</p><p>这个地方可以使用 圆 的并行, 每个圆并行地计算是否经过这个 <code>tile</code></p><p>使用 <code>sharedMemExclusiveScan</code> 可以进行计算 <br><br>这个时候需要把圆分批计算, 因为如果很多圆同时计算的话会爆显存</p><p>设置每批圆 1024 个, 这样每个 <code>tile</code> 中</p><ol><li><code>prefixSumInput</code> 存储当前圆是否与当前 <code>tile</code> 相交</li><li><code>prefixSumOutput</code> 存储 <code>explicit</code> 的前缀和</li><li>在全局开一个 <code>circleFlag</code> 数组 <br>大小为 <code>sizeof(short) * NUM_CIRCLES_PROC * numTilesX * numTilesY</code> <br>因为每个 <code>tile</code> 中最多能相交 1024 个圆 (同一批)<ul><li>当前 圆 在 <code>circleFlag</code> 中的下标 <code>flagIndex</code> 为: <code>1024 * tileIdx + sum[circleId]</code></li><li>在 <code>flagIndex</code> 处记录 <code>circleIdx</code> 备用</li><li>注意如果当前的 <code>circle</code> 是最后一个则需要记录表示终止的 -1</li></ul></li></ol><p>使用 像素 并行计算每个像素的值: 当 <code>flagValue</code> 为 -1 时就提前结束循环</p>]]></content>
       
       
       <categories>
@@ -20,9 +20,9 @@
       
         <tags>
             
-            <tag> Lab </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> Lab </tag>
             
             <tag> Parallel </tag>
             
@@ -51,9 +51,9 @@
       
         <tags>
             
-            <tag> Lab </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> Lab </tag>
             
             <tag> Parallel </tag>
             
@@ -82,9 +82,9 @@
       
         <tags>
             
-            <tag> Lab </tag>
-            
             <tag> C++ </tag>
+            
+            <tag> Lab </tag>
             
             <tag> Parallel </tag>
             
@@ -144,9 +144,9 @@
             
             <tag> Golang </tag>
             
-            <tag> Raft </tag>
-            
             <tag> Distributed System </tag>
+            
+            <tag> Raft </tag>
             
         </tags>
       
@@ -283,36 +283,9 @@
             
             <tag> Golang </tag>
             
+            <tag> Distributed System </tag>
+            
             <tag> Raft </tag>
-            
-            <tag> Distributed System </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>6.824 分布式系统 FaRM</title>
-      <link href="/2023/11/04/farm/"/>
-      <url>/2023/11/04/farm/</url>
-      
-        <content type="html"><![CDATA[<h1>特性</h1><ol><li>所有的 <code>replica</code> 在一个数据中心, 配置管理器决定每个数据分区中哪个服务器是 <code>Primary</code>, 哪个服务器是 <code>Backup</code>, 使用 <code>ZooKeeper</code> 来实现配置管理器</li><li>使用主从复制的方式容错, 读写数据都在 <code>Primary</code> 上</li><li>事务协调器 <code>CM</code>, 执行事务, 充当两阶段提交中事务协调器的角色</li></ol><h1>高性能</h1><ol><li>数据分片, 并行处理</li><li>数据存放 <code>RAM</code> 中而不是持久化到磁盘</li><li>使用 <code>Remote Direct Memory Access, RDMA</code>, 直接对服务器的内存进行读写</li></ol><p><strong><code>RAM</code> 断电的问题</strong></p><p>尽量让其不断电, 所以为每个服务器配备一个备用的电池 <br><br>至少可以撑到电池没电, 从而让管理员重新接上电源</p><p>服务器会在断电的时候向其他服务器发送信号, 会停止当前正在进行的任务并把 <code>RAM</code> 中的数据写入磁盘, 这样可以放置大范围的供电故障引起的数据丢失</p><p>这种方案只适用于断电的故障, 对于其他类型的让服务器关机的故障并不起作用</p><p><strong><code>RDMA</code></strong></p><p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.6ax2zcwkdtc0.webp" alt="image"></p><p>传统网络: 应用 -&gt; <code>Socket</code>(用于缓存) -&gt; <code>TCP</code> -&gt; <code>NIC Driver</code> -&gt; <code>NIC</code> -&gt; 另一台机器的 <code>NIC</code> -&gt; <code>NIC Driver</code> -&gt; <code>buffer</code> -&gt; 应用</p><p><code>Kernal Bypass</code>: 应用 -&gt; <code>NIC</code> -&gt; 另一台机器的 <code>NIC</code> -&gt; 应用, 但是需要应用来实现 <code>TCP</code> 相关的功能</p><p><code>RDMA</code>: 用特殊的网卡(支持 <code>RDMA</code>), 不再发送 <code>RPC</code>, 而是直接对内存进行读写</p><h1>乐观并发控制</h1><p>乐观锁机制下, 可以在没有锁的情况下读取数据 <br><br>之后将对数据的修改缓存在本地, 事务结束的时候尝试提交 <br><br>由事务管理系统来验证你的提交是否合法</p><p>如果你读写操作的顺序与执行顺序一致, 那么成功提交, 否则终止并重新执行</p><p>如何验证是否合法?</p><h1><code>API</code></h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">txCreate()</span><br><span class="line">o = txRead(OID)</span><br><span class="line">o.f += <span class="number">1</span></span><br><span class="line">txWrite(OID, o)</span><br><span class="line">ok = txCommit()</span><br></pre></td></tr></table></figure><p><code>OID</code> 包括 <code>Region</code> 和 <code>Access</code> 定位访问的位置</p><h1>服务器内存布局</h1><p>每个服务器分为多个 <code>Region</code>, 每个 <code>Region</code> 存储数据对象 <br><br>还存储着 n 个日志队列和消息队列, n 是服务器数量, 其他服务器通过 <code>RDMA</code> 修改队列</p><p>数据对象的头部数据, 高位是锁标志位, 低位是对象的版本号</p><h1></h1><p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.57dak5yskgw0.webp" alt="image"></p><p>第一个阶段是 <code>Execute phase</code>, <code>C</code> 通过 <code>RDMA</code> 向 $P_{1-3}$ 读取数据</p><p><strong><code>LOCK</code></strong></p><p>客户端(扮演协调器的角色)把数据写入 <code>Primary</code>, <code>Primary</code> 尝试使用 <code>CAS</code> 来锁定版本, 如果失败就返回 NO, 成功就加锁返回 YES</p><p><strong><code>VALIDATE</code></strong></p><p><code>RDMA</code> 读版本, 检查是否改变</p><p><strong><code>COMMIT BACKUP</code></strong></p><p>发送给 <code>backup</code>, 等待 <code>NIC</code> 确认</p><p><strong><code>COMMIT PRIMARY</code></strong></p><p>发送数据给 <code>primary</code> 更新数据并解锁, 等待 <code>NIC</code> 确认</p><p><strong><code>TRUNCATE</code></strong></p><p>通知各服务器删除对应日志</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> Papers </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Distributed System </tag>
-            
-            <tag> FaRM </tag>
             
         </tags>
       
@@ -340,6 +313,33 @@
             <tag> Distributed System </tag>
             
             <tag> DynamoDB </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>6.824 分布式系统 FaRM</title>
+      <link href="/2023/11/04/farm/"/>
+      <url>/2023/11/04/farm/</url>
+      
+        <content type="html"><![CDATA[<h1>特性</h1><ol><li>所有的 <code>replica</code> 在一个数据中心, 配置管理器决定每个数据分区中哪个服务器是 <code>Primary</code>, 哪个服务器是 <code>Backup</code>, 使用 <code>ZooKeeper</code> 来实现配置管理器</li><li>使用主从复制的方式容错, 读写数据都在 <code>Primary</code> 上</li><li>事务协调器 <code>CM</code>, 执行事务, 充当两阶段提交中事务协调器的角色</li></ol><h1>高性能</h1><ol><li>数据分片, 并行处理</li><li>数据存放 <code>RAM</code> 中而不是持久化到磁盘</li><li>使用 <code>Remote Direct Memory Access, RDMA</code>, 直接对服务器的内存进行读写</li></ol><p><strong><code>RAM</code> 断电的问题</strong></p><p>尽量让其不断电, 所以为每个服务器配备一个备用的电池 <br><br>至少可以撑到电池没电, 从而让管理员重新接上电源</p><p>服务器会在断电的时候向其他服务器发送信号, 会停止当前正在进行的任务并把 <code>RAM</code> 中的数据写入磁盘, 这样可以放置大范围的供电故障引起的数据丢失</p><p>这种方案只适用于断电的故障, 对于其他类型的让服务器关机的故障并不起作用</p><p><strong><code>RDMA</code></strong></p><p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.6ax2zcwkdtc0.webp" alt="image"></p><p>传统网络: 应用 -&gt; <code>Socket</code>(用于缓存) -&gt; <code>TCP</code> -&gt; <code>NIC Driver</code> -&gt; <code>NIC</code> -&gt; 另一台机器的 <code>NIC</code> -&gt; <code>NIC Driver</code> -&gt; <code>buffer</code> -&gt; 应用</p><p><code>Kernal Bypass</code>: 应用 -&gt; <code>NIC</code> -&gt; 另一台机器的 <code>NIC</code> -&gt; 应用, 但是需要应用来实现 <code>TCP</code> 相关的功能</p><p><code>RDMA</code>: 用特殊的网卡(支持 <code>RDMA</code>), 不再发送 <code>RPC</code>, 而是直接对内存进行读写</p><h1>乐观并发控制</h1><p>乐观锁机制下, 可以在没有锁的情况下读取数据 <br><br>之后将对数据的修改缓存在本地, 事务结束的时候尝试提交 <br><br>由事务管理系统来验证你的提交是否合法</p><p>如果你读写操作的顺序与执行顺序一致, 那么成功提交, 否则终止并重新执行</p><p>如何验证是否合法?</p><h1><code>API</code></h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">txCreate()</span><br><span class="line">o = txRead(OID)</span><br><span class="line">o.f += <span class="number">1</span></span><br><span class="line">txWrite(OID, o)</span><br><span class="line">ok = txCommit()</span><br></pre></td></tr></table></figure><p><code>OID</code> 包括 <code>Region</code> 和 <code>Access</code> 定位访问的位置</p><h1>服务器内存布局</h1><p>每个服务器分为多个 <code>Region</code>, 每个 <code>Region</code> 存储数据对象 <br><br>还存储着 n 个日志队列和消息队列, n 是服务器数量, 其他服务器通过 <code>RDMA</code> 修改队列</p><p>数据对象的头部数据, 高位是锁标志位, 低位是对象的版本号</p><h1></h1><p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.57dak5yskgw0.webp" alt="image"></p><p>第一个阶段是 <code>Execute phase</code>, <code>C</code> 通过 <code>RDMA</code> 向 $P_{1-3}$ 读取数据</p><p><strong><code>LOCK</code></strong></p><p>客户端(扮演协调器的角色)把数据写入 <code>Primary</code>, <code>Primary</code> 尝试使用 <code>CAS</code> 来锁定版本, 如果失败就返回 NO, 成功就加锁返回 YES</p><p><strong><code>VALIDATE</code></strong></p><p><code>RDMA</code> 读版本, 检查是否改变</p><p><strong><code>COMMIT BACKUP</code></strong></p><p>发送给 <code>backup</code>, 等待 <code>NIC</code> 确认</p><p><strong><code>COMMIT PRIMARY</code></strong></p><p>发送数据给 <code>primary</code> 更新数据并解锁, 等待 <code>NIC</code> 确认</p><p><strong><code>TRUNCATE</code></strong></p><p>通知各服务器删除对应日志</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Papers </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Distributed System </tag>
+            
+            <tag> FaRM </tag>
             
         </tags>
       
@@ -476,9 +476,9 @@
             
             <tag> Golang </tag>
             
-            <tag> Raft </tag>
-            
             <tag> Distributed System </tag>
+            
+            <tag> Raft </tag>
             
         </tags>
       
@@ -503,9 +503,9 @@
       
         <tags>
             
-            <tag> Raft </tag>
-            
             <tag> Distributed System </tag>
+            
+            <tag> Raft </tag>
             
         </tags>
       
@@ -530,9 +530,9 @@
       
         <tags>
             
-            <tag> Fault-Tolerant Virtual Machines </tag>
-            
             <tag> Distributed System </tag>
+            
+            <tag> Fault-Tolerant Virtual Machines </tag>
             
         </tags>
       
@@ -557,9 +557,9 @@
       
         <tags>
             
-            <tag> The Google File System </tag>
-            
             <tag> Distributed System </tag>
+            
+            <tag> The Google File System </tag>
             
         </tags>
       
@@ -669,11 +669,11 @@
       
         <tags>
             
+            <tag> Lab </tag>
+            
             <tag> C </tag>
             
             <tag> OS </tag>
-            
-            <tag> Lab </tag>
             
         </tags>
       
@@ -698,11 +698,11 @@
       
         <tags>
             
+            <tag> Lab </tag>
+            
             <tag> C </tag>
             
             <tag> OS </tag>
-            
-            <tag> Lab </tag>
             
         </tags>
       

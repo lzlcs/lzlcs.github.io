@@ -169,14 +169,14 @@
                 <i class="iconfont icon-tags mr-10" title="Tags"></i>
                 
                 <span class="span--tag mr-8">
-                  <a href="/tags/Lab/" title="Lab">
-                    #Lab
+                  <a href="/tags/C/" title="C++">
+                    #C++
                   </a>
                 </span>
                 
                 <span class="span--tag mr-8">
-                  <a href="/tags/C/" title="C++">
-                    #C++
+                  <a href="/tags/Lab/" title="Lab">
+                    #Lab
                   </a>
                 </span>
                 
@@ -231,6 +231,36 @@
 <li><code>output[idx]</code> 的值还是答案数组的下标</li>
 </ul>
 <p>所以更新答案 <code>result[output[idx]] = idx</code></p>
+<h1>Part 3</h1>
+<blockquote>
+<p>参考 <code>@kykim0</code> 的 <a target="_blank" rel="noopener" href="https://github.com/kykim0/asst3"><code>Tile-based</code></a> 实现</p>
+</blockquote>
+<p><strong>朴素实现</strong></p>
+<p>两种并行: 圆 和 像素</p>
+<p>渲染顺序的问题可以通过逐像素 遍历每个圆来计算</p>
+<p>每帧图像可以拆解为 16 * 16 个 <code>tile</code>, 每个 <code>tile</code> 负责 64 * 64 个像素</p>
+<p>每个 <code>tile</code> 可以作为一个线程块, 每个线程块中 1024 个线程负责 1024 个像素</p>
+<p>计算的过程可以照抄原本的代码, 只需要看代码处理一下 <code>tile</code> 的细节</p>
+<p><strong>优化实现</strong></p>
+<p>朴素实现效率很低, 考虑优化遍历圆的过程, 只遍历经过这个 <code>tile</code> 的圆</p>
+<p>这个地方可以使用 圆 的并行, 每个圆并行地计算是否经过这个 <code>tile</code></p>
+<p>使用 <code>sharedMemExclusiveScan</code> 可以进行计算 <br><br>
+这个时候需要把圆分批计算, 因为如果很多圆同时计算的话会爆显存</p>
+<p>设置每批圆 1024 个, 这样每个 <code>tile</code> 中</p>
+<ol>
+<li><code>prefixSumInput</code> 存储当前圆是否与当前 <code>tile</code> 相交</li>
+<li><code>prefixSumOutput</code> 存储 <code>explicit</code> 的前缀和</li>
+<li>在全局开一个 <code>circleFlag</code> 数组 <br>
+大小为 <code>sizeof(short) * NUM_CIRCLES_PROC * numTilesX * numTilesY</code> <br>
+因为每个 <code>tile</code> 中最多能相交 1024 个圆 (同一批)
+<ul>
+<li>当前 圆 在 <code>circleFlag</code> 中的下标 <code>flagIndex</code> 为: <code>1024 * tileIdx + sum[circleId]</code></li>
+<li>在 <code>flagIndex</code> 处记录 <code>circleIdx</code> 备用</li>
+<li>注意如果当前的 <code>circle</code> 是最后一个则需要记录表示终止的 -1</li>
+</ul>
+</li>
+</ol>
+<p>使用 像素 并行计算每个像素的值: 当 <code>flagValue</code> 为 -1 时就提前结束循环</p>
 
       </div>
       
@@ -264,14 +294,14 @@
                     <i class="iconfont icon-tags mr-10" title="Tags"></i>
                     
                     <span class="span--tag mr-8">
-                      <a href="/tags/Lab/" title="Lab">
-                        #Lab
+                      <a href="/tags/C/" title="C++">
+                        #C++
                       </a>
                     </span>
                     
                     <span class="span--tag mr-8">
-                      <a href="/tags/C/" title="C++">
-                        #C++
+                      <a href="/tags/Lab/" title="Lab">
+                        #Lab
                       </a>
                     </span>
                     
@@ -304,7 +334,7 @@
     <div class="title">Contents</div>
     <div class="catalog-content">
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Part 1</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98-1"><span class="toc-text">问题 1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98-2"><span class="toc-text">问题 2</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Part 2</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1-1"><span class="toc-text">任务 1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1-2"><span class="toc-text">任务 2</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Part 1</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98-1"><span class="toc-text">问题 1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98-2"><span class="toc-text">问题 2</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Part 2</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1-1"><span class="toc-text">任务 1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1-2"><span class="toc-text">任务 2</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Part 3</span></a></li></ol>
       
     </div>
   </div>
