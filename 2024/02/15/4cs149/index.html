@@ -8,10 +8,13 @@
   <meta name="author" content="lzl" />
   <meta name="description" content="" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
+    
+      StanFord CS149 Assignment4 简记 
+      
+      
+      |
     
      lzl&#39;s blog
   </title>
@@ -99,151 +102,243 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第七章)">
-        <div class="time-m-d">2023-08-29</div>
-        <div class="title">
-          <a href="/2023/08/29/7csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第七章)</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">StanFord CS149 Assignment4 简记</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2024-02-15 14:20:10
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="Categories"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/Labs/" title="Labs">
+                    <b>#</b> Labs
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/C/" title="C++">
+                    #C++
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Lab/" title="Lab">
+                    #Lab
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Parallel/" title="Parallel">
+                    #Parallel
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/CUDA/" title="CUDA">
+                    #CUDA
+                  </a>
+                </span>
+                
+              </span>
+          
       </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第五章)">
-        <div class="time-m-d">2023-08-29</div>
-        <div class="title">
-          <a href="/2023/08/29/5csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第五章)</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <p><a target="_blank" rel="noopener" href="https://github.com/lzlcs/Courses"><code>Github</code></a></p>
+<h1>Part 1</h1>
+<p>串行实现根据伪代码即可, 难度不大</p>
+<p>并行化的部分也可以直接看代码</p>
+<p>重点是其中一个 <code>reduction</code> 的操作 <br><br>
+使用 <code>reduction</code> 而不是直接 <code>parallel for</code> 的原因是后者会不断对 <code>global_diff</code> 做原子操作, 而 <code>reduction</code> 效率更高</p>
+<h1>Part 2</h1>
+<p><strong>朴素并行化</strong></p>
+<ol>
+<li>在 <code>top_down_step</code> 下的第一个循环加上 <code>#pragma omp parallel for</code></li>
+<li>把 访问 <code>distance</code> 的部分加上 <code>#pragma omp critical</code></li>
+</ol>
+<p><strong>优化</strong></p>
+<p>注意到 <code>new_frontier-&gt;count</code> 这个变量被访问很多次, 不断进行原子自增操作</p>
+<p>可以拆分, 每个线程在本地做这些操作, 然后在最后通过 <code>memcpy</code> 和 <code>__sync_fetch_and_add</code> 与全局的信息做合并</p>
+<p>优点: 每个线程多次访问  <code>new_frontier-&gt;count</code> 变成 每个线程只需要访问一次</p>
+<h1>Part 3</h1>
+<p>实现细节见代码</p>
+<p><strong>区别</strong></p>
+<ol>
+<li><code>top_down</code>: 从 <code>frontier</code> 中向外探索</li>
+<li><code>bottom_up</code> 看所有的点是否是 <code>frontier</code> 中的后继结点</li>
+</ol>
+<p><strong>自底向上的优缺点</strong></p>
+<ol>
+<li>优点
+<ul>
+<li>写的时候只改变 <code>distances[i]</code>, 不需要复杂的 <code>CAS</code> 操作</li>
+<li>看到一个满足条件的 <code>frontier</code> 就可以直接退出循环</li>
+<li>自己的 <code>distance</code> 不是 -1 的时候也可以退出循环</li>
+</ul>
+</li>
+<li>缺点
+<ul>
+<li>需要遍历所有的点, 计算量大</li>
+</ul>
+</li>
+</ol>
+<h1>Part 4</h1>
+<p>综上所述</p>
+<ol>
+<li>如果 <code>frontier</code> 中点不多, 最好使用 <code>top_down</code></li>
+<li>如果 <code>frontier</code> 中点很多, 那就不如使用 <code>bottom_up</code></li>
+</ol>
+<p>多不多的界限可以实验, 这里取 10000000 作为分界点</p>
+
       </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第九章)">
-        <div class="time-m-d">2023-08-26</div>
-        <div class="title">
-          <a href="/2023/08/26/9csapp/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>CSAPP 学习笔记 (第九章)</span>
-              
+              <a href="/2024/02/12/3cs149/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2024-02-15 14:20:10
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="Categories"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/Labs/" title="Labs">
+                        <b>#</b> Labs
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/C/" title="C++">
+                        #C++
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Lab/" title="Lab">
+                        #Lab
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Parallel/" title="Parallel">
+                        #Parallel
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/CUDA/" title="CUDA">
+                        #CUDA
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="CSAPP 学习笔记 (第六章)">
-        <div class="time-m-d">2023-08-24</div>
-        <div class="title">
-          <a href="/2023/08/24/6csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第六章)</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Part 1</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Part 2</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Part 3</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Part 4</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
-      <div class="post-item" title="CSAPP 学习笔记 (第四章) (暂跳过流水线实现)">
-        <div class="time-m-d">2023-08-21</div>
-        <div class="title">
-          <a href="/2023/08/21/4csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第四章) (暂跳过流水线实现)</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="GDB 学习笔记">
-        <div class="time-m-d">2023-08-15</div>
-        <div class="title">
-          <a href="/2023/08/15/gdb/">
-            
-              
-                <span>GDB 学习笔记</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第三章)">
-        <div class="time-m-d">2023-08-04</div>
-        <div class="title">
-          <a href="/2023/08/04/3csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第三章)</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第二章)">
-        <div class="time-m-d">2023-08-01</div>
-        <div class="title">
-          <a href="/2023/08/01/2csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第二章)</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第一章)">
-        <div class="time-m-d">2023-07-26</div>
-        <div class="title">
-          <a href="/2023/07/26/1csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第一章)</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="SICP 学习笔记 (第一章)">
-        <div class="time-m-d">2023-07-02</div>
-        <div class="title">
-          <a href="/2023/07/02/1sicp/">
-            
-              
-                <span>SICP 学习笔记 (第一章)</span>
-              
-            
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/page/3/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">4 / 5</span>
-    
-      <a href="/page/5/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         
 <div class="footer">
@@ -498,6 +593,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + StanFord%20CS149%20Assignment4%20%E7%AE%80%E8%AE%B0 + '&url=' + http%3A%2F%2Fexample.com%2F2024%2F02%2F15%2F4cs149%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2024/02/15/4cs149/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
