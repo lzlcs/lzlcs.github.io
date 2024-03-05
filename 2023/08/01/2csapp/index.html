@@ -599,11 +599,11 @@ B. <code>maxbytes &gt;= (int)sizeof(val)</code> 即可</p>
 <h2 id="2-75">2.75</h2>
 <p><code>signed</code>:<br>
 $$<br>
-\begin{align*}<br>
+\begin{align}<br>
 &amp;(x - 2^{32}s_x)(y - 2^{32}s_y) \enspace mod \enspace 2^{32} \<br>
 = &amp;(xy -2^{32}s_xy - 2^{32}s_yx - s_xs_y2^{64}) \enspace mod \enspace 2^{32} \<br>
-= &amp;(xy - s_xy - s_yx) \enspace mod \enspace 2^{32}</p>
-<p>\end{align*}<br>
+= &amp;(xy - s_xy - s_yx) \enspace mod \enspace 2^{32}<br>
+\end{align}<br>
 $$</p>
 <p>所以转换回去只需要 $+ s_xy + s_yx$</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">signed_high_prod</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="type">long</span> <span class="type">long</span> tmp = <span class="number">1ll</span> * x * y;</span><br><span class="line">    <span class="keyword">return</span> (<span class="type">int</span>)(tmp &gt;&gt; <span class="number">32</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">unsigned</span> <span class="title">unsigned_high_prod</span><span class="params">(<span class="type">unsigned</span> x, <span class="type">unsigned</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> sig_x = x &gt;&gt; <span class="number">31</span>;</span><br><span class="line">    <span class="type">int</span> sig_y = y &gt;&gt; <span class="number">31</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">signed_high_prod</span>(x, y) + sig_x * y + sig_y * x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>

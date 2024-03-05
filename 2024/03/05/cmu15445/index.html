@@ -8,10 +8,13 @@
   <meta name="author" content="lzl" />
   <meta name="description" content="" />
   
-    <meta name="robots" content="noindex" />
-  
   
   <title>
+    
+      CMU 15445 Spring 2023 
+      
+      
+      |
     
      lzl&#39;s blog
   </title>
@@ -99,151 +102,245 @@
 
 
       <div class="flex-container">
-        <div class="container index">
-  <div class="post-list">
-    <!-- 遍历渲染文章 -->
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第八章)">
-        <div class="time-m-d">2023-09-01</div>
-        <div class="title">
-          <a href="/2023/09/01/8csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第八章)</span>
-              
-            
-          </a>
-        </div>
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">CMU 15445 Spring 2023</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+          2024-03-05 10:00:00
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="Categories"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/Course/" title="Course">
+                    <b>#</b> Course
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/C/" title="C++">
+                    #C++
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Course/" title="Course">
+                    #Course
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/SQL/" title="SQL">
+                    #SQL
+                  </a>
+                </span>
+                
+                <span class="span--tag mr-8">
+                  <a href="/tags/Database/" title="Database">
+                    #Database
+                  </a>
+                </span>
+                
+              </span>
+          
       </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第七章)">
-        <div class="time-m-d">2023-08-29</div>
-        <div class="title">
-          <a href="/2023/08/29/7csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第七章)</span>
-              
-            
-          </a>
-        </div>
+      <div class="markdown-body">
+        <h1>Lecture 01</h1>
+<p>数据模型：数据库中数据的存储方式</p>
+<ol>
+<li>关系型 (常用, 数据库)</li>
+<li>键值对</li>
+<li>图</li>
+<li>文档/对象</li>
+<li>宽列/列族</li>
+<li>向量/矩阵 (机器学习)</li>
+</ol>
+<p>模式：使用给定数据模型对特定数据集合的描述</p>
+<h2 id="关系模型">关系模型</h2>
+<ol>
+<li>用简单的数据结构存储数据库</li>
+<li>物理存储留给 DBMS 实现</li>
+<li>通过高级语言访问数据, DBMS 找出最快的方式</li>
+</ol>
+<p>关系: 一个关系是一个无序集合, 包含表示实体的属性之间的关系</p>
+<blockquote>
+<p>关系: 表格, 表格中每一行是一个实体(tuple), 列: 属性</p>
+</blockquote>
+<p>属性通常是标量, NULL 在允许时可以成为属性</p>
+<p><strong>主键</strong>: 唯一标识一个 tuple</p>
+<p><strong>外键</strong>: 一个表中的外键, 引用另一张表的主键</p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.78nxjn9hvlc0.webp" alt="image"></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.3rtqm3xz9jk0.webp" alt="image"></p>
+<p><strong>数据库操作语言(DML)</strong></p>
+<ol>
+<li>过程式查询: 详细指定获取什么样的数据, 如何获取数据</li>
+<li>声明式查询: 只涉及想要什么样的数据, 不涉及如何获取数据</li>
+</ol>
+<p><strong>关系代数</strong></p>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.68lvplbvrlc0.webp" alt="image"></p>
+<ol>
+<li><code>Select</code>: <img src="https://github.com/lzlcs/image-hosting/raw/master/image.5d6tozu3cvg0.webp" alt="image"></li>
+<li><code>Projection</code>: <img src="https://github.com/lzlcs/image-hosting/raw/master/image.3yg7vyc9tho0.webp" alt="image"></li>
+<li><code>Union</code>: <img src="https://github.com/lzlcs/image-hosting/raw/master/image.ctimu4saahk.webp" alt="image"></li>
+<li><code>Intersect</code>: <img src="https://github.com/lzlcs/image-hosting/raw/master/image.6i0w4kz3yy80.webp" alt="image"></li>
+<li><code>Difference</code>: <img src="https://github.com/lzlcs/image-hosting/raw/master/image.1zb64rw904m8.webp" alt="image"></li>
+<li><code>Product</code>: <img src="https://github.com/lzlcs/image-hosting/raw/master/image.3n1ixcv6bn20.webp" alt="image"></li>
+<li><code>Join</code>: <img src="https://github.com/lzlcs/image-hosting/raw/master/image.x824l0py8gw.webp" alt="image"></li>
+</ol>
+<h2 id="文档模型">文档模型</h2>
+<p><img src="https://github.com/lzlcs/image-hosting/raw/master/image.4hww031lu9s0.webp" alt="image"></p>
+<h1>Lecture 02</h1>
+<p><a target="_blank" rel="noopener" href="https://15445.courses.cs.cmu.edu/spring2023/notes/02-modernsql.pdf">SQL Notes</a></p>
+<h1>Lecture 03</h1>
+
       </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第五章)">
-        <div class="time-m-d">2023-08-29</div>
-        <div class="title">
-          <a href="/2023/08/29/5csapp/">
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
             
-              
-                <span>CSAPP 学习笔记 (第五章)</span>
-              
+              <a href="/2024/02/15/4cs149/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
             
-          </a>
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
+              2024-03-05 10:00:00
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="Categories"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/Course/" title="Course">
+                        <b>#</b> Course
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags mr-10" title="Tags"></i>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/C/" title="C++">
+                        #C++
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Course/" title="Course">
+                        #Course
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/SQL/" title="SQL">
+                        #SQL
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag mr-8">
+                      <a href="/tags/Database/" title="Database">
+                        #Database
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
         </div>
-      </div>
+      
+    </div>
     
-      <div class="post-item" title="CSAPP 学习笔记 (第九章)">
-        <div class="time-m-d">2023-08-26</div>
-        <div class="title">
-          <a href="/2023/08/26/9csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第九章)</span>
-              
-            
-          </a>
-        </div>
-      </div>
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Lecture 01</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B"><span class="toc-text">关系模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B"><span class="toc-text">文档模型</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Lecture 02</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">Lecture 03</span></a></li></ol>
+      
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
     
-      <div class="post-item" title="CSAPP 学习笔记 (第六章)">
-        <div class="time-m-d">2023-08-24</div>
-        <div class="title">
-          <a href="/2023/08/24/6csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第六章)</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第四章) (暂跳过流水线实现)">
-        <div class="time-m-d">2023-08-21</div>
-        <div class="title">
-          <a href="/2023/08/21/4csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第四章) (暂跳过流水线实现)</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="GDB 学习笔记">
-        <div class="time-m-d">2023-08-15</div>
-        <div class="title">
-          <a href="/2023/08/15/gdb/">
-            
-              
-                <span>GDB 学习笔记</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第三章)">
-        <div class="time-m-d">2023-08-04</div>
-        <div class="title">
-          <a href="/2023/08/04/3csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第三章)</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第二章)">
-        <div class="time-m-d">2023-08-01</div>
-        <div class="title">
-          <a href="/2023/08/01/2csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第二章)</span>
-              
-            
-          </a>
-        </div>
-      </div>
-    
-      <div class="post-item" title="CSAPP 学习笔记 (第一章)">
-        <div class="time-m-d">2023-07-26</div>
-        <div class="title">
-          <a href="/2023/07/26/1csapp/">
-            
-              
-                <span>CSAPP 学习笔记 (第一章)</span>
-              
-            
-          </a>
-        </div>
+      <div class="comments-container">
+        
+
+
+
+
+
+
+
       </div>
     
   </div>
-  <nav class="post-navigation">
-    
-      <a href="/page/3/"><i class="iconfont icon-angleleft"></i></a>
-    
-    <span class="page-num">4 / 5</span>
-    
-      <a href="/page/5/"><i class="iconfont icon-angleright"></i></a>
-    
-  </nav>
-</div>
+
 
         
 <div class="footer">
@@ -498,6 +595,24 @@
 
 
         
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + CMU%2015445%20Spring%202023 + '&url=' + http%3A%2F%2Fexample.com%2F2024%2F03%2F05%2Fcmu15445%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://example.com/2024/03/05/cmu15445/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
   
   
 <script src="/js/shares.js"></script>
