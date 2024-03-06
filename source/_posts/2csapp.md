@@ -961,12 +961,11 @@ int tsub_ok(int x, int y) {
 
 `signed`: 
 $$
-\begin{align*}
+\begin{align}
   &(x - 2^{32}s_x)(y - 2^{32}s_y) \enspace mod \enspace 2^{32} \\
 = &(xy -2^{32}s_xy - 2^{32}s_yx - s_xs_y2^{64}) \enspace mod \enspace 2^{32} \\
 = &(xy - s_xy - s_yx) \enspace mod \enspace 2^{32}
-
-\end{align*}
+\end{align}
 $$
 
 所以转换回去只需要 $+ s_xy + s_yx$
